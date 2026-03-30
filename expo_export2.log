@@ -1,0 +1,32 @@
+Starting Metro Bundler
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Web .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 97.7% (285/425)
+Web Bundling failed 4108ms index.ts (745 modules)
+Error: Unable to resolve module expo-asset from C:\Users\rrudnicki\OneDrive - Grodno S.A\Dokumenty\Aplikacja\mobile\node_modules\expo-font\build\FontLoader.web.js: expo-asset could not be found within the project or in these directories:
+  node_modules
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mAsset[39m } [36mfrom[39m [32m'expo-asset'[39m[33m;[39m
+ [90m   |[39m                        [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { [33mCodedError[39m } [36mfrom[39m [32m'expo-modules-core'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mExpoFontLoader[39m [36mfrom[39m [32m'./ExpoFontLoader'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mFontDisplay[39m } [36mfrom[39m [32m'./Font.types'[39m[33m;[39m[0m
+
+Import stack:
+
+ node_modules\expo-font\build\FontLoader.web.js
+ | import "expo-asset"
+
+ node_modules\expo-font\build\Font.js
+ | import "./FontLoader"
+
+ node_modules\expo-font\build\index.js
+ | import "./Font"
+
+ App.tsx
+ | import "expo-font"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
