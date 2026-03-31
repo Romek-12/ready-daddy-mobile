@@ -11,8 +11,7 @@ import checkupVisitsData from '../data/checkup-visits.json';
 import shoppingItemsData from '../data/shopping-items.json';
 import birthPrepData from '../data/birth-preparation.json';
 import bagChecklistData from '../data/bag-checklist.json';
-import fourthTrimesterData from '../data/fourth-trimester.json';
-import dadModuleData from '../data/dad-module.json';
+// fourth-trimester.json and dad-module.json are loaded lazily (on first screen visit)
 
 // ---------------------------------------------------------------------------
 // Helper: calculate current pregnancy week from conception date
@@ -113,12 +112,12 @@ export const api = {
   getBirthPreparation: () => ({ stages: birthPrepData }),
   getBagChecklist: () => ({ items: bagChecklistData }),
 
-  // ---- Fourth trimester (bundled) ----
-  getFourthTrimester: () => ({ weeks: fourthTrimesterData }),
+  // ---- Fourth trimester (lazy — loaded on first visit) ----
+  getFourthTrimester: () => ({ weeks: require('../data/fourth-trimester.json') }),
 
   // ---- Action cards (bundled) ----
   getActionCardsDeck: () => ({ cards: actionCardsData }),
 
-  // ---- Dad module (bundled) ----
-  getDadModule: () => dadModuleData,
+  // ---- Dad module (lazy — loaded on first visit) ----
+  getDadModule: () => require('../data/dad-module.json'),
 };

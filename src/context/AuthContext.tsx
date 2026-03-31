@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, type Profile } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+
+const PROFILE_CACHE_KEY = '@ready_daddy/profile';
 
 export interface User {
   id: string;
@@ -50,10 +53,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Load existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        const profile = await fetchProfile(session.user.id);
-        if (profile) setUser(profileToUser(profile));
+        // Fire both in parallel — don't wait for Supabase before reading cache
+        const cachePromise = AsyncStorage.getItem(PROFILE_CACHE_KEY).catch(() => null);
+        const supabasePromise = fetchProfile(session.user.id);
+
+        // Show cached profile the moment AsyncStorage responds (fast, local)
+        const cached = await cachePromise;
+        if (cached) {
+          setUser(profileToUser(JSON.parse(cached) as Profile));
+          setLoading(false);
+        }
+
+        // Apply fresh Supabase data when it arrives (Supabase was already fetching in parallel)
+        const profile = await supabasePromise;
+        if (profile) {
+          setUser(profileToUser(profile));
+          AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => {});
+        }
+        if (!cached) setLoading(false);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Listen to auth state changes (token refresh, sign out, etc.)
@@ -106,11 +126,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     await supabase.auth.signOut();
+    AsyncStorage.removeItem(PROFILE_CACHE_KEY).catch(() => {});
     setUser(null);
   };
 
   const updateUser = (data: Partial<User>) => {
-    setUser(prev => prev ? { ...prev, ...data } : null);
+    setUser(prev => {
+      if (!prev) return null;
+      const updated = { ...prev, ...data };
+      // Keep cache in sync
+      AsyncStorage.getItem(PROFILE_CACHE_KEY).then(cached => {
+        if (!cached) return;
+        const profile: Profile = JSON.parse(cached);
+        if (data.conceptionDate !== undefined) profile.conception_date = data.conceptionDate;
+        if (data.partnerName !== undefined) profile.partner_name = data.partnerName;
+        AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => {});
+      }).catch(() => {});
+      return updated;
+    });
   };
 
   const clearFirstLogin = () => setIsFirstLogin(false);

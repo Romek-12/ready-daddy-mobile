@@ -86,30 +86,31 @@ function MainTabs() {
         tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 2 },
         headerShown: false,
         tabBarItemStyle: { justifyContent: 'center' },
+        lazy: true,
       }}
     >
       <Tab.Screen name="Home" component={HomeStackNavigator}
         options={{ tabBarLabel: 'Główna', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primaryLight, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="home" size={24} color={color} />
+          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
+            <Icon name="home" size={24} color={focused ? theme.colors.background : color} />
           </View>
         ) }} />
       <Tab.Screen name="WeekDetailTab" component={WeekDetailScreen}
         options={{ tabBarLabel: 'Tydzień', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primaryLight, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="fetus" size={24} color={color} />
+          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
+            <Icon name="fetus" size={24} color={focused ? theme.colors.background : color} />
           </View>
         ) }} />
       <Tab.Screen name="ActionCards" component={ActionCardsScreen}
         options={{ tabBarLabel: 'Karty', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primaryLight, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="bolt" size={24} color={color} />
+          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
+            <Icon name="bolt" size={24} color={focused ? theme.colors.background : color} />
           </View>
         ) }} />
       <Tab.Screen name="DadModuleTab" component={DadStackNavigator}
         options={{ tabBarLabel: 'Tata', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primaryLight, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="dad" size={24} color={color} />
+          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
+            <Icon name="dad" size={24} color={focused ? theme.colors.background : color} />
           </View>
         ) }} />
     </Tab.Navigator>
