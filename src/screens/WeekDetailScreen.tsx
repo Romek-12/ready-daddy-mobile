@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useWeekDetail } from '../hooks/useAppData';
 import Icon from '../components/Icon';
 import SkeletonBox from '../components/SkeletonBox';
+import FetusVisualizer from '../components/FetusVisualizer';
 import type { Theme } from '../theme';
 
 interface WeekActionCard { id: string; title: string; scenario: string; science_explanation: string; concrete_action: string; }
@@ -45,17 +46,21 @@ export default function WeekDetailScreen({ route }: Props) {
 
   return (
     <ScrollView style={s.c}>
-      <View style={s.hero}>
-        <Icon name="fetus" size={64} color={theme.colors.primary} />
+      <View style={s.titleRow}>
         <Text style={s.heroTitle}>Tydzień {w.week_number}</Text>
-        <Text style={s.heroTri}>{w.trimester === 1 ? 'I' : w.trimester === 2 ? 'II' : 'III'} trymestr</Text>
+      </View>
+
+      <View style={s.visualizerCard}>
+        <FetusVisualizer
+          week={w.week_number}
+          sizeMm={w.fetus_size_mm}
+          weightG={w.fetus_weight_g}
+          trimester={w.trimester}
+        />
       </View>
 
       <View style={s.card}>
-        <View style={s.cardHeader}><Icon name="ruler" size={20} color={theme.colors.fetus} /><Text style={s.cardTitle}> Rozwój płodu</Text></View>
-        {w.size_comparison && <Text style={s.sizeComp}>{w.size_comparison}</Text>}
-        {w.fetus_size_mm > 0 && <Text style={s.stat}>Długość: {w.fetus_size_mm} mm</Text>}
-        {w.fetus_weight_g > 0 && <Text style={s.stat}>Waga: {w.fetus_weight_g} g</Text>}
+        <View style={s.cardHeader}><Icon name="fetus" size={20} color={theme.colors.fetus} /><Text style={s.cardTitle}> Rozwój płodu</Text></View>
         <Text style={s.desc}>{w.fetus_description}</Text>
       </View>
 
@@ -119,9 +124,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   center: { justifyContent: 'center', alignItems: 'center' },
   empty: { color: theme.colors.textSecondary, fontSize: theme.fontSize.md },
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
-  hero: { alignItems: 'center', paddingTop: 30, paddingBottom: theme.spacing.xl },
-  heroTitle: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text, marginTop: theme.spacing.sm },
-  heroTri: { fontSize: theme.fontSize.md, color: theme.colors.primary, marginTop: theme.spacing.xs },
+  titleRow: { paddingTop: 30, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.sm },
+  heroTitle: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text },
+  visualizerCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, overflow: 'hidden', elevation: 2 },
   card: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md, backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, elevation: 1 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },
   cardTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },

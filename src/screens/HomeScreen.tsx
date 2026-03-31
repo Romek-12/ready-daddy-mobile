@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCurrentWeek } from '../hooks/useAppData';
 import Icon from '../components/Icon';
 import SkeletonBox from '../components/SkeletonBox';
+import FetusVisualizerCompact from '../components/FetusVisualizerCompact';
 import type { AppNavigation } from '../types/navigation';
 
 interface ActionCardSummary { id: string; title: string; scenario: string; }
@@ -99,8 +100,12 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
             <View style={s.weekBadge}><Text style={[s.weekBadgeText, { color: trimesterColor }]}>{data?.trimester} trymestr</Text></View>
           </View>
           <Text style={s.weekNumber}>{data.currentWeek}. tydzień</Text>
-          {w.size_comparison && <Text style={s.fetusSize}>{w.size_comparison}</Text>}
-          {w.fetus_description && <Text style={s.fetusDesc}>{w.fetus_description}</Text>}
+          <FetusVisualizerCompact
+            week={data.currentWeek}
+            sizeMm={w.fetus_size_mm}
+            weightG={w.fetus_weight_g}
+            trimester={data.trimester}
+          />
           <View style={s.progressContainer}>
             <View style={s.progressBar}>
               <View style={[s.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
@@ -178,8 +183,6 @@ const createStyles = (theme: Theme, CARD_W: number) => StyleSheet.create({
   weekBadge: { backgroundColor: theme.colors.surface, paddingHorizontal: 12, paddingVertical: 4, borderRadius: theme.borderRadius.full },
   weekBadgeText: { fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.semibold as any },
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text },
-  fetusSize: { fontSize: theme.fontSize.lg, color: theme.colors.accent, marginTop: theme.spacing.sm },
-  fetusDesc: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.sm, lineHeight: 20 },
   progressContainer: { marginTop: theme.spacing.lg },
   progressBar: { height: 6, backgroundColor: theme.colors.surfaceLight, borderRadius: 3 },
   progressFill: { height: 6, backgroundColor: theme.colors.primary, borderRadius: 3 },
