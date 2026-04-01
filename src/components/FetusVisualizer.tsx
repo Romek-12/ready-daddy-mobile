@@ -5,26 +5,21 @@ import { useTheme } from '../context/ThemeContext';
 import FETUS_SVGS from '../data/fetusSvgs';
 import type { Theme } from '../theme';
 
-// Mapping based on visual comparison with reference fetal development chart:
-// fetus1-6: round womb cross-section (ellipses) = 1st trimester stages
-// fetus7-11: oval womb growing (paths only) = 2nd trimester
-// fetus12-15: largest, with opacity/shadows = 3rd trimester
 const WEEK_TO_FETUS: Record<number, number> = {
-  1: 1, 2: 1, 3: 1, 4: 1,        // very early (egg/sperm/cells)
-  5: 2, 6: 2,                      // early embryo, round womb
-  7: 3, 8: 3,                      // embryo growing
-  9: 4, 10: 4,                     // end of embryo stage
-  11: 5, 12: 5,                    // early fetus, 1st trimester
-  13: 6,                           // end of 1st trimester
-  14: 7, 15: 7,                    // 2nd trimester start
-  16: 8, 17: 8,                    // 4th month
-  18: 9, 19: 9, 20: 9,            // 5th month
-  21: 10, 22: 10, 23: 10,         // mid 2nd trimester
-  24: 11, 25: 11, 26: 11,         // 6th month
-  27: 12, 28: 12, 29: 12,         // 7th month / 3rd trimester start
-  30: 13, 31: 13, 32: 13,         // 8th month
-  33: 14, 34: 14, 35: 14,         // late 3rd trimester
-  36: 15, 37: 15, 38: 15, 39: 15, 40: 15, // term
+  0: 1, 1: 1,
+  2: 2,
+  3: 4,
+  4: 5,
+  5: 6, 6: 6,
+  7: 7,
+  8: 8, 9: 8,
+  10: 9, 11: 9, 12: 9,
+  13: 10, 14: 10, 15: 10, 16: 10,
+  17: 11, 18: 11, 19: 11, 20: 11,
+  21: 12, 22: 12, 23: 12, 24: 12,
+  25: 13, 26: 13, 27: 13, 28: 13,
+  29: 14, 30: 14, 31: 14, 32: 14,
+  33: 15, 34: 15, 35: 15, 36: 15, 37: 15, 38: 15, 39: 15, 40: 15,
 };
 
 const WEEK_TO_FRUIT: Record<number, { emoji: string; name: string }> = {
