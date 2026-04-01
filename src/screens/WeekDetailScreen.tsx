@@ -13,7 +13,7 @@ interface WeekCheckup { id: string; name: string; description: string; }
 
 type Props = { route?: any };
 
-const MIN_WEEK = 6;
+const MIN_WEEK = 2;
 const MAX_WEEK = 40;
 
 export default function WeekDetailScreen({ route }: Props) {
