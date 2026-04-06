@@ -89,7 +89,6 @@ const getChecklist = (theme: Theme): PersonSection[] => [
     person: 'Dla dziecka',
     personIcon: 'baby',
     color: theme.colors.primary,
-    bagNote: 'Wyprawka na wyjście ze szpitala.',
     categories: [
       {
         title: 'Na czas podróży', icon: 'car',
@@ -127,7 +126,6 @@ const getChecklist = (theme: Theme): PersonSection[] => [
     person: 'Dla taty',
     personIcon: 'dad',
     color: theme.colors.dadModule,
-    bagNote: 'Twoja wyprawka na czas porodu.',
     categories: [
       {
         title: 'Dokumenty', icon: 'checklist',
@@ -196,8 +194,7 @@ export default function BirthPrepScreen() {
     <ScrollView style={s.c}>
       <View style={s.header}>
         <Icon name="hospital" size={48} color={theme.colors.birth} />
-        <Text style={s.title}>Wyprawka do Szpitala</Text>
-        <Text style={s.sub}>Lista rzeczy do spakowania, by być gotowym</Text>
+        <Text style={s.title}>Misja: Porodówka</Text>
       </View>
 
       {/* Progress */}
