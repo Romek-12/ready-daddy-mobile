@@ -138,12 +138,12 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
 
           {/* Size comparison */}
           <View style={[s.fruitBox, { backgroundColor: trimesterColor + '18' }]}>
-            {displayName ? <Text style={[s.fruitName, { color: trimesterColor }]}>jak {displayName}</Text> : null}
+            {displayName ? <Text style={[s.fruitName, { color: trimesterColor }]}>Jestem jak {displayName}</Text> : null}
           </View>
 
           {/* Mode toggle buttons */}
           <View style={s.modeRow}>
-            {SIZE_MODES.map(({ mode, label, emoji }) => {
+            {SIZE_MODES.map(({ mode, emoji }) => {
               const isActive = sizeMode === mode;
               return (
                 <TouchableOpacity
@@ -154,7 +154,7 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
                   accessibilityRole="radio"
                   accessibilityState={{ checked: isActive }}
                 >
-                  <Text style={[s.modeBtnText, isActive && { color: theme.colors.black ?? '#000' }]}>{emoji} {label}</Text>
+                  <Text style={[s.modeBtnText, isActive && { color: theme.colors.black ?? '#000' }]}>{emoji}</Text>
                 </TouchableOpacity>
               );
             })}
