@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator, TextInput } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, ThemeMode } from '../context/ThemeContext';
+import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
+import Button from '../components/Button';
 import { api } from '../services/api';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
@@ -14,12 +16,19 @@ type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 export default function SettingsScreen({ navigation }: Props) {
   const { user, updateUser, logout } = useAuth();
   const { theme, mode, setThemeMode } = useTheme();
+  const [sizeMode, setSizeMode] = useSizeMode();
   const s = React.useMemo(() => createStyles(theme), [theme]);
 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [dateType, setDateType] = useState<'conception' | 'due'>('conception');
   const [selectedDate, setSelectedDate] = useState(user?.conceptionDate || '');
   const [saving, setSaving] = useState(false);
+
+  // Baby names modal states
+  const [babyNameEditModal, setBabyNameEditModal] = useState<'name1' | 'name2' | null>(null);
+  const [editingBabyName, setEditingBabyName] = useState('');
+  const [savingBabyName, setSavingBabyName] = useState(false);
+  const [showGenderPickerAlert, setShowGenderPickerAlert] = useState(false);
 
   const handleLogout = async () => {
     Alert.alert('Wylogowanie', 'Czy na pewno chcesz się wylogować?', [
@@ -48,6 +57,89 @@ export default function SettingsScreen({ navigation }: Props) {
     }
   };
 
+  const handleSaveBabyName = async () => {
+    if (!editingBabyName.trim() && babyNameEditModal === 'name1') {
+      Alert.alert('Błąd', 'Imię dziecka nie może być puste');
+      return;
+    }
+
+    try {
+      setSavingBabyName(true);
+      const updateData = babyNameEditModal === 'name1'
+        ? { babyName1: editingBabyName.trim() || null }
+        : { babyName2: editingBabyName.trim() || null };
+
+      await api.updateProfile(user!.id, updateData);
+      updateUser(updateData);
+      setBabyNameEditModal(null);
+      setEditingBabyName('');
+      Alert.alert('Sukces', 'Imię zostało zaktualizowane.');
+    } catch (err: any) {
+      Alert.alert('Błąd', err.message || 'Nie udało się zapisać zmianę.');
+    } finally {
+      setSavingBabyName(false);
+    }
+  };
+
+  const handleSetGender = async (gender: 'boy' | 'girl') => {
+    try {
+      setSaving(true);
+      await api.updateProfile(user!.id, { babyGender: gender });
+      updateUser({ babyGender: gender });
+
+      // If 2 names exist, ask which to keep
+      if (user?.babyName1 && user?.babyName2) {
+        Alert.alert(
+          'Wybierz imię',
+          'Które imię chcesz zachować?',
+          [
+            { text: user.babyName1, onPress: async () => {
+              try {
+                await api.updateProfile(user.id, { babyName1: user.babyName1, babyName2: null });
+                updateUser({ babyName2: null });
+              } catch (err: any) {
+                Alert.alert('Błąd', err.message);
+              }
+            }},
+            { text: user.babyName2, onPress: async () => {
+              try {
+                await api.updateProfile(user.id, { babyName1: user.babyName2, babyName2: null });
+                updateUser({ babyName1: user.babyName2, babyName2: null });
+              } catch (err: any) {
+                Alert.alert('Błąd', err.message);
+              }
+            }},
+          ]
+        );
+      }
+    } catch (err: any) {
+      Alert.alert('Błąd', err.message || 'Nie udało się zapisać płeć.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleClearGender = () => {
+    Alert.alert(
+      'Zmiana płci',
+      'Czy na pewno chcesz zmienić wybraną płeć? Będzie trzeba wybrać jej ponownie.',
+      [
+        { text: 'Anuluj', style: 'cancel' },
+        { text: 'Zmień', style: 'destructive', onPress: async () => {
+          try {
+            setSaving(true);
+            await api.updateProfile(user!.id, { babyGender: null });
+            updateUser({ babyGender: null });
+          } catch (err: any) {
+            Alert.alert('Błąd', err.message);
+          } finally {
+            setSaving(false);
+          }
+        }},
+      ]
+    );
+  };
+
   const renderThemeOption = (targetMode: ThemeMode, label: string, icon: string) => {
     const isSelected = mode === targetMode;
     return (
@@ -61,6 +153,30 @@ export default function SettingsScreen({ navigation }: Props) {
       >
         <View style={[s.optionIcon, isSelected && s.optionIconSelected]}>
           <Icon name={icon} size={22} color={isSelected ? theme.colors.white : theme.colors.textMuted} />
+        </View>
+        <Text style={[s.optionLabel, isSelected && s.optionLabelSelected]}>{label}</Text>
+        {isSelected && (
+          <View style={s.checkIcon}>
+            <Icon name="check" size={18} color={theme.colors.primary} />
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSizeModeOption = (targetMode: SizeComparisonMode, label: string, emoji: string) => {
+    const isSelected = sizeMode === targetMode;
+    return (
+      <TouchableOpacity
+        style={[s.optionCard, isSelected && s.optionCardSelected]}
+        onPress={() => setSizeMode(targetMode)}
+        activeOpacity={0.7}
+        accessibilityRole="radio"
+        accessibilityLabel={`Porównanie: ${label}`}
+        accessibilityState={{ checked: isSelected }}
+      >
+        <View style={[s.optionIcon, isSelected && s.optionIconSelected]}>
+          <Text style={{ fontSize: 20 }}>{emoji}</Text>
         </View>
         <Text style={[s.optionLabel, isSelected && s.optionLabelSelected]}>{label}</Text>
         {isSelected && (
@@ -118,6 +234,104 @@ export default function SettingsScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
+        {/* O dziecku Section */}
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>O dziecku</Text>
+
+          {/* Baby Name 1 */}
+          <TouchableOpacity
+            style={s.listButton}
+            onPress={() => { setEditingBabyName(user?.babyName1 || ''); setBabyNameEditModal('name1'); }}
+            accessibilityRole="button"
+            accessibilityLabel="Edytuj imię dziecka"
+          >
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: theme.colors.primary + '20' }]}>
+                <Icon name="person" size={20} color={theme.colors.primary} />
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Imię dziecka</Text>
+                <Text style={s.listButtonSub}>{user?.babyName1 || '– nie podano –'}</Text>
+              </View>
+            </View>
+            <Icon name="edit" size={16} color={theme.colors.textMuted} />
+          </TouchableOpacity>
+
+          {/* Baby Name 2 */}
+          <TouchableOpacity
+            style={[s.listButton, { marginTop: theme.spacing.md }]}
+            onPress={() => { setEditingBabyName(user?.babyName2 || ''); setBabyNameEditModal('name2'); }}
+            accessibilityRole="button"
+            accessibilityLabel="Edytuj drugie imię dziecka"
+          >
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: theme.colors.primary + '20' }]}>
+                <Icon name="person" size={20} color={theme.colors.primary} />
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Drugie imię (opcjonalne)</Text>
+                <Text style={s.listButtonSub}>{user?.babyName2 || '– nie podano –'}</Text>
+              </View>
+            </View>
+            <Icon name="edit" size={16} color={theme.colors.textMuted} />
+          </TouchableOpacity>
+
+          {/* Gender Selection */}
+          {user?.babyGender === null ? (
+            <View style={[s.genderSection, { marginTop: theme.spacing.lg }]}>
+              <Text style={s.genderSectionTitle}>Płeć dziecka</Text>
+              <Text style={s.genderSectionDesc}>Jeszcze nie wiesz? Daj znać gdy się dowiesz! 🎉</Text>
+              <View style={s.genderButtonsContainer}>
+                <TouchableOpacity
+                  style={[s.genderButton, { borderColor: '#FF6B9D' }]}
+                  onPress={() => handleSetGender('girl')}
+                  disabled={saving}
+                >
+                  <Text style={s.genderButtonEmoji}>👧</Text>
+                  <Text style={s.genderButtonText}>Dziewczynka</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[s.genderButton, { borderColor: '#0088FF' }]}
+                  onPress={() => handleSetGender('boy')}
+                  disabled={saving}
+                >
+                  <Text style={s.genderButtonEmoji}>👦</Text>
+                  <Text style={s.genderButtonText}>Chłopiec</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[s.listButton, { marginTop: theme.spacing.lg }]}
+              onPress={handleClearGender}
+              accessibilityRole="button"
+              accessibilityLabel="Zmień płeć dziecka"
+            >
+              <View style={s.listButtonLeft}>
+                <View style={[s.listButtonIcon, { backgroundColor: (user?.babyGender === 'girl' ? '#FF6B9D' : '#0088FF') + '20' }]}>
+                  <Icon name={user?.babyGender === 'girl' ? 'female' : 'male'} size={20} color={user?.babyGender === 'girl' ? '#FF6B9D' : '#0088FF'} />
+                </View>
+                <View>
+                  <Text style={s.listButtonText}>Płeć dziecka</Text>
+                  <Text style={s.listButtonSub}>{user?.babyGender === 'girl' ? '👧 Dziewczynka' : '👦 Chłopiec'}</Text>
+                </View>
+              </View>
+              <Icon name="edit" size={16} color={theme.colors.textMuted} />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Porównanie rozmiaru dziecka */}
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>Porównanie rozmiaru dziecka</Text>
+          <Text style={s.sectionDesc}>Wybierz w jaki sposób chcesz porównywać wielkość dziecka na kartach tygodnia.</Text>
+          <View style={s.optionsGrid}>
+            {renderSizeModeOption('fruit', 'Owoc / warzywo', '🍎')}
+            {renderSizeModeOption('animal', 'Zwierzę', '🐾')}
+            {renderSizeModeOption('sweet', 'Słodycz', '🍬')}
+          </View>
+        </View>
+
         <View style={s.spacer} />
         
         <TouchableOpacity style={s.logoutButton} onPress={handleLogout} accessibilityRole="button" accessibilityLabel="Wyloguj się">
@@ -127,6 +341,49 @@ export default function SettingsScreen({ navigation }: Props) {
 
         <Text style={s.versionText}>Wersja 1.0.0</Text>
       </ScrollView>
+
+      {/* Baby Name Edit Modal */}
+      <Modal visible={babyNameEditModal !== null} animationType="fade" transparent={true}>
+        <View style={s.modalOverlay}>
+          <View style={s.babyNameModal}>
+            <Text style={s.modalTitle}>
+              {babyNameEditModal === 'name1' ? 'Edytuj imię dziecka' : 'Edytuj drugie imię'}
+            </Text>
+            <TextInput
+              style={s.babyNameInput}
+              placeholder={babyNameEditModal === 'name1' ? 'np. Zosia' : 'np. Piotrek'}
+              placeholderTextColor={theme.colors.textMuted}
+              value={editingBabyName}
+              onChangeText={setEditingBabyName}
+              maxLength={30}
+              autoFocus
+            />
+            <View style={s.modalButtonsContainer}>
+              <TouchableOpacity
+                style={[s.modalButton, s.modalButtonCancel]}
+                onPress={() => {
+                  setBabyNameEditModal(null);
+                  setEditingBabyName('');
+                }}
+                disabled={savingBabyName}
+              >
+                <Text style={s.modalButtonCancelText}>Anuluj</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[s.modalButton, s.modalButtonSave, savingBabyName && { opacity: 0.6 }]}
+                onPress={handleSaveBabyName}
+                disabled={savingBabyName}
+              >
+                {savingBabyName ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={s.modalButtonSaveText}>Zapisz</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Date Picker Modal */}
       <Modal visible={isDatePickerVisible} animationType="slide" transparent={true}>
@@ -230,4 +487,35 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   toggleBtnActive: { backgroundColor: theme.colors.primaryLight, borderColor: theme.colors.primary },
   toggleText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontWeight: theme.fontWeight.medium },
   toggleTextActive: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold },
+
+  // Gender Section
+  genderSection: { backgroundColor: theme.colors.surface, padding: theme.spacing.lg, borderRadius: theme.borderRadius.lg },
+  genderSectionTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.text, marginBottom: theme.spacing.xs },
+  genderSectionDesc: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.md },
+  genderButtonsContainer: { flexDirection: 'row', gap: theme.spacing.md },
+  genderButton: {
+    flex: 1, paddingVertical: theme.spacing.lg, paddingHorizontal: theme.spacing.md,
+    borderWidth: 2, borderRadius: theme.borderRadius.lg, backgroundColor: theme.colors.background,
+    alignItems: 'center', gap: theme.spacing.xs,
+  },
+  genderButtonEmoji: { fontSize: 28 },
+  genderButtonText: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold, color: theme.colors.text },
+
+  // Baby Name Modal
+  babyNameModal: {
+    backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.xl, marginHorizontal: theme.spacing.lg,
+    marginTop: 'auto', marginBottom: 'auto',
+  },
+  babyNameInput: {
+    backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.cardBorder,
+    borderRadius: theme.borderRadius.md, padding: theme.spacing.md, fontSize: theme.fontSize.md,
+    color: theme.colors.text, marginVertical: theme.spacing.lg,
+  },
+  modalButtonsContainer: { flexDirection: 'row', gap: theme.spacing.md },
+  modalButton: { flex: 1, paddingVertical: theme.spacing.md, borderRadius: theme.borderRadius.md, alignItems: 'center' },
+  modalButtonCancel: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder },
+  modalButtonCancelText: { color: theme.colors.text, fontWeight: theme.fontWeight.bold },
+  modalButtonSave: { backgroundColor: theme.colors.primary },
+  modalButtonSaveText: { color: theme.colors.black, fontWeight: theme.fontWeight.bold },
 });

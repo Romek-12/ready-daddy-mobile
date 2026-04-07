@@ -8,6 +8,7 @@ import Logo from '../components/Logo';
 import DateScrollPicker from '../components/DateScrollPicker';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
+import Icon from '../components/Icon';
 import { registerSchema, type RegisterForm } from '../lib/validation';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
@@ -15,20 +16,28 @@ import type { Theme } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
+interface ExtendedRegisterForm extends RegisterForm {
+  babyName1?: string;
+  babyName2?: string;
+}
+
 export default function RegisterScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const s = React.useMemo(() => createStyles(theme), [theme]);
   const { register } = useAuth();
   const [dateType, setDateType] = useState<'conception' | 'due'>('conception');
   const [loading, setLoading] = useState(false);
+  const [showBabyNames, setShowBabyNames] = useState(false);
 
-  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<RegisterForm>({
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<ExtendedRegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
       password: '',
       conceptionDate: '',
       partnerName: '',
+      babyName1: '',
+      babyName2: '',
     },
   });
 
@@ -39,8 +48,7 @@ export default function RegisterScreen({ navigation }: Props) {
     else Alert.alert(title, msg);
   };
 
-  const onSubmit = async (data: RegisterForm) => {
-    // Convert due date to conception date (due - 280 days)
+  const onSubmit = async (data: ExtendedRegisterForm) => {
     let conceptionDate = data.conceptionDate;
     if (dateType === 'due') {
       const due = new Date(conceptionDate);
@@ -66,33 +74,36 @@ export default function RegisterScreen({ navigation }: Props) {
 
     setLoading(true);
     try {
-      await register(data.email.trim(), data.password, conceptionDate, data.partnerName?.trim() || undefined);
+      await register(
+        data.email.trim(),
+        data.password,
+        conceptionDate,
+        data.partnerName?.trim() || undefined,
+        data.babyName1?.trim() || undefined,
+        data.babyName2?.trim() || undefined
+      );
     } catch (err: any) {
-      if (Platform.OS === 'web') window.alert(`Błąd rejestracji: ${err.message || 'Spróbuj ponownie'}`);
-      else Alert.alert('Błąd rejestracji', err.message || 'Spróbuj ponownie');
+      showAlert('Błąd rejestracji', err.message || 'Spróbuj ponownie');
     } finally {
       setLoading(false);
     }
   };
 
-  const formatDisplayDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    const [y, m, d] = dateStr.split('-').map(Number);
-    const months = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
-    return `${d} ${months[m - 1]} ${y}`;
-  };
-
   return (
     <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={s.inner} keyboardShouldPersistTaps="handled">
-        <View style={s.iconWrap}><Logo width={120} height={120} color={theme.colors.primary} /></View>
-        <Text style={s.title}>Dołącz do akcji!</Text>
-        <Text style={s.subtitle}>Stwórz konto i zacznij swoją podróż</Text>
+        <View style={s.logoWrap}>
+          <Logo width={100} height={100} color={theme.colors.primary} />
+        </View>
 
+        <Text style={s.title}>Dołącz do nas</Text>
+        <Text style={s.subtitle}>Hej Papa · Tata W Akcji</Text>
+
+        {/* Email */}
         <Controller
           control={control}
           name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <FormInput
               label="Email"
               value={value}
@@ -101,92 +112,139 @@ export default function RegisterScreen({ navigation }: Props) {
               placeholder="twoj@email.pl"
               keyboardType="email-address"
               autoCapitalize="none"
-              error={errors.email?.message}
+              error={error?.message}
             />
           )}
         />
 
+        {/* Password */}
         <Controller
           control={control}
           name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <FormInput
               label="Hasło"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              placeholder="Min. 6 znaków"
+              placeholder="••••••••"
               isPassword
-              error={errors.password?.message}
+              error={error?.message}
             />
           )}
         />
 
+        {/* Partner Name */}
         <Controller
           control={control}
           name="partnerName"
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, value } }) => (
             <FormInput
               label="Imię partnerki (opcjonalne)"
-              value={value ?? ''}
+              value={value}
               onChangeText={onChange}
-              onBlur={onBlur}
               placeholder="np. Anna"
-              error={errors.partnerName?.message}
             />
           )}
         />
 
-        <View style={s.dateGroup}>
-          {/* Date type toggle */}
-          <Text style={s.label}>Wprowadź</Text>
-          <View style={s.dateToggle}>
-            <TouchableOpacity
-              style={[s.toggleBtn, dateType === 'conception' && s.toggleBtnActive]}
-              onPress={() => { setDateType('conception'); setValue('conceptionDate', ''); }}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: dateType === 'conception' }}
-            >
-              <Text style={[s.toggleText, dateType === 'conception' && s.toggleTextActive]}>Datę poczęcia</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[s.toggleBtn, dateType === 'due' && s.toggleBtnActive]}
-              onPress={() => { setDateType('due'); setValue('conceptionDate', ''); }}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: dateType === 'due' }}
-            >
-              <Text style={[s.toggleText, dateType === 'due' && s.toggleTextActive]}>Termin porodu</Text>
-            </TouchableOpacity>
-          </View>
-
-          <DateScrollPicker
-            onDateChange={(date: string) => setValue('conceptionDate', date, { shouldValidate: true })}
-            allowFuture={dateType === 'due'}
-            maxDaysBack={dateType === 'conception' ? 366 : 30}
-            maxDaysForward={dateType === 'due' ? 310 : 0}
-          />
-          {selectedDate ? (
-            <Text style={s.dateDisplay}>Wybrano: {formatDisplayDate(selectedDate)}</Text>
-          ) : null}
-          {errors.conceptionDate?.message ? (
-            <Text style={s.dateError}>{errors.conceptionDate.message}</Text>
-          ) : null}
-          <Text style={s.hint}>
-            {dateType === 'conception'
-              ? 'Przybliżona data poczęcia '
-              : 'Przewidywany termin porodu '}
-            — możesz ją później zmienić
-          </Text>
+        {/* Date Type Toggle */}
+        <View style={s.dateTypeContainer}>
+          <TouchableOpacity
+            style={[s.dateTypeBtn, dateType === 'conception' && s.dateTypeBtnActive]}
+            onPress={() => setDateType('conception')}
+          >
+            <Text style={[s.dateTypeText, dateType === 'conception' && s.dateTypeTextActive]}>Datę poczęcia</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.dateTypeBtn, dateType === 'due' && s.dateTypeBtnActive]}
+            onPress={() => setDateType('due')}
+          >
+            <Text style={[s.dateTypeText, dateType === 'due' && s.dateTypeTextActive]}>Termin porodu</Text>
+          </TouchableOpacity>
         </View>
 
+        {/* Date Picker */}
+        <Controller
+          control={control}
+          name="conceptionDate"
+          render={({ field: { value } }) => (
+            <View style={s.datePickerContainer}>
+              <DateScrollPicker
+                selectedDate={value}
+                onDateChange={(date) => setValue('conceptionDate', date)}
+                label={dateType === 'conception' ? 'Data poczęcia' : 'Termin porodu'}
+              />
+            </View>
+          )}
+        />
+
+        {/* Baby Names Section - Collapsible */}
+        <TouchableOpacity
+          style={s.babyNamesToggle}
+          onPress={() => setShowBabyNames(!showBabyNames)}
+        >
+          <Text style={s.babyNamesToggleText}>Znasz już imię dziecka? Wpisz je! (opcjonalnie)</Text>
+          <Icon
+            name={showBabyNames ? 'expand-less' : 'expand-more'}
+            size={20}
+            color={theme.colors.primary}
+          />
+        </TouchableOpacity>
+
+        {showBabyNames && (
+          <View style={s.babyNamesSection}>
+            <Controller
+              control={control}
+              name="babyName1"
+              render={({ field: { onChange, value } }) => (
+                <FormInput
+                  label="Imię dziecka"
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder="np. Zosia"
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="babyName2"
+              render={({ field: { onChange, value } }) => (
+                <View>
+                  <FormInput
+                    label="Drugie imię (opcjonalne)"
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder="np. Piotrek"
+                  />
+                  <Text style={s.babyNamesHelper}>
+                    Możesz wpisać dwa imiona — jedno dla dziewczynki, jedno dla chłopca.
+                  </Text>
+                </View>
+              )}
+            />
+          </View>
+        )}
+
+        {/* Register Button */}
         <Button
           title="Zarejestruj się"
           onPress={handleSubmit(onSubmit)}
           loading={loading}
           accessibilityLabel="Zarejestruj się"
         />
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={s.link} accessibilityRole="button" accessibilityLabel="Przejdź do logowania">
-          <Text style={s.linkText}>Masz już konto? <Text style={s.linkBold}>Zaloguj się</Text></Text>
+
+        {/* Login Link */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          style={s.linkContainer}
+          accessibilityRole="button"
+          accessibilityLabel="Przejdź do logowania"
+        >
+          <Text style={s.linkText}>
+            Masz już konto? <Text style={s.linkBold}>Zaloguj się</Text>
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -194,27 +252,107 @@ export default function RegisterScreen({ navigation }: Props) {
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  inner: { flexGrow: 1, justifyContent: 'center', padding: theme.spacing.xl },
-  iconWrap: { alignItems: 'center', marginBottom: theme.spacing.md },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, textAlign: 'center' },
-  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, textAlign: 'center', marginTop: theme.spacing.sm, marginBottom: theme.spacing.xl },
-  dateGroup: { marginBottom: theme.spacing.lg },
-  label: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.sm, fontWeight: theme.fontWeight.medium },
-  dateDisplay: { fontSize: theme.fontSize.md, color: theme.colors.primary, fontWeight: theme.fontWeight.semibold, marginTop: theme.spacing.sm, textAlign: 'center' },
-  dateError: { color: theme.colors.danger, fontSize: theme.fontSize.xs, marginTop: theme.spacing.xs, textAlign: 'center' },
-  hint: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: theme.spacing.xs, textAlign: 'center' },
-  link: { marginTop: theme.spacing.xl, alignItems: 'center', marginBottom: theme.spacing.xxl },
-  linkText: { color: theme.colors.textSecondary, fontSize: theme.fontSize.md },
-  linkBold: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold },
-
-  dateToggle: { flexDirection: 'row', marginBottom: theme.spacing.md, gap: 8 },
-  toggleBtn: {
-    flex: 1, paddingVertical: 10, borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.surfaceLight, borderWidth: 1,
-    borderColor: theme.colors.cardBorder, alignItems: 'center',
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
   },
-  toggleBtnActive: { backgroundColor: theme.colors.primaryLight, borderColor: theme.colors.primary },
-  toggleText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontWeight: theme.fontWeight.medium },
-  toggleTextActive: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold },
+  inner: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.xxl,
+    paddingBottom: theme.spacing.xxl,
+  },
+  logoWrap: {
+    alignItems: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  title: {
+    fontSize: theme.fontSize.hero,
+    fontFamily: 'SpaceGrotesk_700Bold',
+    color: theme.colors.primary,
+    textAlign: 'center',
+    letterSpacing: 1,
+    marginBottom: theme.spacing.sm,
+  },
+  subtitle: {
+    fontSize: theme.fontSize.md,
+    fontFamily: 'SpaceGrotesk_400Regular',
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.xxl,
+  },
+  dateTypeContainer: {
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.lg,
+  },
+  dateTypeBtn: {
+    flex: 1,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.surface,
+    alignItems: 'center',
+  },
+  dateTypeBtnActive: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  dateTypeText: {
+    fontSize: theme.fontSize.sm,
+    fontFamily: 'SpaceGrotesk_600SemiBold',
+    color: theme.colors.textSecondary,
+  },
+  dateTypeTextActive: {
+    color: theme.colors.black,
+  },
+  datePickerContainer: {
+    marginBottom: theme.spacing.lg,
+  },
+  babyNamesToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.surface,
+    marginBottom: theme.spacing.lg,
+  },
+  babyNamesToggleText: {
+    flex: 1,
+    fontSize: theme.fontSize.md,
+    fontFamily: 'SpaceGrotesk_500Medium',
+    color: theme.colors.primary,
+  },
+  babyNamesSection: {
+    marginBottom: theme.spacing.lg,
+    backgroundColor: theme.colors.surfaceLight,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+  },
+  babyNamesHelper: {
+    fontSize: theme.fontSize.xs,
+    fontFamily: 'SpaceGrotesk_400Regular',
+    color: theme.colors.textMuted,
+    marginTop: theme.spacing.xs,
+    fontStyle: 'italic',
+  },
+  linkContainer: {
+    alignItems: 'center',
+    marginTop: theme.spacing.lg,
+  },
+  linkText: {
+    fontSize: theme.fontSize.md,
+    fontFamily: 'SpaceGrotesk_400Regular',
+    color: theme.colors.textSecondary,
+  },
+  linkBold: {
+    color: theme.colors.primary,
+    fontFamily: 'SpaceGrotesk_600SemiBold',
+  },
 });

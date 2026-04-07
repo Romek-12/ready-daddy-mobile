@@ -10,6 +10,9 @@ export interface User {
   email: string;
   conceptionDate: string;
   partnerName: string;
+  babyName1?: string | null;
+  babyName2?: string | null;
+  babyGender?: 'boy' | 'girl' | null;
 }
 
 interface AuthContextType {
@@ -17,7 +20,7 @@ interface AuthContextType {
   loading: boolean;
   isFirstLogin: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, conceptionDate: string, partnerName?: string) => Promise<void>;
+  register: (email: string, password: string, conceptionDate: string, partnerName?: string, babyName1?: string, babyName2?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
   clearFirstLogin: () => void;
@@ -31,6 +34,9 @@ function profileToUser(profile: Profile): User {
     email: profile.email,
     conceptionDate: profile.conception_date,
     partnerName: profile.partner_name,
+    babyName1: profile.baby_name_1 || null,
+    babyName2: profile.baby_name_2 || null,
+    babyGender: profile.baby_gender || null,
   };
 }
 
@@ -43,6 +49,17 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
   if (error || !data) return null;
   return data as Profile;
 }
+
+export const getBabyDisplayName = (user: User | null): string => {
+  if (!user) return 'maluszek';
+  if (user.babyGender && user.babyName1) {
+    return user.babyName1;
+  }
+  if (user.babyName1 && user.babyName2) {
+    return `${user.babyName1} lub ${user.babyName2}`;
+  }
+  return user.babyName1 || 'maluszek';
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -101,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(profileToUser(profile));
   };
 
-  const register = async (email: string, password: string, conceptionDate: string, partnerName?: string) => {
+  const register = async (email: string, password: string, conceptionDate: string, partnerName?: string, babyName1?: string, babyName2?: string) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw new Error(error.message);
     if (!data.user) throw new Error('Rejestracja nie powiodła się');
@@ -112,6 +129,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       conception_date: conceptionDate,
       partner_name: partnerName || '',
+      baby_name_1: babyName1 || null,
+      baby_name_2: babyName2 || null,
     });
     if (profileError) throw new Error(profileError.message);
 
@@ -121,6 +140,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       conceptionDate,
       partnerName: partnerName || '',
+      babyName1: babyName1 || null,
+      babyName2: babyName2 || null,
+      babyGender: null,
     });
   };
 
@@ -140,6 +162,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const profile: Profile = JSON.parse(cached);
         if (data.conceptionDate !== undefined) profile.conception_date = data.conceptionDate;
         if (data.partnerName !== undefined) profile.partner_name = data.partnerName;
+        if (data.babyName1 !== undefined) profile.baby_name_1 = data.babyName1;
+        if (data.babyName2 !== undefined) profile.baby_name_2 = data.babyName2;
+        if (data.babyGender !== undefined) profile.baby_gender = data.babyGender;
         AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => {});
       }).catch(() => {});
       return updated;

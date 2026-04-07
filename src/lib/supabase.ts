@@ -16,5 +16,8 @@ export type Profile = {
   email: string;
   conception_date: string;
   partner_name: string;
+  baby_name_1?: string | null;
+  baby_name_2?: string | null;
+  baby_gender?: 'boy' | 'girl' | null;
   created_at: string;
 };

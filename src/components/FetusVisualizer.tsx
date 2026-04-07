@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
-import FETUS_SVGS from '../data/fetusSvgs';
+import { FETUS_IMAGES } from '../data/fetusImages';
+import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
+import { getSizeComparison } from '../utils/sizeComparison';
 import type { Theme } from '../theme';
 
 const WEEK_TO_FETUS: Record<number, number> = {
@@ -72,16 +73,26 @@ interface Props {
   sizeMm?: number;
   weightG?: number;
   trimester?: number;
+  weekData?: { fetus_size_comparison?: string; fetus_size_comparison_animal?: string; fetus_size_comparison_sweet?: string };
 }
 
-export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimester = 1 }: Props) {
+const SIZE_MODES: { mode: SizeComparisonMode; label: string; emoji: string }[] = [
+  { mode: 'fruit',  label: 'Owoc',    emoji: '🍎' },
+  { mode: 'animal', label: 'Zwierzę', emoji: '🐾' },
+  { mode: 'sweet',  label: 'Słodycz', emoji: '🍬' },
+];
+
+export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimester = 1, weekData }: Props) {
   const { theme } = useTheme();
   const s = React.useMemo(() => createStyles(theme), [theme]);
+  const [sizeMode, setSizeMode] = useSizeMode();
 
   const fetusNum = WEEK_TO_FETUS[Math.min(Math.max(week, 1), 40)] ?? 1;
-  const svgXml = FETUS_SVGS[fetusNum];
+  const fetusImage = FETUS_IMAGES[fetusNum];
   const fruit = WEEK_TO_FRUIT[week] ?? { emoji: '👶', name: '' };
   const progress = Math.min(Math.max(Math.round(((week - 4) / 36) * 100), 2), 100);
+
+  const displayName = weekData ? getSizeComparison(weekData, sizeMode) : (sizeMode === 'fruit' ? fruit.name : '');
 
   const trimesterColor = trimester === 1
     ? theme.colors.trimester1
@@ -106,10 +117,10 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
         })}
       </View>
 
-      {/* SVG + metrics */}
+      {/* Fetus image + metrics */}
       <View style={s.row}>
         <View style={s.svgBox}>
-          <SvgXml xml={svgXml} width={155} height={175} />
+          <Image source={fetusImage} style={{ width: 155, height: 175 }} resizeMode="contain" />
         </View>
 
         <View style={s.metrics}>
@@ -125,10 +136,28 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
             </View>
           </View>
 
-          {/* Fruit emoji */}
+          {/* Size comparison */}
           <View style={[s.fruitBox, { backgroundColor: trimesterColor + '18' }]}>
-            <Text style={s.fruitEmoji}>{fruit.emoji}</Text>
-            {fruit.name ? <Text style={[s.fruitName, { color: trimesterColor }]}>jak {fruit.name}</Text> : null}
+            {displayName ? <Text style={[s.fruitName, { color: trimesterColor }]}>jak {displayName}</Text> : null}
+          </View>
+
+          {/* Mode toggle buttons */}
+          <View style={s.modeRow}>
+            {SIZE_MODES.map(({ mode, label, emoji }) => {
+              const isActive = sizeMode === mode;
+              return (
+                <TouchableOpacity
+                  key={mode}
+                  style={[s.modeBtn, isActive && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }]}
+                  onPress={() => setSizeMode(mode)}
+                  activeOpacity={0.7}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isActive }}
+                >
+                  <Text style={[s.modeBtnText, isActive && { color: theme.colors.black ?? '#000' }]}>{emoji} {label}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* Progress */}
@@ -211,9 +240,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  fruitEmoji: {
-    fontSize: 32,
-  },
   fruitName: {
     fontSize: theme.fontSize.sm,
     fontWeight: theme.fontWeight.semibold,
@@ -233,5 +259,23 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   progressText: {
     fontSize: theme.fontSize.xs,
     color: theme.colors.textMuted,
+  },
+  modeRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.xs,
+  },
+  modeBtn: {
+    flex: 1,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    alignItems: 'center',
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+  },
+  modeBtnText: {
+    fontFamily: 'SpaceGrotesk_500Medium',
+    fontSize: 12,
+    color: theme.colors.textSecondary,
   },
 });

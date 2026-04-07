@@ -29,10 +29,13 @@ function getCurrentWeek(conceptionDate: string): number {
 // ---------------------------------------------------------------------------
 export const api = {
   // ---- User profile (Supabase) ----
-  updateProfile: async (userId: string, data: { conceptionDate?: string; partnerName?: string }) => {
-    const updates: Record<string, string> = {};
+  updateProfile: async (userId: string, data: { conceptionDate?: string; partnerName?: string; babyName1?: string | null; babyName2?: string | null; babyGender?: 'boy' | 'girl' | null }) => {
+    const updates: Record<string, any> = {};
     if (data.conceptionDate !== undefined) updates.conception_date = data.conceptionDate;
     if (data.partnerName !== undefined) updates.partner_name = data.partnerName;
+    if (data.babyName1 !== undefined) updates.baby_name_1 = data.babyName1;
+    if (data.babyName2 !== undefined) updates.baby_name_2 = data.babyName2;
+    if (data.babyGender !== undefined) updates.baby_gender = data.babyGender;
     const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
     if (error) throw new Error(error.message);
   },

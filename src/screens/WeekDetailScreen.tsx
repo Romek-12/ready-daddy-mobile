@@ -111,6 +111,7 @@ export default function WeekDetailScreen({ route }: Props) {
           sizeMm={w?.fetus_size_mm ?? 0}
           weightG={w?.fetus_weight_g ?? 0}
           trimester={w?.trimester ?? 1}
+          weekData={w}
         />
       </View>
 

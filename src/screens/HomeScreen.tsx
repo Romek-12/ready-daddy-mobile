@@ -4,6 +4,7 @@ import type { Theme } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useCurrentWeek } from '../hooks/useAppData';
+import { useSizeMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import SkeletonBox from '../components/SkeletonBox';
 import FetusVisualizerCompact from '../components/FetusVisualizerCompact';
@@ -19,6 +20,7 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
   const { user } = useAuth();
 
   const { data, isLoading, error, refetch, isRefetching } = useCurrentWeek(user?.conceptionDate);
+  const [sizeMode] = useSizeMode();
 
   const MODULES = React.useMemo(() => [
     { key: 'WeekDetailTab', icon: 'fetus', label: 'Rozwój dziecka', color: theme.colors.fetus, isTab: true },
@@ -96,26 +98,18 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
 
       {w && (
         <TouchableOpacity style={s.weekCard} onPress={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })} accessibilityRole="button" accessibilityLabel={`Tydzień ${data.currentWeek} – sprawdź szczegóły`}>
-          <View style={s.weekHeader}>
-            <View style={s.weekBadge}><Text style={[s.weekBadgeText, { color: trimesterColor }]}>{data?.trimester} trymestr</Text></View>
-          </View>
           <Text style={s.weekNumber}>{data.currentWeek}. tydzień</Text>
           <FetusVisualizerCompact
             week={data.currentWeek}
             sizeMm={w.fetus_size_mm}
             weightG={w.fetus_weight_g}
             trimester={data.trimester}
+            sizeMode={sizeMode}
+            weekData={w}
+            progress={progress}
+            progressLabel={`${progress}% ciąży za nami`}
+            onDetails={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })}
           />
-          <View style={s.progressContainer}>
-            <View style={s.progressBar}>
-              <View style={[s.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
-            </View>
-            <Text style={s.progressText}>{progress}% ciąży za nami</Text>
-          </View>
-          <View style={s.detailBtn}>
-            <Text style={s.detailBtnText}>Sprawdź szczegóły</Text>
-            <Icon name="arrow-forward" size={16} color={theme.colors.primary} />
-          </View>
         </TouchableOpacity>
       )}
 
@@ -179,16 +173,7 @@ const createStyles = (theme: Theme, CARD_W: number) => StyleSheet.create({
   appName: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, color: theme.colors.primary, letterSpacing: 1 },
   settingsBtn: { padding: theme.spacing.sm },
   weekCard: { margin: theme.spacing.lg, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, elevation: 2 },
-  weekHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: theme.spacing.sm },
-  weekBadge: { backgroundColor: theme.colors.surface, paddingHorizontal: 12, paddingVertical: 4, borderRadius: theme.borderRadius.full },
-  weekBadgeText: { fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.semibold as any },
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text },
-  progressContainer: { marginTop: theme.spacing.lg },
-  progressBar: { height: 6, backgroundColor: theme.colors.surfaceLight, borderRadius: 3 },
-  progressFill: { height: 6, backgroundColor: theme.colors.primary, borderRadius: 3 },
-  progressText: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: theme.spacing.xs },
-  detailBtn: { flexDirection: 'row', alignItems: 'center', marginTop: theme.spacing.md, gap: 4 },
-  detailBtnText: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold as any, fontSize: theme.fontSize.sm },
   notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1 },
   notifHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 8 },
   notifTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold as any, color: theme.colors.text },
