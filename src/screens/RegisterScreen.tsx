@@ -171,9 +171,8 @@ export default function RegisterScreen({ navigation }: Props) {
           render={({ field: { value } }) => (
             <View style={s.datePickerContainer}>
               <DateScrollPicker
-                selectedDate={value}
+                initialDate={value}
                 onDateChange={(date) => setValue('conceptionDate', date)}
-                label={dateType === 'conception' ? 'Data poczęcia' : 'Termin porodu'}
               />
             </View>
           )}

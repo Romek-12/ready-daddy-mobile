@@ -69,6 +69,34 @@ export function useActionCardsDeck() {
 }
 
 // ---- Dad module ----
+export interface DadModuleEmotion { icon: string; label: string; desc: string; }
+export interface DadModuleStat { num: string; desc: string; }
+export interface DadModuleConflict { feel: string; clash: string; }
+export interface DadModuleWarning { icon: string; text: string; }
+export interface DadModuleHelpStep { title: string; desc: string; }
+export interface DadModuleSpecialist { icon: string; title: string; desc: string; }
+export interface DadModuleTrioContent { badge: string; weeks: string; colorHex: string; textColorHex: string; title: string; desc: string; tags: Array<{ text: string; type: string }>; }
+export interface DadModuleSafePractice { title: string; desc: string; }
+export interface DadModulePostBirth { title: string; desc: string; }
+export interface DadModuleTalkStep { title: string; desc: string; }
+export interface DadModuleBibliography { id: string; authors: string; title: string; journal: string; }
+export interface DadModuleSection { id: string; icon: string; iconColorKey: string; title: string; }
+export interface DadModuleContent {
+  sections: DadModuleSection[];
+  emotions: DadModuleEmotion[];
+  stats: DadModuleStat[];
+  conflicts: DadModuleConflict[];
+  warnings: DadModuleWarning[];
+  helpSteps: DadModuleHelpStep[];
+  specialists: DadModuleSpecialist[];
+  trimesterLibido: DadModuleTrioContent[];
+  safePractices: DadModuleSafePractice[];
+  stopReasons: string[];
+  postBirthSex: DadModulePostBirth[];
+  talkSteps: DadModuleTalkStep[];
+  bibliography: DadModuleBibliography[];
+}
+
 export function useDadModule() {
-  return useQuery({ queryKey: ['dadModule'], queryFn: () => api.getDadModule(), ...STATIC });
+  return useQuery<DadModuleContent>({ queryKey: ['dadModule'], queryFn: () => api.getDadModule(), ...STATIC });
 }
