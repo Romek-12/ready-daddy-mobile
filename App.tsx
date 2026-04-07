@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'ClimateCrisis': require('./assets/fonts/ClimateCrisis.ttf'),
+    'ClimateCrisis': require('./assets/fonts/ClimateCrisis-subset.ttf'),
   });
 
   useEffect(() => {
