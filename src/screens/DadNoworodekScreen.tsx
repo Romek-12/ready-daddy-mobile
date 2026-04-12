@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 
 export default function DadNoworodekScreen() {
   const { theme } = useTheme();
-  const st = React.useMemo(() => createStyles(theme), [theme]);
+  const insets = useSafeAreaInsets();
+  const st = React.useMemo(() => createStyles(theme, insets), [theme, insets]);
   return (
-    <ScrollView style={st.c}>
+    <ScrollView style={st.c} contentContainerStyle={st.scrollContent}>
       <View style={st.header}>
         <Text style={st.title}>Opieka nad noworodkiem. Twoja nowa rola.</Text>
         <Text style={st.sub}>
@@ -169,9 +171,10 @@ export default function DadNoworodekScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { padding: theme.spacing.xl, paddingTop: 60, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder },
+  scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
+  header: { padding: theme.spacing.xl, paddingTop: insets.top + theme.spacing.md, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder },
   title: { fontSize: 24, fontWeight: 'bold', color: theme.colors.text, marginBottom: 8, letterSpacing: 0.5 },
   sub: { fontSize: 13, color: theme.colors.textSecondary, lineHeight: 20 },
   

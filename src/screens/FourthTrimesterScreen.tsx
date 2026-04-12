@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { useFourthTrimester } from '../hooks/useAppData';
 import Icon from '../components/Icon';
+import { renderNumberedText } from '../utils/textFormatting';
 import type { Theme } from '../theme';
 
 interface FourthTrimesterWeek {
@@ -18,7 +20,8 @@ interface FourthTrimesterWeek {
 
 export default function FourthTrimesterScreen() {
   const { theme } = useTheme();
-  const s = React.useMemo(() => createStyles(theme), [theme]);
+  const insets = useSafeAreaInsets();
+  const s = React.useMemo(() => createStyles(theme, insets), [theme, insets]);
   const { data } = useFourthTrimester();
   const weeks: FourthTrimesterWeek[] = data?.weeks ?? [];
 
@@ -35,7 +38,7 @@ export default function FourthTrimesterScreen() {
   }
 
   return (
-    <ScrollView style={s.c}>
+    <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <View style={s.header}>
         <Icon name="baby" size={48} color={theme.colors.fourthTrimester} />
         <Text style={s.title}>4. Trymestr</Text>
@@ -70,21 +73,21 @@ export default function FourthTrimesterScreen() {
                   {w.baby_development ? (
                     <View style={s.section}>
                        <View style={s.sectionHeader}><Icon name="baby" size={16} color={theme.colors.primary} /><Text style={s.sectionLabel}> Rozwój dziecka:</Text></View>
-                      <Text style={s.sectionText}>{w.baby_development}</Text>
+                      {renderNumberedText(w.baby_development, s.sectionText)}
                     </View>
                   ) : null}
 
                   {w.relationship_tips ? (
                     <View style={[s.section, { backgroundColor: theme.colors.primaryLight }]}>
                        <View style={s.sectionHeader}><Icon name="couple" size={16} color={theme.colors.primary} /><Text style={s.sectionLabel}> Wy i Wasza relacja:</Text></View>
-                      <Text style={s.sectionText}>{w.relationship_tips}</Text>
+                      {renderNumberedText(w.relationship_tips, s.sectionText)}
                     </View>
                   ) : null}
 
                   {w.warning_signs ? (
                     <View style={[s.section, { backgroundColor: theme.colors.dangerLight }]}>
                        <View style={s.sectionHeader}><Icon name="warning" size={16} color={theme.colors.danger} /><Text style={[s.sectionLabel, { color: theme.colors.danger }]}> Zwróć uwagę (objawy alarmowe):</Text></View>
-                      <Text style={s.sectionText}>{w.warning_signs}</Text>
+                      {renderNumberedText(w.warning_signs, s.sectionText)}
                     </View>
                   ) : null}
                 </View>
@@ -98,10 +101,11 @@ export default function FourthTrimesterScreen() {
   );
 }
 
-const createStyles = (theme: Theme) => StyleSheet.create({
+const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
+  scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
   center: { justifyContent: 'center', alignItems: 'center' },
-  header: { alignItems: 'center', paddingTop: 60, paddingBottom: theme.spacing.xl },
+  header: { alignItems: 'center', paddingTop: insets.top + theme.spacing.md, paddingBottom: theme.spacing.xl },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.fourthTrimester, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
   infoCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: 'rgba(255,107,157,0.1)', borderRadius: theme.borderRadius.lg, padding: theme.spacing.xl, borderWidth: 1, borderColor: 'rgba(255,107,157,0.2)' },

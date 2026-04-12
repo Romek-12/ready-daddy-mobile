@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import type { AppNavigation } from '../types/navigation';
@@ -19,9 +20,10 @@ const resolveIconColor = (colorKey: string, theme: Theme): string => {
 
 export default function DadModuleScreen({ navigation }: { navigation: AppNavigation }) {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { data: content, isLoading, error, refetch } = useDadModule();
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const s = React.useMemo(() => createStyles(theme), [theme]);
+  const s = React.useMemo(() => createStyles(theme, insets), [theme, insets]);
 
   if (isLoading) {
     return (
@@ -199,7 +201,7 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
   };
 
   return (
-    <ScrollView style={s.c}>
+    <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <View style={s.header}>
         <Icon name="dad" size={48} color={theme.colors.dadModule} />
         <Text style={s.title}>Moduł dla Ojców</Text>
@@ -227,10 +229,11 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
   );
 }
 
-const createStyles = (theme: Theme) =>
+const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
   StyleSheet.create({
     c: { flex: 1, backgroundColor: theme.colors.background },
-    header: { alignItems: 'center', paddingVertical: 24, paddingHorizontal: 16 },
+    scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
+    header: { alignItems: 'center', paddingTop: insets.top + 16, paddingBottom: 24, paddingHorizontal: 16 },
     title: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, color: theme.colors.dadModule, marginTop: 12 },
     subtitle: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 8, textAlign: 'center' },
 
