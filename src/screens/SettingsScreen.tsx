@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, ThemeMode } from '../context/ThemeContext';
 import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
 import Button from '../components/Button';
+import BabyNameModal from '../components/BabyNameModal';
 import { api } from '../services/api';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
+import { PREGNANCY_DAYS } from '../constants';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 
 export default function SettingsScreen({ navigation }: Props) {
   const { user, updateUser, logout } = useAuth();
   const { theme, mode, setThemeMode } = useTheme();
+  const insets = useSafeAreaInsets();
   const [sizeMode, setSizeMode] = useSizeMode();
-  const s = React.useMemo(() => createStyles(theme), [theme]);
+  const s = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [dateType, setDateType] = useState<'conception' | 'due'>('conception');
@@ -43,15 +47,15 @@ export default function SettingsScreen({ navigation }: Props) {
       let conceptionDate = selectedDate;
       if (dateType === 'due' && selectedDate) {
         const due = new Date(selectedDate);
-        due.setDate(due.getDate() - 280);
+        due.setDate(due.getDate() - PREGNANCY_DAYS);
         conceptionDate = `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}-${String(due.getDate()).padStart(2, '0')}`;
       }
       await api.updateProfile(user!.id, { conceptionDate });
       updateUser({ conceptionDate });
       setDatePickerVisible(false);
       Alert.alert('Sukces', 'Data została zaktualizowana.');
-    } catch (err: any) {
-      Alert.alert('Błąd', err.message || 'Nie udało się zapisać zmiany.');
+    } catch (err: unknown) {
+      Alert.alert('Błąd', err instanceof Error ? err.message : 'Nie udało się zapisać zmiany.');
     } finally {
       setSaving(false);
     }
@@ -74,8 +78,8 @@ export default function SettingsScreen({ navigation }: Props) {
       setBabyNameEditModal(null);
       setEditingBabyName('');
       Alert.alert('Sukces', 'Imię zostało zaktualizowane.');
-    } catch (err: any) {
-      Alert.alert('Błąd', err.message || 'Nie udało się zapisać zmianę.');
+    } catch (err: unknown) {
+      Alert.alert('Błąd', err instanceof Error ? err.message : 'Nie udało się zapisać zmianę.');
     } finally {
       setSavingBabyName(false);
     }
@@ -97,23 +101,23 @@ export default function SettingsScreen({ navigation }: Props) {
               try {
                 await api.updateProfile(user.id, { babyName1: user.babyName1, babyName2: null });
                 updateUser({ babyName2: null });
-              } catch (err: any) {
-                Alert.alert('Błąd', err.message);
+              } catch (err: unknown) {
+                Alert.alert('Błąd', err instanceof Error ? err.message : 'Wystąpił błąd');
               }
             }},
             { text: user.babyName2, onPress: async () => {
               try {
                 await api.updateProfile(user.id, { babyName1: user.babyName2, babyName2: null });
                 updateUser({ babyName1: user.babyName2, babyName2: null });
-              } catch (err: any) {
-                Alert.alert('Błąd', err.message);
+              } catch (err: unknown) {
+                Alert.alert('Błąd', err instanceof Error ? err.message : 'Wystąpił błąd');
               }
             }},
           ]
         );
       }
-    } catch (err: any) {
-      Alert.alert('Błąd', err.message || 'Nie udało się zapisać płeć.');
+    } catch (err: unknown) {
+      Alert.alert('Błąd', err instanceof Error ? err.message : 'Nie udało się zapisać płeć.');
     } finally {
       setSaving(false);
     }
@@ -130,8 +134,8 @@ export default function SettingsScreen({ navigation }: Props) {
             setSaving(true);
             await api.updateProfile(user!.id, { babyGender: null });
             updateUser({ babyGender: null });
-          } catch (err: any) {
-            Alert.alert('Błąd', err.message);
+          } catch (err: unknown) {
+            Alert.alert('Błąd', err instanceof Error ? err.message : 'Wystąpił błąd');
           } finally {
             setSaving(false);
           }
@@ -342,48 +346,16 @@ export default function SettingsScreen({ navigation }: Props) {
         <Text style={s.versionText}>Wersja 1.0.0</Text>
       </ScrollView>
 
-      {/* Baby Name Edit Modal */}
-      <Modal visible={babyNameEditModal !== null} animationType="fade" transparent={true}>
-        <View style={s.modalOverlay}>
-          <View style={s.babyNameModal}>
-            <Text style={s.modalTitle}>
-              {babyNameEditModal === 'name1' ? 'Edytuj imię dziecka' : 'Edytuj drugie imię'}
-            </Text>
-            <TextInput
-              style={s.babyNameInput}
-              placeholder={babyNameEditModal === 'name1' ? 'np. Zosia' : 'np. Piotrek'}
-              placeholderTextColor={theme.colors.textMuted}
-              value={editingBabyName}
-              onChangeText={setEditingBabyName}
-              maxLength={30}
-              autoFocus
-            />
-            <View style={s.modalButtonsContainer}>
-              <TouchableOpacity
-                style={[s.modalButton, s.modalButtonCancel]}
-                onPress={() => {
-                  setBabyNameEditModal(null);
-                  setEditingBabyName('');
-                }}
-                disabled={savingBabyName}
-              >
-                <Text style={s.modalButtonCancelText}>Anuluj</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[s.modalButton, s.modalButtonSave, savingBabyName && { opacity: 0.6 }]}
-                onPress={handleSaveBabyName}
-                disabled={savingBabyName}
-              >
-                {savingBabyName ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={s.modalButtonSaveText}>Zapisz</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <BabyNameModal
+        visible={babyNameEditModal !== null}
+        isName1={babyNameEditModal === 'name1'}
+        value={editingBabyName}
+        onChangeText={setEditingBabyName}
+        onSave={handleSaveBabyName}
+        onClose={() => { setBabyNameEditModal(null); setEditingBabyName(''); }}
+        saving={savingBabyName}
+        theme={theme}
+      />
 
       {/* Date Picker Modal */}
       <Modal visible={isDatePickerVisible} animationType="slide" transparent={true}>
@@ -437,9 +409,9 @@ export default function SettingsScreen({ navigation }: Props) {
   );
 }
 
-const createStyles = (theme: Theme) => StyleSheet.create({
+const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: theme.spacing.lg, paddingTop: 60, paddingBottom: theme.spacing.md, backgroundColor: theme.colors.surface },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.md, backgroundColor: theme.colors.surface },
   backBtn: { padding: theme.spacing.sm, borderRadius: 20, backgroundColor: theme.colors.background },
   headerTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
   content: { padding: theme.spacing.xl, paddingBottom: 40 },
@@ -501,21 +473,4 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   genderButtonEmoji: { fontSize: 28 },
   genderButtonText: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold, color: theme.colors.text },
 
-  // Baby Name Modal
-  babyNameModal: {
-    backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing.xl, marginHorizontal: theme.spacing.lg,
-    marginTop: 'auto', marginBottom: 'auto',
-  },
-  babyNameInput: {
-    backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.cardBorder,
-    borderRadius: theme.borderRadius.md, padding: theme.spacing.md, fontSize: theme.fontSize.md,
-    color: theme.colors.text, marginVertical: theme.spacing.lg,
-  },
-  modalButtonsContainer: { flexDirection: 'row', gap: theme.spacing.md },
-  modalButton: { flex: 1, paddingVertical: theme.spacing.md, borderRadius: theme.borderRadius.md, alignItems: 'center' },
-  modalButtonCancel: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder },
-  modalButtonCancelText: { color: theme.colors.text, fontWeight: theme.fontWeight.bold },
-  modalButtonSave: { backgroundColor: theme.colors.primary },
-  modalButtonSaveText: { color: theme.colors.black, fontWeight: theme.fontWeight.bold },
 });

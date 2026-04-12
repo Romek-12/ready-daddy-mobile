@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
@@ -85,7 +86,8 @@ const getTaskKey = (idx: number) => `task-${idx}`;
 
 export default function PostBirthScreen() {
   const { theme } = useTheme();
-  const st = React.useMemo(() => createStyles(theme), [theme]);
+  const insets = useSafeAreaInsets();
+  const st = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
   const [expanded, setExpanded] = useState<number | null>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [otherChecked, setOtherChecked] = useState<Record<number, boolean>>({});
@@ -237,9 +239,9 @@ export default function PostBirthScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { alignItems: 'center', paddingTop: 60, paddingBottom: theme.spacing.lg },
+  header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.postBirth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 

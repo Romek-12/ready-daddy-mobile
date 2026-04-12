@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Calendar from 'expo-calendar';
 import { useTheme } from '../context/ThemeContext';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
@@ -95,7 +95,8 @@ async function addToCalendar(itemName: string, weekRange: string) {
 
 export default function CheckupsScreen() {
   const { theme } = useTheme();
-  const s = React.useMemo(() => createStyles(theme), [theme]);
+  const insets = useSafeAreaInsets();
+  const s = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
   const { data } = useCheckupVisits();
   const visits: VisitPeriod[] = data?.visits ?? [];
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -123,13 +124,8 @@ export default function CheckupsScreen() {
   }
 
   return (
-    <LinearGradient colors={['#030A16', '#040A18']} style={s.container}>
-      {/* Orbs */}
-      <View style={[s.orb, s.orb1]} />
-      <View style={[s.orb, s.orb2]} />
-      <View style={[s.orb, s.orb3]} />
-
-      <ScrollView style={s.c}>
+    <View style={s.container}>
+      <ScrollView style={s.scroll}>
         <View style={s.header}>
         <Icon name="calendar" size={48} color={theme.colors.checkups} />
         <Text style={s.title}>Wizyty Lekarskie</Text>
@@ -268,59 +264,35 @@ export default function CheckupsScreen() {
       </View>
       <View style={{ height: 40 }} />
     </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: { flex: 1 },
-  orb: {
-    position: 'absolute',
-    borderRadius: 9999,
-  },
-  orb1: {
-    backgroundColor: 'rgba(0,136,255,0.45)',
-    width: 300,
-    height: 300,
-    left: 200,
-    top: -50,
-  },
-  orb2: {
-    backgroundColor: 'rgba(0,217,166,0.35)',
-    width: 260,
-    height: 260,
-    left: -60,
-    top: 400,
-  },
-  orb3: {
-    backgroundColor: 'rgba(124,92,255,0.30)',
-    width: 220,
-    height: 220,
-    left: 240,
-    top: 650,
-  },
-  c: { flex: 1 },
-  header: { alignItems: 'flex-start', paddingHorizontal: 20, paddingTop: 40, paddingBottom: 24 },
-  title: { fontSize: 28, fontFamily: 'SpaceGrotesk_700Bold', color: '#FFFFFF', marginBottom: 4 },
-  sub: { fontSize: 14, fontFamily: 'SpaceGrotesk_400Regular', color: 'rgba(255,255,255,0.42)' },
+const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: theme.colors.background },
+  scroll: { flex: 1 },
+  c: { flex: 1, backgroundColor: theme.colors.background },
+  header: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, marginBottom: 4 },
+  sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
 
-  progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 20, marginBottom: 24, backgroundColor: 'rgba(255,255,255,0.09)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)', borderRadius: 18, paddingHorizontal: 20, paddingVertical: 20, minHeight: 90 },
-  progressLabel: { fontSize: 15, fontFamily: 'SpaceGrotesk_600SemiBold', color: 'rgba(255,255,255,0.8)', flex: 1, marginRight: 12 },
+  progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.lg, minHeight: 90 },
+  progressLabel: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold, color: theme.colors.text, flex: 1, marginRight: 12 },
   progressRight: { alignItems: 'flex-end' },
-  progressCount: { fontSize: 18, fontFamily: 'SpaceGrotesk_700Bold', color: '#00D9A6' },
-  progressCheckLabel: { fontSize: 11, fontFamily: 'SpaceGrotesk_400Regular', color: 'rgba(255,255,255,0.5)', marginTop: 2 },
+  progressCount: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },
+  progressCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },
 
-  visitSection: { marginHorizontal: 20, marginBottom: 12 },
-  visitHeader: { backgroundColor: 'rgba(255,255,255,0.09)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center' },
+  visitSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
+  visitHeader: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, flexDirection: 'row', alignItems: 'center' },
   visitHeaderLeft: { flex: 1 },
   weekBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start', marginBottom: 6 },
-  weekBadgeText: { fontSize: 11, fontFamily: 'SpaceGrotesk_600SemiBold', color: '#FFFFFF' },
-  visitTitle: { fontSize: 15, fontFamily: 'SpaceGrotesk_600SemiBold', color: 'rgba(255,255,255,0.88)' },
-  visitSubtitle: { fontSize: 12, fontFamily: 'SpaceGrotesk_400Regular', color: 'rgba(255,255,255,0.45)', marginTop: 2 },
+  weekBadgeText: { fontSize: 11, fontWeight: theme.fontWeight.semibold, color: '#FFFFFF' },
+  visitTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold, color: theme.colors.text },
+  visitSubtitle: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
   visitHeaderRight: { alignItems: 'flex-end', marginLeft: theme.spacing.sm },
   visitProgress: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.bold, marginBottom: 4 },
 
-  visitContent: { backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18, marginTop: 4, padding: 16 },
+  visitContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, marginTop: 4, padding: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.cardBorder },
 
   catSection: { marginBottom: 16 },
   catHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },

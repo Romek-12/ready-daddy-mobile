@@ -6,22 +6,6 @@ import { formatSize, formatWeight } from './FetusVisualizer';
 import type { SizeComparisonMode } from '../hooks/useSizeMode';
 import type { Theme } from '../theme';
 
-const WEEK_TO_FETUS: Record<number, number> = {
-  0: 1, 1: 1,
-  2: 2,
-  3: 4,
-  4: 5,
-  5: 6, 6: 6,
-  7: 7,
-  8: 8, 9: 8,
-  10: 9, 11: 9, 12: 9,
-  13: 10, 14: 10, 15: 10, 16: 10,
-  17: 11, 18: 11, 19: 11, 20: 11,
-  21: 12, 22: 12, 23: 12, 24: 12,
-  25: 13, 26: 13, 27: 13, 28: 13,
-  29: 14, 30: 14, 31: 14, 32: 14,
-  33: 15, 34: 15, 35: 15, 36: 15, 37: 15, 38: 15, 39: 15, 40: 15,
-};
 
 
 interface Props {
@@ -40,8 +24,7 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
   const { theme } = useTheme();
   const s = React.useMemo(() => createStyles(theme), [theme]);
 
-  const fetusNum = WEEK_TO_FETUS[Math.min(Math.max(week, 1), 40)] ?? 1;
-  const fetusImage = FETUS_IMAGES[fetusNum];
+  const fetusImage = FETUS_IMAGES[Math.min(Math.max(week, 1), 40)];
 
   const trimesterColor = trimester === 1
     ? theme.colors.trimester1
@@ -131,7 +114,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   comparisonName: {
     fontSize: 11,
     color: theme.colors.textSecondary,
-    fontWeight: theme.fontWeight.medium as any,
+    fontWeight: theme.fontWeight.medium,
     flexShrink: 1,
   },
   stats: {
@@ -175,6 +158,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   detailsLink: {
     fontSize: theme.fontSize.sm,
     fontFamily: 'SpaceGrotesk_600SemiBold',
-    fontWeight: theme.fontWeight.semibold as any,
+    fontWeight: theme.fontWeight.semibold,
   },
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, useWindowDimensions, RefreshControl } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Theme } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -14,9 +15,10 @@ interface ActionCardSummary { id: string; title: string; scenario: string; }
 
 export default function HomeScreen({ navigation }: { navigation: AppNavigation }) {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const CARD_W = (width - theme.spacing.lg * 3) / 2;
-  const s = React.useMemo(() => createStyles(theme, CARD_W), [theme, CARD_W]);
+  const s = React.useMemo(() => createStyles(theme, CARD_W, insets.top), [theme, CARD_W, insets.top]);
   const { user } = useAuth();
 
   const { data, isLoading, error, refetch, isRefetching } = useCurrentWeek(user?.conceptionDate);
@@ -161,13 +163,13 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
   );
 }
 
-const createStyles = (theme: Theme, CARD_W: number) => StyleSheet.create({
+const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
   center: { justifyContent: 'center', alignItems: 'center' },
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
   retryBtn: { marginTop: theme.spacing.lg, paddingHorizontal: theme.spacing.xl, paddingVertical: theme.spacing.md, backgroundColor: theme.colors.primary, borderRadius: theme.borderRadius.full },
-  retryText: { color: theme.colors.white, fontWeight: theme.fontWeight.bold as any, fontSize: theme.fontSize.md },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing.xl, paddingTop: 60 },
+  retryText: { color: theme.colors.white, fontWeight: theme.fontWeight.bold, fontSize: theme.fontSize.md },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing.xl, paddingTop: topInset + 16 },
   greetRow: { flexDirection: 'row', alignItems: 'center' },
   greeting: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
   appName: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, color: theme.colors.primary, letterSpacing: 1 },
@@ -176,16 +178,16 @@ const createStyles = (theme: Theme, CARD_W: number) => StyleSheet.create({
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text },
   notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1 },
   notifHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 8 },
-  notifTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold as any, color: theme.colors.text },
+  notifTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
   notifText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 20 },
   section: { paddingHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },
-  sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold as any, color: theme.colors.text },
+  sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
   quickCard: { backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, marginBottom: theme.spacing.sm },
-  quickTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold as any, color: theme.colors.accent },
+  quickTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.accent },
   quickScenario: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 4 },
   moduleGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.lg },
   moduleCard: { width: CARD_W, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, alignItems: 'center', elevation: 1 },
   moduleIcon: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.sm },
-  moduleLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, textAlign: 'center', fontWeight: theme.fontWeight.medium as any },
+  moduleLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, textAlign: 'center', fontWeight: theme.fontWeight.medium },
 });

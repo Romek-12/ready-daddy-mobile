@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
@@ -174,8 +175,9 @@ const getItemKey = (pIdx: number, cIdx: number, iIdx: number) => `p${pIdx}-c${cI
 
 export default function BirthPrepScreen() {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const CHECKLIST = React.useMemo(() => getChecklist(theme), [theme]);
-  const s = React.useMemo(() => createStyles(theme), [theme]);
+  const s = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
   const [expanded, setExpanded] = useState<number | null>(null);
 
   // Pre-warm hook caches (bundled JSON, staleTime: Infinity)
@@ -294,9 +296,9 @@ export default function BirthPrepScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { alignItems: 'center', paddingTop: 60, paddingBottom: theme.spacing.lg },
+  header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.birth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
