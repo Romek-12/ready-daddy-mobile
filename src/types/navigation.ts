@@ -30,11 +30,18 @@ export type DadStackParamList = {
   DadNoworodek: undefined;
 };
 
+export type JournalStackParamList = {
+  JournalMain: undefined;
+  JournalEntry: { entryId: string };
+  AddEntry: { entryId?: string };
+};
+
 export type MainTabParamList = {
   Home: undefined;
   WeekDetailTab: { week?: number };
   ActionCards: { initialCardId?: string };
   DadModuleTab: undefined;
+  Journal: undefined;
 };
 
 /** Shared minimal navigation prop — use for screens navigating across multiple stacks/tabs */

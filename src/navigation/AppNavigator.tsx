@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Icon from '../components/Icon';
 import ErrorBoundary from '../components/ErrorBoundary';
-import type { RootStackParamList, HomeStackParamList, DadStackParamList, MainTabParamList } from '../types/navigation';
+import type { RootStackParamList, HomeStackParamList, DadStackParamList, MainTabParamList, JournalStackParamList } from '../types/navigation';
 import { TAB_BAR_HEIGHT } from '../constants';
 
 import LoginScreen from '../screens/LoginScreen';
@@ -31,11 +31,27 @@ import DadPologScreen from '../screens/DadPologScreen';
 import DadRelacjaScreen from '../screens/DadRelacjaScreen';
 import DadNoworodekScreen from '../screens/DadNoworodekScreen';
 import NotificationSettingsScreen from '../screens/NotificationSettingsScreen';
+import JournalScreen from '../screens/journal/JournalScreen';
+import JournalEntryScreen from '../screens/journal/JournalEntryScreen';
+import AddEntryScreen from '../screens/journal/AddEntryScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const DadStack = createNativeStackNavigator<DadStackParamList>();
+const JournalStack = createNativeStackNavigator<JournalStackParamList>();
+
+function JournalStackNavigator() {
+  const { theme } = useTheme();
+  const noHeader = { headerShown: false, contentStyle: { backgroundColor: theme.colors.background } };
+  return (
+    <JournalStack.Navigator screenOptions={noHeader}>
+      <JournalStack.Screen name="JournalMain" component={JournalScreen} />
+      <JournalStack.Screen name="JournalEntry" component={JournalEntryScreen} />
+      <JournalStack.Screen name="AddEntry" component={AddEntryScreen} />
+    </JournalStack.Navigator>
+  );
+}
 
 function DadStackNavigator() {
   const { theme } = useTheme();
@@ -115,6 +131,12 @@ function MainTabs() {
         options={{ tabBarLabel: 'Tata', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
           <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
             <Icon name="dad" size={24} color={focused ? '#FFFFFF' : color} />
+          </View>
+        ) }} />
+      <Tab.Screen name="Journal" component={JournalStackNavigator}
+        options={{ tabBarLabel: 'Dziennik', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
+          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
+            <Icon name="journal" size={24} color={focused ? '#FFFFFF' : color} />
           </View>
         ) }} />
     </Tab.Navigator>

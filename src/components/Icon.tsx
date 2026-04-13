@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+type MIName = ComponentProps<typeof MaterialIcons>['name'];
+type MCIName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 // Maps semantic icon names to Material Icons
 // Using Material Symbols Rounded equivalents from @expo/vector-icons
@@ -88,6 +91,12 @@ const ICON_MAP: Record<string, IconDef> = {
   'hygiene': { set: 'mci', name: 'hand-wash' },
   'car': { set: 'mi', name: 'directions-car' },
   'post-birth': { set: 'mi', name: 'description' },
+  'journal': { set: 'mi', name: 'book' },
+  'add': { set: 'mi', name: 'add' },
+  'close': { set: 'mi', name: 'close' },
+  'delete': { set: 'mi', name: 'delete' },
+  'photo': { set: 'mi', name: 'photo-camera' },
+  'back': { set: 'mi', name: 'arrow-back' },
   'happy': { set: 'mi', name: 'sentiment-satisfied' },
 };
 
@@ -95,19 +104,19 @@ interface IconProps {
   name: keyof typeof ICON_MAP | string;
   size?: number;
   color?: string;
-  style?: any;
+  style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 
 export default function Icon({ name, size = 24, color = '#FFFFFF' }: IconProps) {
   const def = ICON_MAP[name];
   if (!def) {
     // Fallback: try as direct MaterialIcons name
-    return <MaterialIcons name={name as any} size={size} color={color} />;
+    return <MaterialIcons name={name as MIName} size={size} color={color} />;
   }
   if (def.set === 'mci') {
-    return <MaterialCommunityIcons name={def.name as any} size={size} color={color} />;
+    return <MaterialCommunityIcons name={def.name as MCIName} size={size} color={color} />;
   }
-  return <MaterialIcons name={def.name as any} size={size} color={color} />;
+  return <MaterialIcons name={def.name as MIName} size={size} color={color} />;
 }
 
 export { ICON_MAP };
