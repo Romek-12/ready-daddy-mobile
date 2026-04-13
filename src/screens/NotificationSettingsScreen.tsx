@@ -14,6 +14,8 @@ import { pl } from 'date-fns/locale';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../hooks/useNotifications';
+import { useBadgeContext } from '../context/BadgeContext';
+import { checkNotificationsBadge } from '../services/gamification/BadgeChecker';
 import Icon from '../components/Icon';
 import { PREGNANCY_DAYS, TAB_BAR_HEIGHT } from '../constants';
 import type { Theme } from '../theme';
@@ -52,6 +54,7 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { settings, loading, enable, disable } = useNotifications();
+  const { queueBadgeUnlock } = useBadgeContext();
   const s = useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
 
   const [toggling, setToggling] = useState(false);
@@ -82,7 +85,12 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
     setToggling(true);
     if (value) {
       const success = await enable(dueDate);
-      if (!success) {
+      if (success) {
+        if (user) {
+          const badgeId = await checkNotificationsBadge(user.id);
+          if (badgeId) queueBadgeUnlock(badgeId);
+        }
+      } else {
         Alert.alert(
           'Brak uprawnień',
           'Zezwól aplikacji na wysyłanie powiadomień w ustawieniach telefonu.',
