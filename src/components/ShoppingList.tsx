@@ -1,9 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
+import { useAuth } from '../context/AuthContext';
+import { useBadgeContext } from '../context/BadgeContext';
+import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
 
 interface ShopItem {
   id: string;
@@ -31,7 +34,7 @@ interface TrimesterData {
   categories: Category[];
 }
 
-const getTrimestersData = (theme: any): TrimesterData[] => [
+const getTrimestersData = (theme: Theme): TrimesterData[] => [
   {
     title: 'I Trymestr',
     subtitle: 'Wczesny etap – skup się na komforcie przyszłej mamy',
@@ -255,6 +258,22 @@ export default function ShoppingList() {
   }, [checked]);
 
   const totalItems = TRIMESTERS.reduce((sum, tri) => sum + tri.categories.reduce((s, c) => s + c.items.length, 0), 0);
+
+  const { user } = useAuth();
+  const { queueBadgeUnlock } = useBadgeContext();
+  const badgeAwardedRef = useRef(false);
+
+  useEffect(() => {
+    if (badgeAwardedRef.current) return;
+    if (totalChecked > 0 && totalChecked === totalItems && user) {
+      badgeAwardedRef.current = true;
+      checkChecklistBadge(user.id, 'layette').then(badgeId => {
+        if (badgeId) queueBadgeUnlock(badgeId);
+      }).catch((err: unknown) => {
+        if (err instanceof Error) console.error('[ShoppingList] badge check failed:', err.message);
+      });
+    }
+  }, [totalChecked, totalItems, user, queueBadgeUnlock]);
 
   const fmt = (n: number) => n.toLocaleString('pl-PL') + ' zł';
 

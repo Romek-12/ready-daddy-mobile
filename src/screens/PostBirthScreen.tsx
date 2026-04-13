@@ -1,9 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
+import { useAuth } from '../context/AuthContext';
+import { useBadgeContext } from '../context/BadgeContext';
+import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
 
 interface TaskItem {
   title: string;
@@ -100,6 +103,22 @@ export default function PostBirthScreen() {
   const totalChecked = useMemo(() =>
     Object.values(checked).filter(Boolean).length + Object.values(otherChecked).filter(Boolean).length,
     [checked, otherChecked]);
+
+  const { user } = useAuth();
+  const { queueBadgeUnlock } = useBadgeContext();
+  const badgeAwardedRef = useRef(false);
+
+  useEffect(() => {
+    if (badgeAwardedRef.current) return;
+    if (totalChecked > 0 && totalChecked === totalItems && user) {
+      badgeAwardedRef.current = true;
+      checkChecklistBadge(user.id, 'post_birth').then(badgeId => {
+        if (badgeId) queueBadgeUnlock(badgeId);
+      }).catch((err: unknown) => {
+        if (err instanceof Error) console.error('[PostBirthScreen] badge check failed:', err.message);
+      });
+    }
+  }, [totalChecked, totalItems, user, queueBadgeUnlock]);
 
   return (
     <ScrollView style={st.c}>

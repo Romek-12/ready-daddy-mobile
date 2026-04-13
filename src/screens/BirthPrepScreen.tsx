@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
@@ -6,6 +6,9 @@ import type { Theme } from '../theme';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
 import { useBirthPreparation, useBagChecklist } from '../hooks/useAppData';
 import Icon from '../components/Icon';
+import { useAuth } from '../context/AuthContext';
+import { useBadgeContext } from '../context/BadgeContext';
+import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
 
 interface BagItem {
   name: string;
@@ -191,6 +194,22 @@ export default function BirthPrepScreen() {
     CHECKLIST.reduce((sum, p) => sum + p.categories.reduce((s, c) => s + c.items.length, 0), 0), []);
   const totalChecked = useMemo(() =>
     Object.values(checked).filter(Boolean).length, [checked]);
+
+  const { user } = useAuth();
+  const { queueBadgeUnlock } = useBadgeContext();
+  const badgeAwardedRef = useRef(false);
+
+  useEffect(() => {
+    if (badgeAwardedRef.current) return;
+    if (totalChecked > 0 && totalChecked === totalItems && user) {
+      badgeAwardedRef.current = true;
+      checkChecklistBadge(user.id, 'hospital_bag').then(badgeId => {
+        if (badgeId) queueBadgeUnlock(badgeId);
+      }).catch((err: unknown) => {
+        if (err instanceof Error) console.error('[BirthPrepScreen] badge check failed:', err.message);
+      });
+    }
+  }, [totalChecked, totalItems, user, queueBadgeUnlock]);
 
   return (
     <ScrollView style={s.c}>
