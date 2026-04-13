@@ -18,6 +18,6 @@ export const TAB_BAR_HEIGHT = 80;
 
 /** Badge thresholds */
 export const BADGE_T1_WEEK = 14;   // tydzień po końcu T1 (T1 = 1-13)
-export const BADGE_T2_WEEK = 28;   // początek T2→T3 (T2 kończy się w 27)
+export const BADGE_T2_WEEK = 28;   // pierwszy tydzień T3 (T2 kończy się w 27)
 export const BADGE_T3_WEEK = 29;   // głębiej w T3
 export const BADGE_ACTIVE_DAD_ENTRIES = 10;  // wpisy dziennika dla odznaki
