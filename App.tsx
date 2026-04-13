@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './src/context/AuthContext';
 import { ThemeProvider } from './src/context/ThemeContext';
 import AppNavigator from './src/navigation/AppNavigator';
+import { initializeNotifications } from './src/services/notifications/NotificationService';
 
 // Keep splash visible until we're ready
 SplashScreen.preventAutoHideAsync();
@@ -15,6 +16,10 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'ClimateCrisis': require('./assets/fonts/ClimateCrisis-subset.ttf'),
   });
+
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
 
   useEffect(() => {
     if (fontsLoaded) {

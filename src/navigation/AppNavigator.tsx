@@ -7,7 +7,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Icon from '../components/Icon';
+import ErrorBoundary from '../components/ErrorBoundary';
 import type { RootStackParamList, HomeStackParamList, DadStackParamList, MainTabParamList } from '../types/navigation';
+import { TAB_BAR_HEIGHT } from '../constants';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -28,6 +30,7 @@ import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import DadPologScreen from '../screens/DadPologScreen';
 import DadRelacjaScreen from '../screens/DadRelacjaScreen';
 import DadNoworodekScreen from '../screens/DadNoworodekScreen';
+import NotificationSettingsScreen from '../screens/NotificationSettingsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -54,6 +57,7 @@ function HomeStackNavigator() {
     <HomeStack.Navigator screenOptions={noHeader}>
       <HomeStack.Screen name="HomeMain" component={HomeScreen} />
       <HomeStack.Screen name="Settings" component={SettingsScreen} />
+      <HomeStack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <HomeStack.Screen name="WeekDetail" component={WeekDetailScreen} />
       <HomeStack.Screen name="BirthPrep" component={BirthPrepScreen} />
       <HomeStack.Screen name="DadModule" component={DadModuleScreen} />
@@ -77,7 +81,7 @@ function MainTabs() {
           backgroundColor: theme.colors.surface,
           borderTopWidth: 0,
           elevation: 0,
-          height: 80,
+          height: TAB_BAR_HEIGHT,
           paddingBottom: 8,
         },
         tabBarActiveTintColor: theme.colors.primary,
@@ -130,6 +134,7 @@ export default function AppNavigator() {
   }
 
   return (
+    <ErrorBoundary>
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
@@ -152,5 +157,6 @@ export default function AppNavigator() {
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }

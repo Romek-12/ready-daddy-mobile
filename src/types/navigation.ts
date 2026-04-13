@@ -10,6 +10,7 @@ export type RootStackParamList = {
 export type HomeStackParamList = {
   HomeMain: undefined;
   Settings: undefined;
+  NotificationSettings: undefined;
   WeekDetail: { week?: number };
   BirthPrep: undefined;
   DadModule: undefined;

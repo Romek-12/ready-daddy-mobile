@@ -336,8 +336,28 @@ export default function SettingsScreen({ navigation }: Props) {
           </View>
         </View>
 
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>Powiadomienia</Text>
+          <TouchableOpacity
+            style={s.listButton}
+            onPress={() => navigation.navigate('NotificationSettings')}
+            accessibilityRole="button"
+            accessibilityLabel="Ustawienia powiadomień"
+          >
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: theme.colors.primary + '20' }]}>
+                <Icon name="notifications" size={18} color={theme.colors.primary} />
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Powiadomienia tygodniowe</Text>
+              </View>
+            </View>
+            <Icon name="expand-more" size={20} color={theme.colors.textMuted} />
+          </TouchableOpacity>
+        </View>
+
         <View style={s.spacer} />
-        
+
         <TouchableOpacity style={s.logoutButton} onPress={handleLogout} accessibilityRole="button" accessibilityLabel="Wyloguj się">
           <Icon name="logout" size={20} color={theme.colors.danger} />
           <Text style={s.logoutText}>Wyloguj się</Text>
