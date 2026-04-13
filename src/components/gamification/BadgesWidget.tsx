@@ -16,7 +16,9 @@ export default function BadgesWidget({ onPressAll }: Props) {
 
   if (isLoading) return null;
 
-  const lastEarned = earned.length > 0 ? earned[earned.length - 1] : null;
+  const lastEarned = earned.length > 0
+    ? [...earned].sort((a, b) => new Date(b.earnedAt).getTime() - new Date(a.earnedAt).getTime())[0]
+    : null;
   const lastDef = lastEarned ? getBadgeDefinition(lastEarned.badgeId) : null;
 
   return (
