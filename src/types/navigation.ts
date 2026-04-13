@@ -21,6 +21,7 @@ export type HomeStackParamList = {
   DadPolog: undefined;
   DadRelacja: undefined;
   DadNoworodek: undefined;
+  Badges: undefined;
 };
 
 export type DadStackParamList = {
