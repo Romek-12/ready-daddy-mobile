@@ -16,6 +16,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '../../context/ThemeContext';
 import { useJournal } from '../../hooks/useJournal';
+import { useAuth } from '../../context/AuthContext';
+import { useBadgeContext } from '../../context/BadgeContext';
+import { checkJournalBadges } from '../../services/gamification/BadgeChecker';
 import { pickAndSavePhoto, deletePhoto } from '../../services/journal/ImageService';
 import Icon from '../../components/Icon';
 import type { JournalStackParamList } from '../../types/navigation';
@@ -37,6 +40,8 @@ export default function AddEntryScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const s = useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
   const { entries, add, update } = useJournal();
+  const { user } = useAuth();
+  const { queueBadgeUnlock } = useBadgeContext();
   const [saving, setSaving] = useState(false);
   const [addingPhoto, setAddingPhoto] = useState(false);
 
@@ -119,6 +124,12 @@ export default function AddEntryScreen({ navigation, route }: Props) {
         await update(editId, payload);
       } else {
         await add(payload);
+        if (!isEdit && user) {
+          const totalAfter = entries.length + 1;
+          const hasPhoto = (payload.photos?.length ?? 0) > 0;
+          const newBadges = await checkJournalBadges(user.id, totalAfter, hasPhoto);
+          newBadges.forEach(id => queueBadgeUnlock(id));
+        }
       }
       navigation.goBack();
     } catch (err: unknown) {
