@@ -34,6 +34,9 @@ import NotificationSettingsScreen from '../screens/NotificationSettingsScreen';
 import JournalScreen from '../screens/journal/JournalScreen';
 import JournalEntryScreen from '../screens/journal/JournalEntryScreen';
 import AddEntryScreen from '../screens/journal/AddEntryScreen';
+import BadgesScreen from '../screens/BadgesScreen';
+import { BadgeProvider } from '../context/BadgeContext';
+import BadgeUnlockModal from '../components/gamification/BadgeUnlockModal';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -84,6 +87,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="DadPolog" component={DadPologScreen} />
       <HomeStack.Screen name="DadRelacja" component={DadRelacjaScreen} />
       <HomeStack.Screen name="DadNoworodek" component={DadNoworodekScreen} />
+      <HomeStack.Screen name="Badges" component={BadgesScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -157,6 +161,7 @@ export default function AppNavigator() {
 
   return (
     <ErrorBoundary>
+    <BadgeProvider>
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
@@ -178,7 +183,9 @@ export default function AppNavigator() {
           )}
         </Stack.Navigator>
       </NavigationContainer>
+      <BadgeUnlockModal />
     </SafeAreaProvider>
+    </BadgeProvider>
     </ErrorBoundary>
   );
 }
