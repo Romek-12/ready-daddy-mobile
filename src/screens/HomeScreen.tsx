@@ -10,6 +10,9 @@ import Icon from '../components/Icon';
 import SkeletonBox from '../components/SkeletonBox';
 import FetusVisualizerCompact from '../components/FetusVisualizerCompact';
 import type { AppNavigation } from '../types/navigation';
+import BadgesWidget from '../components/gamification/BadgesWidget';
+import { checkWeekBadges } from '../services/gamification/BadgeChecker';
+import { useBadgeContext } from '../context/BadgeContext';
 
 interface ActionCardSummary { id: string; title: string; scenario: string; }
 
@@ -23,6 +26,19 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
 
   const { data, isLoading, error, refetch, isRefetching } = useCurrentWeek(user?.conceptionDate);
   const [sizeMode] = useSizeMode();
+  const { queueBadgeUnlock } = useBadgeContext();
+  const checkedWeekRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    if (!user || !data?.currentWeek) return;
+    const week = data.currentWeek;
+    if (checkedWeekRef.current === week) return;
+    checkedWeekRef.current = week;
+
+    checkWeekBadges(user.id, week).then(newBadges => {
+      newBadges.forEach(id => queueBadgeUnlock(id));
+    });
+  }, [user, data?.currentWeek, queueBadgeUnlock]);
 
   const MODULES = React.useMemo(() => [
     { key: 'WeekDetailTab', icon: 'fetus', label: 'Rozwój dziecka', color: theme.colors.fetus, isTab: true },
@@ -139,6 +155,8 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
           ))}
         </View>
       )}
+
+      <BadgesWidget onPressAll={() => navigation.navigate('Badges')} />
 
       <View style={s.section}>
         <View style={s.moduleGrid}>
