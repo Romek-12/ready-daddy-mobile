@@ -70,6 +70,7 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
             key={content.month}
             content={content}
             isCurrentMonth={content.month === currentMonth}
+            // 'Month' screen registered in AppNavigator (Task 7)
             onPress={() => navigation.navigate('Month', { month: content.month })}
           />
         ))}
