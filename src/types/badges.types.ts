@@ -6,7 +6,9 @@ export type BadgeTrigger =
   | 'journal_entry_added'
   | 'journal_entries_count'
   | 'photo_added'
-  | 'notifications_enabled';
+  | 'notifications_enabled'
+  | 'month_reached'
+  | 'first_year_complete';
 
 export interface BadgeDefinition {
   id: string;

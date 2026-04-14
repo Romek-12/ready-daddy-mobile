@@ -85,4 +85,21 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     category: 'engagement',
     triggerEvent: 'notifications_enabled',
   },
+  // — Pierwszy Rok —
+  {
+    id: 'month_3',
+    title: 'Trzy Miesiące',
+    description: 'Koniec 4. trymestru — pierwsze 3 miesiące za wami!',
+    icon: '🧘',
+    category: 'pregnancy',
+    triggerEvent: 'month_reached',
+  },
+  {
+    id: 'first_year_dad',
+    title: 'Tata Pierwszego Roku',
+    description: 'Przeszedłeś cały pierwszy rok życia dziecka',
+    icon: '🏆',
+    category: 'pregnancy',
+    triggerEvent: 'first_year_complete',
+  },
 ];
