@@ -22,6 +22,8 @@ export type HomeStackParamList = {
   DadRelacja: undefined;
   DadNoworodek: undefined;
   Badges: undefined;
+  FirstYear: undefined;
+  Month: { month: number };
 };
 
 export type DadStackParamList = {

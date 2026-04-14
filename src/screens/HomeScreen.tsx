@@ -49,6 +49,7 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
     { key: 'DadModuleTab', icon: 'dad', label: 'Co czujesz?', color: theme.colors.dadModule, isTab: true },
     { key: 'FourthTrimester', icon: 'baby', label: '4. Trymestr', color: theme.colors.fourthTrimester },
     { key: 'PostBirth', icon: 'post-birth', label: 'Po porodzie', color: theme.colors.postBirth },
+    { key: 'FirstYear', icon: 'baby', label: 'Pierwszy Rok', color: theme.colors.primary },
   ], [theme]);
 
   if (isLoading) return (

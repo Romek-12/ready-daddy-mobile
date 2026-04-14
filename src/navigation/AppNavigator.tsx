@@ -35,6 +35,8 @@ import JournalScreen from '../screens/journal/JournalScreen';
 import JournalEntryScreen from '../screens/journal/JournalEntryScreen';
 import AddEntryScreen from '../screens/journal/AddEntryScreen';
 import BadgesScreen from '../screens/BadgesScreen';
+import FirstYearHomeScreen from '../screens/first-year/FirstYearHomeScreen';
+import MonthScreen from '../screens/first-year/MonthScreen';
 import { BadgeProvider } from '../context/BadgeContext';
 import BadgeUnlockModal from '../components/gamification/BadgeUnlockModal';
 
@@ -88,6 +90,8 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="DadRelacja" component={DadRelacjaScreen} />
       <HomeStack.Screen name="DadNoworodek" component={DadNoworodekScreen} />
       <HomeStack.Screen name="Badges" component={BadgesScreen} />
+      <HomeStack.Screen name="FirstYear" component={FirstYearHomeScreen} />
+      <HomeStack.Screen name="Month" component={MonthScreen} />
     </HomeStack.Navigator>
   );
 }
