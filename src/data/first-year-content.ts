@@ -1,5 +1,9 @@
 import type { MonthContent } from '../types/first-year.types';
 
+// UI-facing monthly content. Vaccines listed here are the key vaccines per month shown to users.
+// For the complete vaccination reference schedule, see first-year-vaccines.ts.
+// Note: WZW B 3rd dose at month 6 is part of the 6w1 combination vaccine.
+
 export const FIRST_YEAR_CONTENT: MonthContent[] = [
   {
     month: 0,
@@ -30,7 +34,7 @@ export const FIRST_YEAR_CONTENT: MonthContent[] = [
         mandatory: true,
       },
       {
-        name: 'BCG (gruźlik)',
+        name: 'BCG (gruźlica)',
         description: 'Szczepienie przeciw gruźlicy',
         when: 'W ciągu pierwszych dni',
         mandatory: true,
@@ -255,6 +259,8 @@ export const FIRST_YEAR_CONTENT: MonthContent[] = [
       },
     ],
     vaccines: [
+      // WZW B 3rd dose is included in the 6w1 combo vaccine below
+      { name: 'WZW B (3. dawka)', description: 'Trzecia dawka — zawarta w szczepionce 6w1', when: '6. miesiąc życia', mandatory: true },
       {
         name: 'DTP + Hib + IPV (6w1, 3. dawka)',
         description: '3. dawka szczepienia skojarzonego',
@@ -440,7 +446,7 @@ export const FIRST_YEAR_CONTENT: MonthContent[] = [
         title: 'Samodzielne chodzenie',
         description: 'Dziecko chodzi bez trzymania — świat stoi otworem.',
         forDad:
-          'Chódź razem na spacery i pozwól eksplorować w bezpiecznej przestrzeni.',
+          'Chodź razem na spacery i pozwól eksplorować w bezpiecznej przestrzeni.',
       },
       {
         id: 'm12_words',

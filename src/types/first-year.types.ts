@@ -22,3 +22,10 @@ export interface MonthContent {
   tipOfMonth: string; // główna wskazówka
   emotionalNote: string; // emocjonalny kontekst
 }
+
+export interface VaccineScheduleEntry {
+  name: string;
+  doses: [string, ...string[]];   // at least one dose required
+  description: string;
+  mandatory: boolean;
+}

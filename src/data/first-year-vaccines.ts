@@ -1,9 +1,9 @@
-export interface VaccineScheduleEntry {
-  name: string;
-  doses: string[]; // age strings, e.g. "24h", "1 mies.", "2 mies."
-  description: string;
-  mandatory: boolean;
-}
+import type { VaccineScheduleEntry } from '../types/first-year.types';
+
+// This file is a comprehensive reference schedule for the full vaccination calendar.
+// Per-month vaccines shown in the UI come from first-year-content.ts (MonthContent.vaccines[]).
+// The 6w1 combo vaccine covers DTP+Hib+IPV+WZW B simultaneously — WZW B 3rd dose
+// at month 6 is included in the 6w1 entry in first-year-content.ts.
 
 /**
  * Polski Program Szczepień Ochronnych (PSO) — pierwszy rok życia.
