@@ -7,16 +7,23 @@ import MonthCard from '../../components/first-year/MonthCard';
 import { FIRST_YEAR_CONTENT } from '../../data/first-year-content';
 import type { Theme } from '../../theme';
 import type { AppNavigation } from '../../types/navigation';
+import { PREGNANCY_DAYS } from '../../constants';
 
 interface Props {
   navigation: AppNavigation;
 }
 
-function getCurrentFirstYearMonth(dueDate: string | undefined): number {
-  if (!dueDate) return -1;
-  const birth = new Date(dueDate);
+/**
+ * Derives birth date from conceptionDate + PREGNANCY_DAYS (280d),
+ * then returns how many months have passed since birth (0–12).
+ * Returns -1 if not yet born or more than 12 months have passed.
+ */
+function getCurrentFirstYearMonth(conceptionDate: string | undefined): number {
+  if (!conceptionDate) return -1;
+  const conception = new Date(conceptionDate);
+  const birth = new Date(conception.getTime() + PREGNANCY_DAYS * 24 * 60 * 60 * 1000);
   const now = new Date();
-  if (now < birth) return -1; // still pregnant
+  if (now < birth) return -1;
   const monthsDiff =
     (now.getFullYear() - birth.getFullYear()) * 12 +
     (now.getMonth() - birth.getMonth());
@@ -30,10 +37,7 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const s = useMemo(() => createStyles(theme), [theme]);
 
-  // User type has conceptionDate but not dueDate — use conceptionDate as fallback
-  // The spec says dueDate for simplicity; we derive from available field.
-  const dueDate = (user as { dueDate?: string } & typeof user)?.dueDate;
-  const currentMonth = getCurrentFirstYearMonth(dueDate);
+  const currentMonth = getCurrentFirstYearMonth(user?.conceptionDate);
 
   const progressPercent = currentMonth >= 0 ? (currentMonth / 12) * 100 : 0;
 
