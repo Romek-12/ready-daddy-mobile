@@ -8,6 +8,8 @@ import {
   Alert,
   Image,
   FlatList,
+  Modal,
+  StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -40,6 +42,7 @@ export default function JournalEntryScreen({ navigation, route }: Props) {
   const s = useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
   const { entries, remove } = useJournal();
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [lightboxVisible, setLightboxVisible] = useState(false);
 
   const entry = entries.find(e => e.id === route.params.entryId);
 
@@ -85,6 +88,32 @@ export default function JournalEntryScreen({ navigation, route }: Props) {
 
   return (
     <View style={s.container}>
+      {/* Lightbox — fullscreen photo viewer */}
+      <Modal
+        visible={lightboxVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLightboxVisible(false)}
+        statusBarTranslucent
+      >
+        <StatusBar hidden />
+        <View style={s.lightboxBg}>
+          <Image
+            source={{ uri: entry.photos?.[photoIndex] }}
+            style={s.lightboxImage}
+            resizeMode="contain"
+          />
+          <TouchableOpacity
+            style={s.lightboxClose}
+            onPress={() => setLightboxVisible(false)}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Zamknij podgląd zdjęcia"
+          >
+            <Text style={s.lightboxCloseText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       {/* Header */}
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.7}>
@@ -140,7 +169,9 @@ export default function JournalEntryScreen({ navigation, route }: Props) {
         {/* Photos */}
         {entry.photos && entry.photos.length > 0 && (
           <View style={s.photosSection}>
-            <Image source={{ uri: entry.photos[photoIndex] }} style={s.mainPhoto} resizeMode="cover" />
+            <TouchableOpacity onPress={() => setLightboxVisible(true)} activeOpacity={0.9}>
+              <Image source={{ uri: entry.photos[photoIndex] }} style={s.mainPhoto} resizeMode="cover" />
+            </TouchableOpacity>
             {entry.photos.length > 1 && (
               <FlatList
                 data={entry.photos}
@@ -247,4 +278,30 @@ const createStyles = (theme: Theme, topInset: number) =>
     },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     notFound: { fontSize: theme.fontSize.md, color: theme.colors.textMuted },
+    lightboxBg: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.95)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    lightboxImage: {
+      width: '100%',
+      height: '100%',
+    },
+    lightboxClose: {
+      position: 'absolute',
+      top: 48,
+      right: 20,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(255,255,255,0.15)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    lightboxCloseText: {
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: '600' as const,
+    },
   });
