@@ -54,7 +54,7 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
     if (data?.currentWeek && !week) {
       setWeek(String(data.currentWeek + 1));
     }
-  }, [data?.currentWeek]);
+  }, [data?.currentWeek, week]);
 
   const handleSave = async () => {
     if (!title.trim()) {
