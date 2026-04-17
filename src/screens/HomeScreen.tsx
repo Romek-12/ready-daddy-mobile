@@ -110,8 +110,8 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
           </View>
           <Text style={s.appName}>Ready Daddy</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={s.settingsBtn} accessibilityRole="button" accessibilityLabel="Ustawienia">
-          <Icon name="gear" size={24} color={theme.colors.textSecondary} />
+        <TouchableOpacity onPress={() => navigation.navigate('AddVisit')} style={s.settingsBtn} accessibilityRole="button" accessibilityLabel="Dodaj wizytę">
+          <Icon name="calendar-add" size={24} color={theme.colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -177,6 +177,15 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
           ))}
         </View>
       </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Settings')}
+        style={s.settingsFooter}
+        accessibilityRole="button"
+        accessibilityLabel="Ustawienia"
+      >
+        <Icon name="gear" size={16} color={theme.colors.textMuted} />
+        <Text style={s.settingsFooterLabel}>Ustawienia</Text>
+      </TouchableOpacity>
       <View style={{ height: 20 }} />
     </ScrollView>
   );
@@ -209,4 +218,15 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   moduleCard: { width: CARD_W, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, alignItems: 'center', elevation: 1 },
   moduleIcon: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.sm },
   moduleLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, textAlign: 'center', fontWeight: theme.fontWeight.medium },
+  settingsFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: theme.spacing.lg,
+  },
+  settingsFooterLabel: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textMuted,
+  },
 });
