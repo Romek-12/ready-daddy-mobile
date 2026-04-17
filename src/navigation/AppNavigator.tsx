@@ -37,6 +37,7 @@ import AddEntryScreen from '../screens/journal/AddEntryScreen';
 import BadgesScreen from '../screens/BadgesScreen';
 import FirstYearHomeScreen from '../screens/first-year/FirstYearHomeScreen';
 import MonthScreen from '../screens/first-year/MonthScreen';
+import AddVisitScreen from '../screens/AddVisitScreen';
 import { BadgeProvider } from '../context/BadgeContext';
 import BadgeUnlockModal from '../components/gamification/BadgeUnlockModal';
 
@@ -92,6 +93,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="Badges" component={BadgesScreen} />
       <HomeStack.Screen name="FirstYear" component={FirstYearHomeScreen} />
       <HomeStack.Screen name="Month" component={MonthScreen} />
+      <HomeStack.Screen name="AddVisit" component={AddVisitScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
@@ -118,34 +120,24 @@ function MainTabs() {
       }}
     >
       <Tab.Screen name="Home" component={HomeStackNavigator}
-        options={{ tabBarLabel: 'Główna', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="home" size={24} color={focused ? '#FFFFFF' : color} />
-          </View>
+        options={{ tabBarLabel: 'Główna', tabBarIcon: ({ color }: { color: string; focused: boolean }) => (
+          <Icon name="home" size={24} color={color} />
         ) }} />
       <Tab.Screen name="WeekDetailTab" component={WeekDetailScreen}
-        options={{ tabBarLabel: 'Tydzień', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="fetus" size={24} color={focused ? '#FFFFFF' : color} />
-          </View>
+        options={{ tabBarLabel: 'Tydzień', tabBarIcon: ({ color }: { color: string; focused: boolean }) => (
+          <Icon name="fetus" size={24} color={color} />
         ) }} />
       <Tab.Screen name="ActionCards" component={ActionCardsScreen}
-        options={{ tabBarLabel: 'Karty', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="bolt" size={24} color={focused ? '#FFFFFF' : color} />
-          </View>
+        options={{ tabBarLabel: 'Karty', tabBarIcon: ({ color }: { color: string; focused: boolean }) => (
+          <Icon name="bolt" size={24} color={color} />
         ) }} />
       <Tab.Screen name="DadModuleTab" component={DadStackNavigator}
-        options={{ tabBarLabel: 'Tata', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="dad" size={24} color={focused ? '#FFFFFF' : color} />
-          </View>
+        options={{ tabBarLabel: 'Tata', tabBarIcon: ({ color }: { color: string; focused: boolean }) => (
+          <Icon name="dad" size={24} color={color} />
         ) }} />
       <Tab.Screen name="Journal" component={JournalStackNavigator}
-        options={{ tabBarLabel: 'Dziennik', tabBarIcon: ({ color, focused }: { color: string; focused: boolean }) => (
-          <View style={[focused && { backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 4, borderRadius: 16 }]}>
-            <Icon name="journal" size={24} color={focused ? '#FFFFFF' : color} />
-          </View>
+        options={{ tabBarLabel: 'Dziennik', tabBarIcon: ({ color }: { color: string; focused: boolean }) => (
+          <Icon name="journal" size={24} color={color} />
         ) }} />
     </Tab.Navigator>
   );

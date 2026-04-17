@@ -22,6 +22,7 @@ export type HomeStackParamList = {
   DadRelacja: undefined;
   DadNoworodek: undefined;
   Badges: undefined;
+  AddVisit: undefined;
   FirstYear: undefined;
   Month: { month: number };
 };

@@ -76,6 +76,7 @@ const ICON_MAP: Record<string, IconDef> = {
   'do-not-touch': { set: 'mci', name: 'hand-back-left-off' },
 
   // Misc
+  'calendar-add': { set: 'mi', name: 'edit-calendar' },
   'wave': { set: 'mi', name: 'waving-hand' },
   'gear': { set: 'mi', name: 'settings' },
   'expand-less': { set: 'mi', name: 'expand-less' },
