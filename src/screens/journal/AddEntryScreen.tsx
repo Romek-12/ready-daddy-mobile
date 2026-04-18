@@ -25,6 +25,7 @@ import type { JournalStackParamList } from '../../types/navigation';
 import type { Theme } from '../../theme';
 import type { EntryType } from '../../types/journal.types';
 import { logError } from '../../utils/logError';
+import DatePickerModal from '../../components/DatePickerModal';
 
 type Props = NativeStackScreenProps<JournalStackParamList, 'AddEntry'>;
 
@@ -54,6 +55,7 @@ export default function AddEntryScreen({ navigation, route }: Props) {
   const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const editId = route.params?.entryId;
   const isEdit = Boolean(editId);
@@ -193,14 +195,20 @@ export default function AddEntryScreen({ navigation, route }: Props) {
 
         {/* Date */}
         <Text style={s.label}>Data</Text>
-        <TextInput
+        <TouchableOpacity
           style={s.input}
+          onPress={() => setDatePickerVisible(true)}
+          activeOpacity={0.7}
+        >
+          <Text style={s.inputText}>
+            {date.split('-').reverse().join('.')}
+          </Text>
+        </TouchableOpacity>
+        <DatePickerModal
+          visible={datePickerVisible}
           value={date}
-          onChangeText={setDate}
-          placeholder="YYYY-MM-DD"
-          placeholderTextColor={theme.colors.textMuted}
-          keyboardType="numeric"
-          maxLength={10}
+          onConfirm={(d) => { setDate(d); setDatePickerVisible(false); }}
+          onDismiss={() => setDatePickerVisible(false)}
         />
 
         {/* Week */}
@@ -351,6 +359,10 @@ const createStyles = (theme: Theme, topInset: number) =>
       borderColor: theme.colors.cardBorder,
       paddingHorizontal: theme.spacing.md,
       paddingVertical: 12,
+      fontSize: theme.fontSize.md,
+      color: theme.colors.text,
+    },
+    inputText: {
       fontSize: theme.fontSize.md,
       color: theme.colors.text,
     },
