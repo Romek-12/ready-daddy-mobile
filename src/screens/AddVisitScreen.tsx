@@ -18,6 +18,8 @@ import { useJournal } from '../hooks/useJournal';
 import { useCurrentWeek } from '../hooks/useAppData';
 import { addCalendarEvent } from '../services/calendar/CalendarService';
 import Icon from '../components/Icon';
+import DatePickerModal from '../components/DatePickerModal';
+import TimePickerModal from '../components/TimePickerModal';
 import type { Theme } from '../theme';
 import type { AppNavigation } from '../types/navigation';
 import { logError } from '../utils/logError';
@@ -49,6 +51,8 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
   const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [timePickerVisible, setTimePickerVisible] = useState(false);
 
   React.useEffect(() => {
     if (data?.currentWeek && !week) {
@@ -139,29 +143,42 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
         <View style={s.row}>
           <View style={s.rowHalf}>
             <Text style={s.label}>Data</Text>
-            <TextInput
-              style={s.input}
-              value={date}
-              onChangeText={setDate}
-              placeholder="YYYY-MM-DD"
-              placeholderTextColor={theme.colors.textMuted}
-              keyboardType="numeric"
-              maxLength={10}
-            />
+            <TouchableOpacity
+              style={[s.input, s.inputButton]}
+              onPress={() => setDatePickerVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={s.inputText}>
+                {date.split('-').reverse().join('.')}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={s.rowHalf}>
             <Text style={s.label}>Godzina</Text>
-            <TextInput
-              style={s.input}
-              value={time}
-              onChangeText={setTime}
-              placeholder="np. 14:30"
-              placeholderTextColor={theme.colors.textMuted}
-              keyboardType="numeric"
-              maxLength={5}
-            />
+            <TouchableOpacity
+              style={[s.input, s.inputButton]}
+              onPress={() => setTimePickerVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={time ? s.inputText : s.inputPlaceholderText}>
+                {time || 'np. 14:30'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
+
+        <DatePickerModal
+          visible={datePickerVisible}
+          value={date}
+          onConfirm={(d) => { setDate(d); setDatePickerVisible(false); }}
+          onDismiss={() => setDatePickerVisible(false)}
+        />
+        <TimePickerModal
+          visible={timePickerVisible}
+          value={time}
+          onConfirm={(t) => { setTime(t); setTimePickerVisible(false); }}
+          onDismiss={() => setTimePickerVisible(false)}
+        />
 
         <Text style={s.label}>Czas trwania</Text>
         <View style={s.chipRow}>
@@ -278,6 +295,17 @@ const createStyles = (theme: Theme, topInset: number) =>
       paddingVertical: 12,
       fontSize: theme.fontSize.md,
       color: theme.colors.text,
+    },
+    inputButton: {
+      justifyContent: 'center' as const,
+    },
+    inputText: {
+      fontSize: theme.fontSize.md,
+      color: theme.colors.text,
+    },
+    inputPlaceholderText: {
+      fontSize: theme.fontSize.md,
+      color: theme.colors.textMuted,
     },
     inputMultiline: {
       minHeight: 100,
