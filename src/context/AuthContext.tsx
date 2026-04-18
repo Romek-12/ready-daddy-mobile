@@ -8,8 +8,8 @@ const PROFILE_CACHE_KEY = '@ready_daddy/profile';
 export interface User {
   id: string;
   email: string;
-  conceptionDate: string;
-  partnerName: string;
+  conceptionDate: string | null;
+  partnerName: string | null;
   babyName1?: string | null;
   babyName2?: string | null;
   babyGender?: 'boy' | 'girl' | null;
@@ -32,8 +32,8 @@ function profileToUser(profile: Profile): User {
   return {
     id: profile.id,
     email: profile.email,
-    conceptionDate: profile.conception_date,
-    partnerName: profile.partner_name,
+    conceptionDate: profile.conception_date ?? null,
+    partnerName: profile.partner_name ?? null,
     babyName1: profile.baby_name_1 || null,
     babyName2: profile.baby_name_2 || null,
     babyGender: profile.baby_gender || null,
