@@ -43,16 +43,16 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.PLACEHOLDER_IOS_REVERSED_CLIENT_ID"
+          "iosUrlScheme": "com.googleusercontent.apps.644789089672-bh6vc5567316ivbboaoq6eoe00pmcn55"
         }
       ],
       [
         "react-native-fbsdk-next",
         {
-          "appID": "PLACEHOLDER_FACEBOOK_APP_ID",
-          "clientToken": "PLACEHOLDER_FACEBOOK_CLIENT_TOKEN",
+          "appID": "2042396430045688",
+          "clientToken": "05ba97cc6a5c36f4ceb6aea97557de7e",
           "displayName": "Ready Daddy",
-          "scheme": "fbPLACEHOLDER_FACEBOOK_APP_ID",
+          "scheme": "fb2042396430045688",
           "advertiserIDCollectionEnabled": false,
           "autoLogAppEventsEnabled": false,
           "isAutoInitEnabled": true
