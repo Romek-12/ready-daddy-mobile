@@ -4,8 +4,8 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   StyleSheet,
-  Pressable,
   FlatList,
   ListRenderItemInfo,
 } from 'react-native';
@@ -35,13 +35,12 @@ export interface TimePickerModalProps {
 
 function parseTime(value: string): { hourIndex: number; minuteIndex: number } {
   if (!value) {
-    return { hourIndex: 9, minuteIndex: 0 }; // default 09:00
+    return { hourIndex: 9, minuteIndex: 0 };
   }
   const parts = value.split(':');
   const hour = Number(parts[0]) || 0;
   const minute = Number(parts[1]) || 0;
   const hourIndex = Math.min(Math.max(hour, 0), 23);
-  // Find closest minute in steps of 5
   const minuteIndex = Math.min(Math.round(minute / 5), 11);
   return { hourIndex, minuteIndex };
 }
@@ -57,7 +56,6 @@ function Drum({ items, selectedIndex, onSelect, styles }: DrumProps) {
   const listRef = useRef<FlatList<string>>(null);
   const isScrolling = useRef(false);
 
-  // Scroll to selected index on mount and when selectedIndex changes externally
   useEffect(() => {
     if (!isScrolling.current && listRef.current) {
       listRef.current.scrollToOffset({
@@ -113,8 +111,12 @@ function Drum({ items, selectedIndex, onSelect, styles }: DrumProps) {
 
   return (
     <View style={styles.drumWrapper}>
-      {/* Selection highlight overlay */}
+      {/* Top fade mask */}
+      <View style={styles.drumFadeTop} pointerEvents="none" />
+      {/* Selection highlight */}
       <View style={styles.selectionHighlight} pointerEvents="none" />
+      {/* Bottom fade mask */}
+      <View style={styles.drumFadeBottom} pointerEvents="none" />
       <FlatList
         ref={listRef}
         data={items}
@@ -162,36 +164,40 @@ export default function TimePickerModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onDismiss}>
-      <Pressable style={s.overlay} onPress={onDismiss}>
-        <Pressable style={s.modal}>
-          {/* Drums */}
-          <View style={s.drumsRow}>
-            <Drum
-              items={HOURS}
-              selectedIndex={hourIndex}
-              onSelect={setHourIndex}
-              styles={s}
-            />
-            <Text style={s.separator}>:</Text>
-            <Drum
-              items={MINUTES}
-              selectedIndex={minuteIndex}
-              onSelect={setMinuteIndex}
-              styles={s}
-            />
-          </View>
+      <TouchableWithoutFeedback onPress={onDismiss}>
+        <View style={s.overlay}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={s.modal}>
+              {/* Drums */}
+              <View style={s.drumsRow}>
+                <Drum
+                  items={HOURS}
+                  selectedIndex={hourIndex}
+                  onSelect={setHourIndex}
+                  styles={s}
+                />
+                <Text style={s.separator}>:</Text>
+                <Drum
+                  items={MINUTES}
+                  selectedIndex={minuteIndex}
+                  onSelect={setMinuteIndex}
+                  styles={s}
+                />
+              </View>
 
-          {/* Buttons */}
-          <View style={s.buttons}>
-            <TouchableOpacity onPress={onDismiss} style={s.btnCancel}>
-              <Text style={s.btnCancelText}>Anuluj</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleConfirm} style={s.btnConfirm}>
-              <Text style={s.btnConfirmText}>Gotowe</Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Pressable>
+              {/* Buttons */}
+              <View style={s.buttons}>
+                <TouchableOpacity onPress={onDismiss} style={s.btnCancel}>
+                  <Text style={s.btnCancelText}>Anuluj</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleConfirm} style={s.btnConfirm}>
+                  <Text style={s.btnConfirmText}>Gotowe</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -210,7 +216,6 @@ const createStyles = (theme: Theme) =>
       maxWidth: MODAL_MAX_WIDTH,
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.xl,
-      overflow: 'hidden',
       paddingTop: theme.spacing.lg,
     },
     drumsRow: {
@@ -222,10 +227,9 @@ const createStyles = (theme: Theme) =>
     drumWrapper: {
       width: 80,
       height: DRUM_HEIGHT,
-      overflow: 'hidden',
     },
     drumContentContainer: {
-      paddingVertical: ITEM_HEIGHT * 2, // 2 padding items top + bottom so first/last can center
+      paddingVertical: ITEM_HEIGHT * 2,
     },
     drumItem: {
       height: ITEM_HEIGHT,
@@ -255,6 +259,26 @@ const createStyles = (theme: Theme) =>
       borderBottomWidth: 1.5,
       borderColor: theme.colors.primary,
       zIndex: 1,
+    },
+    drumFadeTop: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: ITEM_HEIGHT * 2,
+      backgroundColor: theme.colors.surface,
+      opacity: 0.7,
+      zIndex: 2,
+    },
+    drumFadeBottom: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: ITEM_HEIGHT * 2,
+      backgroundColor: theme.colors.surface,
+      opacity: 0.7,
+      zIndex: 2,
     },
     separator: {
       fontSize: theme.fontSize.xxl,

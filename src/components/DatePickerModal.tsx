@@ -4,8 +4,8 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   StyleSheet,
-  Pressable,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useTheme } from '../context/ThemeContext';
@@ -67,63 +67,67 @@ export default function DatePickerModal({ visible, value, onConfirm, onDismiss }
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onDismiss}>
-      <Pressable style={s.overlay} onPress={onDismiss}>
-        <Pressable style={s.modal}>
-          {/* Header */}
-          <View style={s.header}>
-            <TouchableOpacity onPress={prevMonth} style={s.navBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Text style={s.navArrow}>{'‹'}</Text>
-            </TouchableOpacity>
-            <Text style={s.monthLabel}>
-              {MONTHS_PL[month - 1]} {year}
-            </Text>
-            <TouchableOpacity onPress={nextMonth} style={s.navBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Text style={s.navArrow}>{'›'}</Text>
-            </TouchableOpacity>
-          </View>
+      <TouchableWithoutFeedback onPress={onDismiss}>
+        <View style={s.overlay}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={s.modal}>
+              {/* Header */}
+              <View style={s.header}>
+                <TouchableOpacity onPress={prevMonth} style={s.navBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Text style={s.navArrow}>{'‹'}</Text>
+                </TouchableOpacity>
+                <Text style={s.monthLabel}>
+                  {MONTHS_PL[month - 1]} {year}
+                </Text>
+                <TouchableOpacity onPress={nextMonth} style={s.navBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Text style={s.navArrow}>{'›'}</Text>
+                </TouchableOpacity>
+              </View>
 
-          {/* Calendar grid */}
-          <Calendar
-            key={currentMonth}
-            current={currentMonth + '-01'}
-            hideArrows
-            hideExtraDays
-            onDayPress={(day: { dateString: string }) => setSelected(day.dateString)}
-            markedDates={markedDates}
-            theme={{
-              backgroundColor: theme.colors.surface,
-              calendarBackground: theme.colors.surface,
-              dayTextColor: theme.colors.text,
-              textDisabledColor: theme.colors.textMuted,
-              monthTextColor: 'transparent',
-              arrowColor: theme.colors.primary,
-              todayTextColor: theme.colors.primary,
-              selectedDayTextColor: theme.colors.background,
-              selectedDayBackgroundColor: theme.colors.primary,
-              textDayFontSize: theme.fontSize.sm,
-              textMonthFontSize: 0,
-              textDayHeaderFontSize: theme.fontSize.xs,
-              // @ts-expect-error — react-native-calendars supports this key but types don't declare it
-              'stylesheet.calendar.header': {
-                header: { height: 0, overflow: 'hidden' },
-              },
-            }}
-          />
+              {/* Calendar grid */}
+              <Calendar
+                key={currentMonth}
+                current={currentMonth + '-01'}
+                hideArrows
+                hideExtraDays
+                onDayPress={(day: { dateString: string }) => setSelected(day.dateString)}
+                markedDates={markedDates}
+                theme={{
+                  backgroundColor: theme.colors.surface,
+                  calendarBackground: theme.colors.surface,
+                  dayTextColor: theme.colors.text,
+                  textDisabledColor: theme.colors.textMuted,
+                  monthTextColor: 'transparent',
+                  arrowColor: theme.colors.primary,
+                  todayTextColor: theme.colors.primary,
+                  selectedDayTextColor: theme.colors.background,
+                  selectedDayBackgroundColor: theme.colors.primary,
+                  textDayFontSize: theme.fontSize.sm,
+                  textMonthFontSize: 0,
+                  textDayHeaderFontSize: theme.fontSize.xs,
+                  // @ts-expect-error — react-native-calendars supports this key but types don't declare it
+                  'stylesheet.calendar.header': {
+                    header: { height: 0, overflow: 'hidden' },
+                  },
+                }}
+              />
 
-          {/* Buttons */}
-          <View style={s.buttons}>
-            <TouchableOpacity onPress={onDismiss} style={s.btnCancel}>
-              <Text style={s.btnCancelText}>Anuluj</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => onConfirm(selected)}
-              style={s.btnConfirm}
-            >
-              <Text style={s.btnConfirmText}>Gotowe</Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Pressable>
+              {/* Buttons */}
+              <View style={s.buttons}>
+                <TouchableOpacity onPress={onDismiss} style={s.btnCancel}>
+                  <Text style={s.btnCancelText}>Anuluj</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => onConfirm(selected)}
+                  style={s.btnConfirm}
+                >
+                  <Text style={s.btnConfirmText}>Gotowe</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -140,7 +144,6 @@ const createStyles = (theme: Theme) =>
     modal: {
       width: '100%',
       maxWidth: MODAL_MAX_WIDTH,
-      overflow: 'hidden',
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.xl,
     },
