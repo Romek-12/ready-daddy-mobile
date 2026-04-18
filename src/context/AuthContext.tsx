@@ -2,6 +2,16 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, type Profile } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+import {
+  configureGoogleSignIn,
+  getGoogleIdToken,
+  getGoogleTokens,
+  getFacebookAccessToken,
+  signOutGoogle,
+  signOutFacebook,
+} from '../services/socialAuth';
+import { GOOGLE_WEB_CLIENT_ID } from '../config/env';
+import { logError } from '../utils/logError';
 
 const PROFILE_CACHE_KEY = '@ready_daddy/profile';
 
@@ -24,6 +34,10 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
   clearFirstLogin: () => void;
+  signInWithGoogle: () => Promise<void>;
+  signInWithFacebook: () => Promise<void>;
+  linkGoogleAccount: () => Promise<void>;
+  linkFacebookAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isFirstLogin, setIsFirstLogin] = useState(false);
 
   useEffect(() => {
+    configureGoogleSignIn(GOOGLE_WEB_CLIENT_ID);
     // Load existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
@@ -146,7 +161,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const handleSocialUser = async (userId: string, email: string): Promise<void> => {
+    const profile = await fetchProfile(userId);
+    if (profile) {
+      setIsFirstLogin(false);
+      setUser(profileToUser(profile));
+      AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch((e) =>
+        logError('AuthContext:socialCacheWrite', e)
+      );
+      return;
+    }
+    // New social user — create minimal profile, route to setup
+    const { error } = await supabase.from('profiles').insert({
+      id: userId,
+      email,
+      conception_date: null,
+      partner_name: null,
+    });
+    if (error) throw new Error(error.message);
+    setIsFirstLogin(true);
+    setUser({ id: userId, email, conceptionDate: null, partnerName: null });
+  };
+
+  const signInWithGoogle = async (): Promise<void> => {
+    const idToken = await getGoogleIdToken();
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: idToken,
+    });
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Brak danych użytkownika');
+    await handleSocialUser(data.user.id, data.user.email ?? '');
+  };
+
+  const signInWithFacebook = async (): Promise<void> => {
+    const accessToken = await getFacebookAccessToken();
+    if (!accessToken) return;
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'facebook',
+      token: accessToken,
+    });
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Brak danych użytkownika');
+    await handleSocialUser(data.user.id, data.user.email ?? '');
+  };
+
+  const linkGoogleAccount = async (): Promise<void> => {
+    const { idToken, accessToken } = await getGoogleTokens();
+    const { error } = await (supabase.auth as any).linkIdentity({
+      provider: 'google',
+      token: idToken,
+      access_token: accessToken,
+    });
+    if (error) throw new Error(error.message);
+  };
+
+  const linkFacebookAccount = async (): Promise<void> => {
+    const accessToken = await getFacebookAccessToken();
+    if (!accessToken) return;
+    const { error } = await (supabase.auth as any).linkIdentity({
+      provider: 'facebook',
+      token: accessToken,
+    });
+    if (error) throw new Error(error.message);
+  };
+
   const logout = async () => {
+    await signOutGoogle().catch(() => {});
+    signOutFacebook();
     await supabase.auth.signOut();
     AsyncStorage.removeItem(PROFILE_CACHE_KEY).catch(() => {});
     setUser(null);
@@ -174,7 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const clearFirstLogin = () => setIsFirstLogin(false);
 
   return (
-    <AuthContext.Provider value={{ user, loading, isFirstLogin, login, register, logout, updateUser, clearFirstLogin }}>
+    <AuthContext.Provider value={{ user, loading, isFirstLogin, login, register, logout, updateUser, clearFirstLogin, signInWithGoogle, signInWithFacebook, linkGoogleAccount, linkFacebookAccount }}>
       {children}
     </AuthContext.Provider>
   );
