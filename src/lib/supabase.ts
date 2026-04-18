@@ -14,8 +14,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 export type Profile = {
   id: string;
   email: string;
-  conception_date: string;
-  partner_name: string;
+  conception_date: string | null;
+  partner_name: string | null;
   baby_name_1?: string | null;
   baby_name_2?: string | null;
   baby_gender?: 'boy' | 'girl' | null;
