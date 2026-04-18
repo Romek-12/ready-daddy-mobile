@@ -5,6 +5,7 @@
     "slug": "ready-daddy",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "readydaddy",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -38,7 +39,25 @@
     "plugins": [
       "expo-font",
       "expo-asset",
-      "expo-splash-screen"
+      "expo-splash-screen",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.PLACEHOLDER_IOS_REVERSED_CLIENT_ID"
+        }
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "PLACEHOLDER_FACEBOOK_APP_ID",
+          "clientToken": "PLACEHOLDER_FACEBOOK_CLIENT_TOKEN",
+          "displayName": "Ready Daddy",
+          "scheme": "fbPLACEHOLDER_FACEBOOK_APP_ID",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true
+        }
+      ]
     ]
   }
 }
