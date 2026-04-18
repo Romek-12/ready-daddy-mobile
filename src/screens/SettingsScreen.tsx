@@ -295,7 +295,7 @@ export default function SettingsScreen({ navigation }: Props) {
               </View>
               <View>
                 <Text style={s.listButtonText}>Zmień termin poczęcia</Text>
-                <Text style={s.listButtonSub}>{formatDateForDisplay(user?.conceptionDate)}</Text>
+                <Text style={s.listButtonSub}>{formatDateForDisplay(user?.conceptionDate ?? undefined)}</Text>
               </View>
             </View>
             <Icon name="arrow-forward" size={16} color={theme.colors.textMuted} />
@@ -554,7 +554,7 @@ export default function SettingsScreen({ navigation }: Props) {
               </View>
 
               <DateScrollPicker 
-                initialDate={selectedDate || user?.conceptionDate} 
+                initialDate={selectedDate || (user?.conceptionDate ?? undefined)}
                 onDateChange={setSelectedDate}
                 allowFuture={dateType === 'due'}
                 maxDaysBack={dateType === 'conception' ? 366 : 30}
