@@ -29,15 +29,10 @@ jest.mock('../../context/ThemeContext', () => ({
 }));
 
 jest.mock('../../lib/supabase', () => {
-  const mockUpdate = jest.fn().mockReturnThis();
   const mockEq = jest.fn().mockResolvedValue({ error: null });
-  const mockFrom = jest.fn(() => ({ update: mockUpdate, eq: mockEq }));
-  return {
-    supabase: { from: mockFrom },
-    __mockFrom: mockFrom,
-    __mockUpdate: mockUpdate,
-    __mockEq: mockEq,
-  };
+  const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
+  const mockFrom = jest.fn().mockReturnValue({ update: mockUpdate });
+  return { supabase: { from: mockFrom } };
 });
 
 import React from 'react';
@@ -105,5 +100,22 @@ describe('ProfileSetupScreen', () => {
         partnerName: 'Marta',
       });
     });
+  });
+
+  it('shows error message when Supabase update fails', async () => {
+    const mockEq = jest.fn().mockResolvedValue({ error: { message: 'Błąd serwera' } });
+    const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
+    (require('../../lib/supabase').supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
+
+    const { getByPlaceholderText, getByText } = render(
+      <ProfileSetupScreen navigation={mockNavigation as any} route={{} as any} />
+    );
+    fireEvent.changeText(getByPlaceholderText('RRRR-MM-DD'), '2025-06-15');
+    fireEvent.press(getByText('Dalej'));
+
+    await waitFor(() => {
+      expect(getByText('Błąd serwera')).toBeTruthy();
+    });
+    expect(mockUpdateUser).not.toHaveBeenCalled();
   });
 });

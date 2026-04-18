@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  type TextStyle,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,6 +37,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const s = React.useMemo(() => createStyles(theme), [theme]);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     control,
@@ -49,6 +51,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   const onSubmit = async (data: FormData) => {
     if (!user) return;
     setLoading(true);
+    setSubmitError(null);
     try {
       const { error } = await supabase
         .from('profiles')
@@ -58,10 +61,13 @@ export default function ProfileSetupScreen({ navigation }: Props) {
         })
         .eq('id', user.id);
       if (error) throw new Error(error.message);
-      await updateUser({
+      updateUser({
         conceptionDate: data.conceptionDate,
         partnerName: data.partnerName || null,
       });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Wystąpił błąd. Spróbuj ponownie.';
+      setSubmitError(message);
     } finally {
       setLoading(false);
     }
@@ -115,6 +121,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
           )}
         />
 
+        {submitError && <Text style={s.error}>{submitError}</Text>}
         <TouchableOpacity
           style={[s.button, loading && s.buttonDisabled]}
           onPress={handleSubmit(onSubmit)}
@@ -143,7 +150,7 @@ const createStyles = (theme: Theme) =>
     },
     title: {
       fontSize: theme.fontSize.xl,
-      fontWeight: theme.fontWeight.bold as any,
+      fontWeight: theme.fontWeight.bold as TextStyle['fontWeight'],
       color: theme.colors.text,
       marginBottom: theme.spacing.sm,
     },
@@ -156,7 +163,7 @@ const createStyles = (theme: Theme) =>
       fontSize: theme.fontSize.sm,
       color: theme.colors.text,
       marginBottom: theme.spacing.xs,
-      fontWeight: theme.fontWeight.medium as any,
+      fontWeight: theme.fontWeight.medium as TextStyle['fontWeight'],
     },
     input: {
       borderWidth: 1,
@@ -189,6 +196,6 @@ const createStyles = (theme: Theme) =>
     buttonText: {
       color: theme.colors.black,
       fontSize: theme.fontSize.lg,
-      fontWeight: theme.fontWeight.bold as any,
+      fontWeight: theme.fontWeight.bold as TextStyle['fontWeight'],
     },
   });
