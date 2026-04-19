@@ -31,6 +31,7 @@ const ICON_MAP: Record<string, IconDef> = {
   'dad': { set: 'mi', name: 'face-6' },
   'baby': { set: 'mi', name: 'child-care' },
   'baby-bottle': { set: 'mci', name: 'baby-bottle' },
+  'dice': { set: 'mci', name: 'dice-multiple' },
   'notifications': { set: 'mi', name: 'notifications' },
 
   // Content icons - WeekDetail
