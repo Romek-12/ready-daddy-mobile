@@ -16,32 +16,38 @@ interface AddEventParams {
 
 async function getOrCreateCalendarId(): Promise<string> {
   const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+
+  // On Android: prefer existing "Ready Daddy" calendar, then Google calendar, then any writable
+  if (Platform.OS === 'android') {
+    const existing = calendars.find(c => c.title === CALENDAR_NAME && c.allowsModifications);
+    if (existing) return existing.id;
+
+    const google = calendars.find(
+      c => c.allowsModifications && c.source?.type === 'com.google',
+    );
+    if (google) return google.id;
+
+    const any = calendars.find(c => c.allowsModifications);
+    if (any) return any.id;
+
+    throw new Error('Brak dostępnego kalendarza na tym urządzeniu');
+  }
+
+  // iOS: use existing or create new
   const existing = calendars.find(c => c.title === CALENDAR_NAME);
   if (existing) return existing.id;
 
-  if (Platform.OS === 'ios') {
-    const defaultCalendarSource = await getIosDefaultSource();
-    return Calendar.createCalendarAsync({
-      title: CALENDAR_NAME,
-      color: '#00E5CC',
-      entityType: Calendar.EntityTypes.EVENT,
-      sourceId: defaultCalendarSource.id,
-      source: defaultCalendarSource,
-      name: 'readydaddy',
-      ownerAccount: 'personal',
-      accessLevel: Calendar.CalendarAccessLevel.OWNER,
-    });
-  } else {
-    return Calendar.createCalendarAsync({
-      title: CALENDAR_NAME,
-      color: '#00E5CC',
-      entityType: Calendar.EntityTypes.EVENT,
-      source: { isLocalAccount: true, name: CALENDAR_NAME, type: Calendar.SourceType.LOCAL },
-      name: 'readydaddy',
-      ownerAccount: 'personal',
-      accessLevel: Calendar.CalendarAccessLevel.OWNER,
-    });
-  }
+  const defaultCalendarSource = await getIosDefaultSource();
+  return Calendar.createCalendarAsync({
+    title: CALENDAR_NAME,
+    color: '#00E5CC',
+    entityType: Calendar.EntityTypes.EVENT,
+    sourceId: defaultCalendarSource.id,
+    source: defaultCalendarSource,
+    name: 'readydaddy',
+    ownerAccount: 'personal',
+    accessLevel: Calendar.CalendarAccessLevel.OWNER,
+  });
 }
 
 async function getIosDefaultSource(): Promise<Calendar.Source> {
