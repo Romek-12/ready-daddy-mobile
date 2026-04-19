@@ -50,6 +50,7 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
     { key: 'FourthTrimester', icon: 'baby', label: '4. Trymestr', color: theme.colors.fourthTrimester },
     { key: 'PostBirth', icon: 'post-birth', label: 'Po porodzie', color: theme.colors.postBirth },
     { key: 'FirstYear', icon: 'baby', label: 'Pierwszy Rok', color: theme.colors.primary },
+    { key: 'NameDraw', icon: 'dice', label: 'Wybór imienia', color: theme.colors.accent },
   ], [theme]);
 
   if (isLoading) return (
