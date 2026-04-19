@@ -38,6 +38,7 @@ import BadgesScreen from '../screens/BadgesScreen';
 import FirstYearHomeScreen from '../screens/first-year/FirstYearHomeScreen';
 import MonthScreen from '../screens/first-year/MonthScreen';
 import AddVisitScreen from '../screens/AddVisitScreen';
+import NameDrawScreen from '../screens/NameDrawScreen';
 import { BadgeProvider } from '../context/BadgeContext';
 import BadgeUnlockModal from '../components/gamification/BadgeUnlockModal';
 
@@ -94,6 +95,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="FirstYear" component={FirstYearHomeScreen} />
       <HomeStack.Screen name="Month" component={MonthScreen} />
       <HomeStack.Screen name="AddVisit" component={AddVisitScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="NameDraw" component={NameDrawScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
