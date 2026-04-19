@@ -17,18 +17,21 @@ interface AddEventParams {
 async function getOrCreateCalendarId(): Promise<string> {
   const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
 
-  // On Android: prefer existing "Ready Daddy" calendar, then Google calendar, then any writable
+  // On Android: prefer existing "Ready Daddy" calendar, then any writable calendar
   if (Platform.OS === 'android') {
     const existing = calendars.find(c => c.title === CALENDAR_NAME && c.allowsModifications);
     if (existing) return existing.id;
 
-    const google = calendars.find(
-      c => c.allowsModifications && c.source?.type === 'com.google',
+    // Pick Google calendar by account type, fallback to any writable
+    const writable = calendars.filter(c => c.allowsModifications);
+    const google = writable.find(c =>
+      c.source?.name?.toLowerCase().includes('google') ||
+      c.source?.type?.toLowerCase().includes('google') ||
+      c.ownerAccount?.includes('@gmail.com'),
     );
     if (google) return google.id;
 
-    const any = calendars.find(c => c.allowsModifications);
-    if (any) return any.id;
+    if (writable.length > 0) return writable[0].id;
 
     throw new Error('Brak dostępnego kalendarza na tym urządzeniu');
   }

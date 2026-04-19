@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '../../context/ThemeContext';
 import { useJournal } from '../../hooks/useJournal';
@@ -32,8 +33,14 @@ export default function JournalScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const s = useMemo(() => createStyles(theme, insets.top, insets.bottom), [theme, insets.top, insets.bottom]);
-  const { entries, loading } = useJournal();
+  const { entries, loading, reload } = useJournal();
   const [activeFilter, setActiveFilter] = useState<EntryType | 'all'>('all');
+
+  useFocusEffect(
+    React.useCallback(() => {
+      reload();
+    }, [reload]),
+  );
 
   const filtered = useMemo(() => {
     if (activeFilter === 'all') return entries;
