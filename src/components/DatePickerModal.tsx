@@ -107,7 +107,7 @@ export default function DatePickerModal({ visible, value, onConfirm, onDismiss }
                   textDayHeaderFontSize: theme.fontSize.xs,
                   // @ts-expect-error — react-native-calendars supports this key but types don't declare it
                   'stylesheet.calendar.header': {
-                    header: { height: 0, overflow: 'hidden' },
+                    header: { height: 0 },
                   },
                 }}
               />

@@ -111,12 +111,6 @@ function Drum({ items, selectedIndex, onSelect, styles }: DrumProps) {
 
   return (
     <View style={styles.drumWrapper}>
-      {/* Top fade mask */}
-      <View style={styles.drumFadeTop} pointerEvents="none" />
-      {/* Selection highlight */}
-      <View style={styles.selectionHighlight} pointerEvents="none" />
-      {/* Bottom fade mask */}
-      <View style={styles.drumFadeBottom} pointerEvents="none" />
       <FlatList
         ref={listRef}
         data={items}
@@ -131,7 +125,15 @@ function Drum({ items, selectedIndex, onSelect, styles }: DrumProps) {
         contentContainerStyle={styles.drumContentContainer}
         bounces={false}
         overScrollMode="never"
+        style={styles.drumList}
+        nestedScrollEnabled
       />
+      {/* Top fade mask — pointerEvents none so touches pass through to FlatList */}
+      <View style={styles.drumFadeTop} pointerEvents="none" />
+      {/* Selection highlight */}
+      <View style={styles.selectionHighlight} pointerEvents="none" />
+      {/* Bottom fade mask */}
+      <View style={styles.drumFadeBottom} pointerEvents="none" />
     </View>
   );
 }
@@ -226,6 +228,9 @@ const createStyles = (theme: Theme) =>
     },
     drumWrapper: {
       width: 80,
+      height: DRUM_HEIGHT,
+    },
+    drumList: {
       height: DRUM_HEIGHT,
     },
     drumContentContainer: {
