@@ -40,6 +40,6 @@ const createStyles = (theme: Theme) =>
     primary: { backgroundColor: theme.colors.primary },
     outline: { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.colors.primary },
     disabled: { opacity: 0.6 },
-    primaryText: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold as any, color: theme.colors.black },
-    outlineText: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold as any, color: theme.colors.primary },
+    primaryText: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.black },
+    outlineText: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },
   });

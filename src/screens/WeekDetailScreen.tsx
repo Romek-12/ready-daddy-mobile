@@ -11,7 +11,7 @@ import type { Theme } from '../theme';
 interface WeekActionCard { id: string; title: string; scenario: string; science_explanation: string; concrete_action: string; }
 interface WeekCheckup { id: string; name: string; description: string; }
 
-type Props = { route?: any };
+type Props = { route?: { params?: { week?: number } } };
 
 const MIN_WEEK = 2;
 const MAX_WEEK = 40;

@@ -30,8 +30,8 @@ export default function LoginScreen({ navigation }: Props) {
     setLoading(true);
     try {
       await login(data.email.trim(), data.password);
-    } catch (err: any) {
-      Alert.alert('Błąd logowania', err.message || 'Spróbuj ponownie');
+    } catch (err: unknown) {
+      Alert.alert('Błąd logowania', err instanceof Error ? err.message : 'Spróbuj ponownie');
     } finally {
       setLoading(false);
     }

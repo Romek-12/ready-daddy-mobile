@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, type Profile } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+import { logError } from '../utils/logError';
 
 const PROFILE_CACHE_KEY = '@ready_daddy/profile';
 
@@ -81,11 +82,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
         }
 
-        // Apply fresh Supabase data when it arrives (Supabase was already fetching in parallel)
+        // Apply fresh Supabase data when it arrives
         const profile = await supabasePromise;
         if (profile) {
           setUser(profileToUser(profile));
-          AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => {});
+          AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch((e) => logError('AuthContext:cacheWrite', e));
         }
         if (!cached) setLoading(false);
       } else {
@@ -93,15 +94,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    // Listen to auth state changes (token refresh, sign out, etc.)
+    // POPRAWKA: Ignorujemy TOKEN_REFRESHED — to zdarzenie strzelało co kilka minut
+    // i nadpisywało lokalny stan danymi z Supabase, przez co zapis ustawień
+    // (imię, płeć) wyglądał jakby przepadał (race condition).
+    // Reagujemy wyłącznie na SIGNED_IN (nowe logowanie) i SIGNED_OUT.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (session?.user) {
-          const profile = await fetchProfile(session.user.id);
-          if (profile) setUser(profileToUser(profile));
-        } else {
+      async (event, session) => {
+        if (event === 'SIGNED_OUT') {
           setUser(null);
+        } else if (event === 'SIGNED_IN' && session?.user) {
+          const profile = await fetchProfile(session.user.id);
+          if (profile) {
+            setUser(profileToUser(profile));
+            AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch((e) => logError('AuthContext:cacheWrite', e));
+          }
         }
+        // TOKEN_REFRESHED, USER_UPDATED, PASSWORD_RECOVERY itp. — celowo pomijamy
       }
     );
 
@@ -148,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     await supabase.auth.signOut();
-    AsyncStorage.removeItem(PROFILE_CACHE_KEY).catch(() => {});
+    AsyncStorage.removeItem(PROFILE_CACHE_KEY).catch((e) => logError('AuthContext:cacheRemove', e));
     setUser(null);
   };
 
@@ -165,8 +173,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.babyName1 !== undefined) profile.baby_name_1 = data.babyName1;
         if (data.babyName2 !== undefined) profile.baby_name_2 = data.babyName2;
         if (data.babyGender !== undefined) profile.baby_gender = data.babyGender;
-        AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => {});
-      }).catch(() => {});
+        AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch((e) => logError('AuthContext:cacheUpdate', e));
+      }).catch((e) => logError('AuthContext:cacheRead', e));
       return updated;
     });
   };

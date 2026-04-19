@@ -48,8 +48,8 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         'Możesz teraz zalogować się nowym hasłem.',
         [{ text: 'OK', onPress: () => navigation.navigate('Login') }],
       );
-    } catch (err: any) {
-      Alert.alert('Błąd', err.message || 'Nie udało się zresetować hasła. Spróbuj ponownie.');
+    } catch (err: unknown) {
+      Alert.alert('Błąd', err instanceof Error ? err.message : 'Nie udało się zresetować hasła. Spróbuj ponownie.');
     }
   };
 

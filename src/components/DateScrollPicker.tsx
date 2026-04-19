@@ -208,7 +208,7 @@ function ScrollColumn({ data, selected, onChange, renderLabel, flex }: ScrollCol
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     height: PICKER_HEIGHT,
     backgroundColor: theme.colors.surface,

@@ -92,7 +92,7 @@ android {
         applicationId 'com.readydaddy.mobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode 1
         versionName "1.0.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
@@ -105,14 +105,6 @@ android {
             keyPassword 'android'
         }
     }
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            def date = new Date().format('yyyyMMdd-HHmm')
-            def vCode = variant.versionCode
-            outputFileName = "ready-daddy-v${vCode}-${date}.apk"
-        }
-    }
-
     buildTypes {
         debug {
             signingConfig signingConfigs.debug

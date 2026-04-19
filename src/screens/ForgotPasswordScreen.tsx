@@ -43,8 +43,8 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
         'Sukces',
         'Sprawdź swoją skrzynkę mailową. Wysłaliśmy link do resetowania hasła.',
       );
-    } catch (err: any) {
-      Alert.alert('Błąd', err.message || 'Nie udało się wysłać emaila z linkiem resetowania.');
+    } catch (err: unknown) {
+      Alert.alert('Błąd', err instanceof Error ? err.message : 'Nie udało się wysłać emaila z linkiem resetowania.');
     }
   };
 

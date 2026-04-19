@@ -2,6 +2,51 @@
  * Data service – static data from bundled JSON, user data from Supabase.
  */
 import { supabase } from '../lib/supabase';
+import { CONCEPTION_OFFSET_WEEKS, MAX_PREGNANCY_WEEK, TRIMESTER_BOUNDARIES } from '../constants';
+
+interface WeekData {
+  week_number: number;
+  trimester: number;
+  fetus_size_mm: number;
+  fetus_weight_g: number;
+  fetus_size_comparison: string;
+  fetus_size_comparison_animal?: string;
+  fetus_size_comparison_sweet?: string;
+  fetus_description: string;
+  partner_physical: string;
+  partner_emotional: string;
+  partner_hormonal: string;
+  partner_tips: string;
+  dad_symptoms: string;
+  dad_tips: string;
+  notification?: string;
+  weekly_notification?: string;
+}
+
+interface ActionCard {
+  id: number;
+  title: string;
+  scenario: string;
+  week_min: number;
+  week_max: number;
+  reaction_steps: string;
+  why_it_works: string;
+  practical_tip: string;
+  icon?: string;
+}
+
+interface CheckupItem {
+  week_number: number;
+  [key: string]: unknown;
+}
+
+interface ShoppingItem {
+  trimester: number;
+  category: string;
+  is_essential: number;
+  estimated_cost_pln: number;
+  [key: string]: unknown;
+}
 
 // Bundled static data (shipped with the app – no network needed)
 import weeksData from '../data/weeks.json';
@@ -11,7 +56,8 @@ import checkupVisitsData from '../data/checkup-visits.json';
 import shoppingItemsData from '../data/shopping-items.json';
 import birthPrepData from '../data/birth-preparation.json';
 import bagChecklistData from '../data/bag-checklist.json';
-// fourth-trimester.json and dad-module.json are loaded lazily (on first screen visit)
+import fourthTrimesterData from '../data/fourth-trimester.json';
+import dadModuleData from '../data/dad-module.json';
 
 // ---------------------------------------------------------------------------
 // Helper: calculate current pregnancy week from conception date
@@ -21,7 +67,7 @@ function getCurrentWeek(conceptionDate: string): number {
   const now = new Date();
   const diffMs = now.getTime() - conception.getTime();
   const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
-  return Math.min(Math.max(diffWeeks + 2, 1), 42);
+  return Math.min(Math.max(diffWeeks + CONCEPTION_OFFSET_WEEKS, 1), MAX_PREGNANCY_WEEK);
 }
 
 // ---------------------------------------------------------------------------
@@ -30,7 +76,7 @@ function getCurrentWeek(conceptionDate: string): number {
 export const api = {
   // ---- User profile (Supabase) ----
   updateProfile: async (userId: string, data: { conceptionDate?: string; partnerName?: string; babyName1?: string | null; babyName2?: string | null; babyGender?: 'boy' | 'girl' | null }) => {
-    const updates: Record<string, any> = {};
+    const updates: Record<string, string | null | undefined> = {};
     if (data.conceptionDate !== undefined) updates.conception_date = data.conceptionDate;
     if (data.partnerName !== undefined) updates.partner_name = data.partnerName;
     if (data.babyName1 !== undefined) updates.baby_name_1 = data.babyName1;
@@ -48,31 +94,31 @@ export const api = {
   // ---- Weeks (local computation + bundled data) ----
   getCurrentWeek: (conceptionDate: string) => {
     const currentWeek = getCurrentWeek(conceptionDate);
-    const weekData = (weeksData as any[]).find(w => w.week_number === currentWeek) || null;
-    const cards = (actionCardsData as any[]).filter(
+    const weekData = (weeksData as WeekData[]).find(w => w.week_number === currentWeek) || null;
+    const cards = (actionCardsData as ActionCard[]).filter(
       c => c.week_min <= currentWeek && c.week_max >= currentWeek
     );
     const totalWeeks = 42;
     const progress = Math.round((currentWeek / totalWeeks) * 100);
     const trimester = weekData
       ? weekData.trimester
-      : currentWeek <= 13 ? 1 : currentWeek <= 27 ? 2 : 3;
+      : currentWeek <= TRIMESTER_BOUNDARIES.first ? 1 : currentWeek <= TRIMESTER_BOUNDARIES.second ? 2 : 3;
 
     return { currentWeek, totalWeeks, progress, trimester, weekData, actionCards: cards };
   },
 
   getWeek: (weekNumber: number) => {
-    const week = (weeksData as any[]).find(w => w.week_number === weekNumber) || null;
-    const cards = (actionCardsData as any[]).filter(
+    const week = (weeksData as WeekData[]).find(w => w.week_number === weekNumber) || null;
+    const cards = (actionCardsData as ActionCard[]).filter(
       c => c.week_min <= weekNumber && c.week_max >= weekNumber
     );
-    const checks = (checkupsData as any[]).filter(c => c.week_number === weekNumber);
+    const checks = (checkupsData as CheckupItem[]).filter(c => c.week_number === weekNumber);
     return { week, actionCards: cards, checkups: checks };
   },
 
   getAllWeeks: (conceptionDate: string) => {
     const currentWeek = getCurrentWeek(conceptionDate);
-    const weeks = (weeksData as any[]).map(w => ({
+    const weeks = (weeksData as WeekData[]).map(w => ({
       week_number: w.week_number,
       trimester: w.trimester,
       fetus_size_comparison: w.fetus_size_comparison,
@@ -87,8 +133,8 @@ export const api = {
 
   // ---- Shopping (bundled) ----
   getShopping: () => {
-    const items = shoppingItemsData as any[];
-    const grouped: Record<number, any[]> = { 1: [], 2: [], 3: [] };
+    const items = shoppingItemsData as ShoppingItem[];
+    const grouped: Record<number, ShoppingItem[]> = { 1: [], 2: [], 3: [] };
     items.forEach(item => {
       if (grouped[item.trimester]) grouped[item.trimester].push(item);
     });
@@ -97,7 +143,7 @@ export const api = {
   },
 
   getCalculator: () => {
-    const items = shoppingItemsData as any[];
+    const items = shoppingItemsData as ShoppingItem[];
     const essentialItems = items.filter(i => i.is_essential);
     const essentialTotal = essentialItems.reduce((sum, i) => sum + (i.estimated_cost_pln || 0), 0);
     const fullTotal = items.reduce((sum, i) => sum + (i.estimated_cost_pln || 0), 0);
@@ -115,12 +161,12 @@ export const api = {
   getBirthPreparation: () => ({ stages: birthPrepData }),
   getBagChecklist: () => ({ items: bagChecklistData }),
 
-  // ---- Fourth trimester (lazy — loaded on first visit) ----
-  getFourthTrimester: () => ({ weeks: require('../data/fourth-trimester.json') }),
+  // ---- Fourth trimester (bundled) ----
+  getFourthTrimester: () => ({ weeks: fourthTrimesterData }),
 
   // ---- Action cards (bundled) ----
   getActionCardsDeck: () => ({ cards: actionCardsData }),
 
-  // ---- Dad module (lazy — loaded on first visit) ----
-  getDadModule: () => require('../data/dad-module.json'),
+  // ---- Dad module (bundled) ----
+  getDadModule: () => dadModuleData,
 };

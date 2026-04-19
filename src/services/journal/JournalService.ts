@@ -1,18 +1,43 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Crypto from 'expo-crypto';
-import type { JournalEntry, JournalState } from '../../types/journal.types';
+import { supabase } from '../../lib/supabase';
+import type { JournalEntry } from '../../types/journal.types';
 import { logError } from '../../utils/logError';
 
-const JOURNAL_KEY = '@journal_entries';
+// ---------- helpers ----------
+
+async function getUserId(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user?.id) throw new Error('Użytkownik niezalogowany');
+  return session.user.id;
+}
+
+function rowToEntry(row: Record<string, unknown>): JournalEntry {
+  return {
+    id: row.id as string,
+    type: row.type as JournalEntry['type'],
+    title: row.title as string,
+    date: row.date as string,
+    week: row.week as number | undefined,
+    notes: row.notes as string | undefined,
+    doctor: row.doctor as string | undefined,
+    location: row.location as string | undefined,
+    photos: row.photos as string[] | undefined,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
+
+// ---------- public API ----------
 
 export async function getAllEntries(): Promise<JournalEntry[]> {
   try {
-    const raw = await AsyncStorage.getItem(JOURNAL_KEY);
-    if (!raw) return [];
-    const state = JSON.parse(raw) as JournalState;
-    return [...state.entries].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+    const userId = await getUserId();
+    const { data, error } = await supabase
+      .from('journal_entries')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(row => rowToEntry(row as Record<string, unknown>));
   } catch (err: unknown) {
     logError('JournalService.getAllEntries', err);
     return [];
@@ -22,52 +47,74 @@ export async function getAllEntries(): Promise<JournalEntry[]> {
 export async function addEntry(
   entry: Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<JournalEntry> {
-  const entries = await getAllEntries();
-  const now = new Date().toISOString();
-  const newEntry: JournalEntry = {
-    ...entry,
-    id: Crypto.randomUUID(),
-    createdAt: now,
-    updatedAt: now,
-  };
-  entries.unshift(newEntry);
-  await saveEntries(entries);
-  return newEntry;
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('journal_entries')
+    .insert({
+      user_id: userId,
+      type: entry.type,
+      title: entry.title,
+      date: entry.date,
+      week: entry.week ?? null,
+      notes: entry.notes ?? null,
+      doctor: entry.doctor ?? null,
+      location: entry.location ?? null,
+      photos: entry.photos ?? [],
+    })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return rowToEntry(data as Record<string, unknown>);
 }
 
 export async function updateEntry(
   id: string,
   updates: Partial<Omit<JournalEntry, 'id' | 'createdAt'>>,
 ): Promise<JournalEntry | null> {
-  const entries = await getAllEntries();
-  const idx = entries.findIndex(e => e.id === id);
-  if (idx === -1) return null;
-  const updated: JournalEntry = {
-    ...entries[idx],
-    ...updates,
-    updatedAt: new Date().toISOString(),
+  const updateData: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
   };
-  entries[idx] = updated;
-  await saveEntries(entries);
-  return updated;
+  if (updates.type !== undefined) updateData.type = updates.type;
+  if (updates.title !== undefined) updateData.title = updates.title;
+  if (updates.date !== undefined) updateData.date = updates.date;
+  if (updates.week !== undefined) updateData.week = updates.week;
+  if (updates.notes !== undefined) updateData.notes = updates.notes;
+  if (updates.doctor !== undefined) updateData.doctor = updates.doctor;
+  if (updates.location !== undefined) updateData.location = updates.location;
+  if (updates.photos !== undefined) updateData.photos = updates.photos;
+
+  const { data, error } = await supabase
+    .from('journal_entries')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  return rowToEntry(data as Record<string, unknown>);
 }
 
 export async function deleteEntry(id: string): Promise<void> {
-  const entries = await getAllEntries();
-  const filtered = entries.filter(e => e.id !== id);
-  await saveEntries(filtered);
+  const { error } = await supabase
+    .from('journal_entries')
+    .delete()
+    .eq('id', id);
+  if (error) throw new Error(error.message);
 }
 
 export async function getEntriesForWeek(week: number): Promise<JournalEntry[]> {
-  const entries = await getAllEntries();
-  return entries.filter(e => e.week === week);
-}
-
-async function saveEntries(entries: JournalEntry[]): Promise<void> {
   try {
-    const state: JournalState = { entries, lastUpdated: new Date().toISOString() };
-    await AsyncStorage.setItem(JOURNAL_KEY, JSON.stringify(state));
+    const userId = await getUserId();
+    const { data, error } = await supabase
+      .from('journal_entries')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('week', week)
+      .order('date', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(row => rowToEntry(row as Record<string, unknown>));
   } catch (err: unknown) {
-    logError('JournalService.saveEntries', err);
+    logError('JournalService.getEntriesForWeek', err);
+    return [];
   }
 }

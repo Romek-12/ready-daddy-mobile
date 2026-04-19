@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logError } from '../utils/logError';
 
 /**
  * A hook that persists a boolean Record<string, boolean> to AsyncStorage.
@@ -19,21 +20,21 @@ export function usePersistedChecklist(storageKey: string) {
           setChecked(parsed);
         }
       })
-      .catch(() => { /* ignore */ });
+      .catch((e) => logError('usePersistedChecklist:load', e));
   }, [storageKey]);
 
   const toggleCheck = useCallback((key: string) => {
     setChecked(prev => {
       const next = { ...prev, [key]: !prev[key] };
       // Persist asynchronously
-      AsyncStorage.setItem(`checklist_${storageKey}`, JSON.stringify(next)).catch(() => {});
+      AsyncStorage.setItem(`checklist_${storageKey}`, JSON.stringify(next)).catch((e) => logError('usePersistedChecklist:persist', e));
       return next;
     });
   }, [storageKey]);
 
   const resetChecklist = useCallback(() => {
     setChecked({});
-    AsyncStorage.removeItem(`checklist_${storageKey}`).catch(() => {});
+    AsyncStorage.removeItem(`checklist_${storageKey}`).catch((e) => logError('usePersistedChecklist:persist', e));
   }, [storageKey]);
 
   return { checked, toggleCheck, resetChecklist };

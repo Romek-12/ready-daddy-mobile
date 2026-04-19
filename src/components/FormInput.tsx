@@ -45,7 +45,7 @@ export default function FormInput({ label, error, isPassword, secureTextEntry, .
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     group: { marginBottom: theme.spacing.lg },
-    label: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs, fontWeight: theme.fontWeight.medium as any },
+    label: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs, fontWeight: theme.fontWeight.medium },
     input: { backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.md, padding: theme.spacing.md, fontSize: theme.fontSize.md, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.cardBorder },
     passwordContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.cardBorder },
     passwordInput: { flex: 1, padding: theme.spacing.md, fontSize: theme.fontSize.md, color: theme.colors.text },

@@ -8,6 +8,7 @@ import Logo from '../components/Logo';
 import DateScrollPicker from '../components/DateScrollPicker';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
+import { PREGNANCY_DAYS } from '../constants';
 import Icon from '../components/Icon';
 import { registerSchema, type RegisterForm } from '../lib/validation';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -52,7 +53,7 @@ export default function RegisterScreen({ navigation }: Props) {
     let conceptionDate = data.conceptionDate;
     if (dateType === 'due') {
       const due = new Date(conceptionDate);
-      due.setDate(due.getDate() - 280);
+      due.setDate(due.getDate() - PREGNANCY_DAYS);
       conceptionDate = `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}-${String(due.getDate()).padStart(2, '0')}`;
     }
 
@@ -82,8 +83,8 @@ export default function RegisterScreen({ navigation }: Props) {
         data.babyName1?.trim() || undefined,
         data.babyName2?.trim() || undefined
       );
-    } catch (err: any) {
-      showAlert('Błąd rejestracji', err.message || 'Spróbuj ponownie');
+    } catch (err: unknown) {
+      showAlert('Błąd rejestracji', err instanceof Error ? err.message : 'Spróbuj ponownie');
     } finally {
       setLoading(false);
     }
