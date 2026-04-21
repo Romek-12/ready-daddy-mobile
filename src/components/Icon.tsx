@@ -76,6 +76,11 @@ const ICON_MAP: Record<string, IconDef> = {
   'sleep': { set: 'mci', name: 'sleep' },
   'do-not-touch': { set: 'mci', name: 'hand-back-left-off' },
 
+  // Size comparison modes
+  'size-fruit': { set: 'mi', name: 'apple' },
+  'size-animal': { set: 'mi', name: 'pets' },
+  'size-sweet': { set: 'mi', name: 'cookie' },
+
   // Misc
   'calendar-add': { set: 'mi', name: 'edit-calendar' },
   'schedule': { set: 'mi', name: 'schedule' },

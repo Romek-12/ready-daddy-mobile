@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { FETUS_IMAGES } from '../data/fetusImages';
 import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import { getSizeComparison } from '../utils/sizeComparison';
+import Icon from './Icon';
 import type { Theme } from '../theme';
 
 
@@ -60,10 +61,10 @@ interface Props {
   weekData?: { fetus_size_comparison?: string; fetus_size_comparison_animal?: string; fetus_size_comparison_sweet?: string };
 }
 
-const SIZE_MODES: { mode: SizeComparisonMode; label: string; emoji: string }[] = [
-  { mode: 'fruit',  label: 'Owoc',    emoji: '🍎' },
-  { mode: 'animal', label: 'Zwierzę', emoji: '🐾' },
-  { mode: 'sweet',  label: 'Słodycz', emoji: '🍬' },
+const SIZE_MODES: { mode: SizeComparisonMode; label: string; icon: string }[] = [
+  { mode: 'fruit',  label: 'Owoc',    icon: 'size-fruit' },
+  { mode: 'animal', label: 'Zwierzę', icon: 'size-animal' },
+  { mode: 'sweet',  label: 'Słodycz', icon: 'size-sweet' },
 ];
 
 export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimester = 1, weekData }: Props) {
@@ -126,7 +127,7 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
 
           {/* Mode toggle buttons */}
           <View style={s.modeRow}>
-            {SIZE_MODES.map(({ mode, emoji }) => {
+            {SIZE_MODES.map(({ mode, icon }) => {
               const isActive = sizeMode === mode;
               return (
                 <TouchableOpacity
@@ -137,7 +138,11 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
                   accessibilityRole="radio"
                   accessibilityState={{ checked: isActive }}
                 >
-                  <Text style={[s.modeBtnText, isActive && { color: theme.colors.black ?? '#000' }]}>{emoji}</Text>
+                  <Icon
+                    name={icon}
+                    size={18}
+                    color={isActive ? theme.colors.background : theme.colors.textSecondary}
+                  />
                 </TouchableOpacity>
               );
             })}
