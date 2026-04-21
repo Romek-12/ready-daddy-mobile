@@ -1,5 +1,8 @@
-/** Average pregnancy duration in days (40 weeks). Used to convert due date → conception date. */
+/** Pregnancy duration from LMP to due date (40 weeks). */
 export const PREGNANCY_DAYS = 280;
+
+/** Pregnancy duration from conception to due date (38 weeks). Used to convert due date → conception date. */
+export const CONCEPTION_DAYS = 266;
 
 /** Weeks added to conception-to-now diff to get gestational age (medical convention). */
 export const CONCEPTION_OFFSET_WEEKS = 2;

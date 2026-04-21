@@ -12,7 +12,7 @@ import { api } from '../services/api';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
-import { PREGNANCY_DAYS } from '../constants';
+import { CONCEPTION_DAYS } from '../constants';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 
@@ -42,15 +42,18 @@ export default function SettingsScreen({ navigation }: Props) {
   };
 
   const handleSaveDate = async () => {
+    if (!user) return;
     try {
       setSaving(true);
       let conceptionDate = selectedDate;
       if (dateType === 'due' && selectedDate) {
-        const due = new Date(selectedDate);
-        due.setDate(due.getDate() - PREGNANCY_DAYS);
-        conceptionDate = `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}-${String(due.getDate()).padStart(2, '0')}`;
+        // Use UTC arithmetic to avoid DST ±1 day shift
+        const dueMs = new Date(selectedDate).getTime();
+        const conceptionMs = dueMs - CONCEPTION_DAYS * 24 * 60 * 60 * 1000;
+        const due = new Date(conceptionMs);
+        conceptionDate = `${due.getUTCFullYear()}-${String(due.getUTCMonth() + 1).padStart(2, '0')}-${String(due.getUTCDate()).padStart(2, '0')}`;
       }
-      await api.updateProfile(user!.id, { conceptionDate });
+      await api.updateProfile(user.id, { conceptionDate });
       updateUser({ conceptionDate });
       setDatePickerVisible(false);
       Alert.alert('Sukces', 'Data została zaktualizowana.');
@@ -62,6 +65,7 @@ export default function SettingsScreen({ navigation }: Props) {
   };
 
   const handleSaveBabyName = async () => {
+    if (!user) return;
     if (!editingBabyName.trim() && babyNameEditModal === 'name1') {
       Alert.alert('Błąd', 'Imię dziecka nie może być puste');
       return;
@@ -73,7 +77,7 @@ export default function SettingsScreen({ navigation }: Props) {
         ? { babyName1: editingBabyName.trim() || null }
         : { babyName2: editingBabyName.trim() || null };
 
-      await api.updateProfile(user!.id, updateData);
+      await api.updateProfile(user.id, updateData);
       updateUser(updateData);
       setBabyNameEditModal(null);
       setEditingBabyName('');
@@ -86,29 +90,32 @@ export default function SettingsScreen({ navigation }: Props) {
   };
 
   const handleSetGender = async (gender: 'boy' | 'girl') => {
+    if (!user) return;
+    // Capture names before the async gap to avoid stale closure
+    const { id: userId, babyName1, babyName2 } = user;
     try {
       setSaving(true);
-      await api.updateProfile(user!.id, { babyGender: gender });
+      await api.updateProfile(userId, { babyGender: gender });
       updateUser({ babyGender: gender });
 
       // If 2 names exist, ask which to keep
-      if (user?.babyName1 && user?.babyName2) {
+      if (babyName1 && babyName2) {
         Alert.alert(
           'Wybierz imię',
           'Które imię chcesz zachować?',
           [
-            { text: user.babyName1, onPress: async () => {
+            { text: babyName1, onPress: async () => {
               try {
-                await api.updateProfile(user.id, { babyName1: user.babyName1, babyName2: null });
+                await api.updateProfile(userId, { babyName2: null });
                 updateUser({ babyName2: null });
               } catch (err: unknown) {
                 Alert.alert('Błąd', err instanceof Error ? err.message : 'Wystąpił błąd');
               }
             }},
-            { text: user.babyName2, onPress: async () => {
+            { text: babyName2, onPress: async () => {
               try {
-                await api.updateProfile(user.id, { babyName1: user.babyName2, babyName2: null });
-                updateUser({ babyName1: user.babyName2, babyName2: null });
+                await api.updateProfile(userId, { babyName1: babyName2, babyName2: null });
+                updateUser({ babyName1: babyName2, babyName2: null });
               } catch (err: unknown) {
                 Alert.alert('Błąd', err instanceof Error ? err.message : 'Wystąpił błąd');
               }
@@ -130,9 +137,10 @@ export default function SettingsScreen({ navigation }: Props) {
       [
         { text: 'Anuluj', style: 'cancel' },
         { text: 'Zmień', style: 'destructive', onPress: async () => {
+          if (!user) return;
           try {
             setSaving(true);
-            await api.updateProfile(user!.id, { babyGender: null });
+            await api.updateProfile(user.id, { babyGender: null });
             updateUser({ babyGender: null });
           } catch (err: unknown) {
             Alert.alert('Błąd', err instanceof Error ? err.message : 'Wystąpił błąd');
