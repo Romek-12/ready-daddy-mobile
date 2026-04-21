@@ -3,6 +3,7 @@ import React, {
   useContext,
   useState,
   useCallback,
+  useEffect,
   useRef,
   ReactNode,
 } from 'react';
@@ -19,6 +20,13 @@ export function BadgeProvider({ children }: { children: ReactNode }) {
   const [queue, setQueue] = useState<string[]>([]);
   const [currentUnlock, setCurrentUnlock] = useState<string | null>(null);
   const processingRef = useRef(false);
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+    };
+  }, []);
 
   const processQueue = useCallback((q: string[]) => {
     if (processingRef.current || q.length === 0) return;
@@ -43,7 +51,7 @@ export function BadgeProvider({ children }: { children: ReactNode }) {
     setQueue(prev => {
       const remaining = prev.slice(1);
       if (remaining.length > 0) {
-        setTimeout(() => {
+        dismissTimerRef.current = setTimeout(() => {
           processingRef.current = true;
           setCurrentUnlock(remaining[0]);
         }, 300);

@@ -15,8 +15,12 @@ function parseDate(value: string): Date {
     const year = Number(parts[0]);
     const month = Number(parts[1]);
     const day = Number(parts[2]);
-    if (year && month && day) {
-      return new Date(year, month - 1, day);
+    if (year && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      const d = new Date(year, month - 1, day);
+      // Verify no overflow (e.g. Feb 30 → Mar 2)
+      if (d.getMonth() === month - 1 && d.getDate() === day) {
+        return d;
+      }
     }
   }
   return new Date();

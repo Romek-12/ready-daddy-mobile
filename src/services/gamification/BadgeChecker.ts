@@ -12,16 +12,19 @@ export async function checkWeekBadges(
 ): Promise<string[]> {
   const newBadges: string[] = [];
 
-  const weekMap: Record<number, string> = {
-    [BADGE_T1_WEEK]: 'first_trimester',
-    [BADGE_T2_WEEK]: 'second_trimester',
-    [BADGE_T3_WEEK]: 'third_trimester',
-  };
+  // Use >= so users who install mid-pregnancy still earn earlier milestones.
+  // awardBadge is idempotent — safe to call multiple times for the same badge.
+  const milestones: [number, string][] = [
+    [BADGE_T1_WEEK, 'first_trimester'],
+    [BADGE_T2_WEEK, 'second_trimester'],
+    [BADGE_T3_WEEK, 'third_trimester'],
+  ];
 
-  const badgeId = weekMap[currentWeek];
-  if (badgeId) {
-    const isNew = await awardBadge(userId, badgeId);
-    if (isNew) newBadges.push(badgeId);
+  for (const [week, badgeId] of milestones) {
+    if (currentWeek >= week) {
+      const isNew = await awardBadge(userId, badgeId);
+      if (isNew) newBadges.push(badgeId);
+    }
   }
 
   return newBadges;

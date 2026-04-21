@@ -163,9 +163,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUser = (data: Partial<User>) => {
     setUser(prev => {
       if (!prev) return null;
-      const updated = { ...prev, ...data };
-      // Keep cache in sync
-      AsyncStorage.getItem(PROFILE_CACHE_KEY).then(cached => {
+      return { ...prev, ...data };
+    });
+    // Sync cache outside setState to allow proper async/await
+    AsyncStorage.getItem(PROFILE_CACHE_KEY)
+      .then(async (cached) => {
         if (!cached) return;
         const profile: Profile = JSON.parse(cached);
         if (data.conceptionDate !== undefined) profile.conception_date = data.conceptionDate;
@@ -173,10 +175,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.babyName1 !== undefined) profile.baby_name_1 = data.babyName1;
         if (data.babyName2 !== undefined) profile.baby_name_2 = data.babyName2;
         if (data.babyGender !== undefined) profile.baby_gender = data.babyGender;
-        AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch((e) => logError('AuthContext:cacheUpdate', e));
-      }).catch((e) => logError('AuthContext:cacheRead', e));
-      return updated;
-    });
+        await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+      })
+      .catch((e) => logError('AuthContext:cacheUpdate', e));
   };
 
   const clearFirstLogin = () => setIsFirstLogin(false);

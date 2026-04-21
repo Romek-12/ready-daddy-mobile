@@ -4,7 +4,7 @@
 import { supabase } from '../lib/supabase';
 import { CONCEPTION_OFFSET_WEEKS, MAX_PREGNANCY_WEEK, TRIMESTER_BOUNDARIES } from '../constants';
 
-interface WeekData {
+export interface WeekData {
   week_number: number;
   trimester: number;
   fetus_size_mm: number;
@@ -23,21 +23,27 @@ interface WeekData {
   weekly_notification?: string;
 }
 
-interface ActionCard {
-  id: number;
+export interface ActionCard {
+  id: string;
+  weekRange: string;
+  emoji: string;
   title: string;
-  scenario: string;
+  herSide: string[];
+  do: string[];
+  dont: string[];
+  trimester: string;
   week_min: number;
   week_max: number;
-  reaction_steps: string;
-  why_it_works: string;
-  practical_tip: string;
-  icon?: string;
 }
 
-interface CheckupItem {
+export interface CheckupItem {
+  id: number;
   week_number: number;
-  [key: string]: unknown;
+  name: string;
+  description: string;
+  what_it_means?: string;
+  questions_to_ask?: string;
+  is_mandatory?: number;
 }
 
 interface ShoppingItem {
@@ -58,6 +64,23 @@ import birthPrepData from '../data/birth-preparation.json';
 import bagChecklistData from '../data/bag-checklist.json';
 import fourthTrimesterData from '../data/fourth-trimester.json';
 import dadModuleData from '../data/dad-module.json';
+
+// ---------------------------------------------------------------------------
+// Helper: parse "Tygodnie 4–12" / "Tygodnie 4-12" / "Tydzień 8" → [min, max]
+// ---------------------------------------------------------------------------
+function parseWeekRange(weekRange: string): { week_min: number; week_max: number } {
+  const nums = weekRange.match(/\d+/g);
+  if (!nums || nums.length === 0) return { week_min: 1, week_max: MAX_PREGNANCY_WEEK };
+  const a = parseInt(nums[0], 10);
+  const b = nums.length > 1 ? parseInt(nums[1], 10) : a;
+  return { week_min: Math.min(a, b), week_max: Math.max(a, b) };
+}
+
+// Hydrate action cards once at module load with computed numeric week range.
+const actionCards: ActionCard[] = (actionCardsData as Omit<ActionCard, 'week_min' | 'week_max'>[]).map(c => ({
+  ...c,
+  ...parseWeekRange(c.weekRange),
+}));
 
 // ---------------------------------------------------------------------------
 // Helper: calculate current pregnancy week from conception date
@@ -95,10 +118,10 @@ export const api = {
   getCurrentWeek: (conceptionDate: string) => {
     const currentWeek = getCurrentWeek(conceptionDate);
     const weekData = (weeksData as WeekData[]).find(w => w.week_number === currentWeek) || null;
-    const cards = (actionCardsData as ActionCard[]).filter(
+    const cards = actionCards.filter(
       c => c.week_min <= currentWeek && c.week_max >= currentWeek
     );
-    const totalWeeks = 42;
+    const totalWeeks = MAX_PREGNANCY_WEEK;
     const progress = Math.round((currentWeek / totalWeeks) * 100);
     const trimester = weekData
       ? weekData.trimester
@@ -109,7 +132,7 @@ export const api = {
 
   getWeek: (weekNumber: number) => {
     const week = (weeksData as WeekData[]).find(w => w.week_number === weekNumber) || null;
-    const cards = (actionCardsData as ActionCard[]).filter(
+    const cards = actionCards.filter(
       c => c.week_min <= weekNumber && c.week_max >= weekNumber
     );
     const checks = (checkupsData as CheckupItem[]).filter(c => c.week_number === weekNumber);
@@ -144,7 +167,7 @@ export const api = {
 
   getCalculator: () => {
     const items = shoppingItemsData as ShoppingItem[];
-    const essentialItems = items.filter(i => i.is_essential);
+    const essentialItems = items.filter(i => i.is_essential === 1);
     const essentialTotal = essentialItems.reduce((sum, i) => sum + (i.estimated_cost_pln || 0), 0);
     const fullTotal = items.reduce((sum, i) => sum + (i.estimated_cost_pln || 0), 0);
     const monthlyCosts = { pieluchy: 200, mleko_lub_jedzenie: 150, kosmetyki: 80, ubranka: 100, lekarz: 100 };
@@ -165,7 +188,7 @@ export const api = {
   getFourthTrimester: () => ({ weeks: fourthTrimesterData }),
 
   // ---- Action cards (bundled) ----
-  getActionCardsDeck: () => ({ cards: actionCardsData }),
+  getActionCardsDeck: () => ({ cards: actionCards }),
 
   // ---- Dad module (bundled) ----
   getDadModule: () => dadModuleData,
