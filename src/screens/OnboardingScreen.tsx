@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../context/ThemeContext';
 import Icon from '../components/Icon';
 import type { Theme } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 const SLIDES = [
   {
@@ -114,6 +116,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const isLast = currentIndex === SLIDES.length - 1;
 
   return (
+    <AuroraBackground>
     <SafeAreaView style={s.container} edges={['top', 'bottom']}>
       {/* Skip button */}
       <TouchableOpacity style={s.skipBtn} onPress={handleFinish} accessibilityRole="button" accessibilityLabel="Pomiń onboarding">
@@ -143,12 +146,14 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
               {
                 backgroundColor: dotAnim[i].interpolate({
                   inputRange: [0, 1],
-                  outputRange: [theme.colors.textMuted, theme.colors.primary],
+                  outputRange: [theme.colors.cardBorderHi, theme.colors.primary],
                 }),
                 width: dotAnim[i].interpolate({
                   inputRange: [0, 1],
-                  outputRange: [8, 24],
+                  outputRange: [6, 20],
                 }),
+                height: 6,
+                borderRadius: 3,
               },
             ]}
           />
@@ -157,23 +162,31 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
       {/* Next / Get started button */}
       <TouchableOpacity
-        style={[s.nextBtn, { backgroundColor: theme.colors.primary }]}
         onPress={handleNext}
         accessibilityRole="button"
         accessibilityLabel={isLast ? 'Zaczynamy!' : 'Dalej'}
+        style={s.nextBtnWrap}
       >
-        <Text style={s.nextText}>{isLast ? 'Zaczynamy! 🚀' : 'Dalej'}</Text>
-        {!isLast && <Icon name="arrow-forward" size={20} color={theme.colors.black} />}
+        <LinearGradient
+          colors={[theme.colors.primary, theme.colors.violet]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={s.nextBtn}
+        >
+          <Text style={s.nextText}>{isLast ? 'Zaczynamy! 🚀' : 'Dalej'}</Text>
+          {!isLast && <Icon name="arrow-forward" size={20} color={theme.colors.black} />}
+        </LinearGradient>
       </TouchableOpacity>
 
       {/* Step counter */}
       <Text style={s.counter}>{currentIndex + 1} / {SLIDES.length}</Text>
     </SafeAreaView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, width: number) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background, alignItems: 'center' },
+  container: { flex: 1, backgroundColor: 'transparent', alignItems: 'center' },
   skipBtn: { alignSelf: 'flex-end', padding: theme.spacing.lg },
   skipText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontWeight: theme.fontWeight.medium },
 
@@ -211,14 +224,18 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   dots: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: theme.spacing.xl },
   dot: { height: 8, borderRadius: 4, backgroundColor: theme.colors.textMuted },
 
+  nextBtnWrap: {
+    marginTop: theme.spacing.xl,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
   nextBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: theme.spacing.xl,
-    paddingHorizontal: theme.spacing.xxl,
-    paddingVertical: theme.spacing.md + 4,
-    borderRadius: theme.borderRadius.xl,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    borderRadius: 14,
     minWidth: 180,
     justifyContent: 'center',
   },

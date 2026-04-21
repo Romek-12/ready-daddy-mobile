@@ -107,7 +107,8 @@ function MainTabs() {
       screenOptions={{
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
-          borderTopWidth: 0,
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.cardBorder,
           elevation: 0,
           height: TAB_BAR_HEIGHT,
           paddingBottom: 8,

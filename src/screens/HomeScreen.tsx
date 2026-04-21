@@ -13,8 +13,9 @@ import type { AppNavigation } from '../types/navigation';
 import BadgesWidget from '../components/gamification/BadgesWidget';
 import { checkWeekBadges } from '../services/gamification/BadgeChecker';
 import { useBadgeContext } from '../context/BadgeContext';
-
-interface ActionCardSummary { id: string; title: string; scenario: string; }
+import type { ActionCard } from '../services/api';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GlowPill from '../components/ui/GlowPill';
 
 export default function HomeScreen({ navigation }: { navigation: AppNavigation }) {
   const { theme } = useTheme();
@@ -85,13 +86,9 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
 
   const w = data?.weekData;
   const progress = data?.progress || 0;
-  const trimesterColor = data?.trimester === 1
-    ? theme.colors.primary
-    : data?.trimester === 2
-    ? theme.colors.accent
-    : theme.colors.fourthTrimester;
 
   return (
+    <AuroraBackground>
     <ScrollView
       style={s.c}
       refreshControl={
@@ -118,6 +115,9 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
 
       {w && (
         <TouchableOpacity style={s.weekCard} onPress={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })} accessibilityRole="button" accessibilityLabel={`Tydzień ${data.currentWeek} – sprawdź szczegóły`}>
+          <View style={{ marginBottom: theme.spacing.sm }}>
+            <GlowPill label={`${data.trimester}. trymestr`} variant={data.trimester === 2 ? 'violet' : 'cyan'} />
+          </View>
           <Text style={s.weekNumber}>{data.currentWeek}. tydzień</Text>
           <FetusVisualizerCompact
             week={data.currentWeek}
@@ -149,12 +149,15 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
             <Icon name="bolt" size={20} color={theme.colors.accent} />
             <Text style={s.sectionTitle}> Co dzieje się teraz?</Text>
           </View>
-          {data?.actionCards.slice(0, 2).map((card: ActionCardSummary, index: number) => (
-            <TouchableOpacity key={card.id} style={s.quickCard} onPress={() => navigation.navigate('ActionCards', { initialCardId: card.id })} accessibilityRole="button" accessibilityLabel={`Karta reakcji: ${card.title}`}>
-              <Text style={s.quickTitle}>{card.title}</Text>
-              <Text style={s.quickScenario}>{card.scenario?.substring(0, 80)}...</Text>
-            </TouchableOpacity>
-          ))}
+          {data?.actionCards.slice(0, 2).map((card: ActionCard) => {
+            const preview = card.herSide?.[0] ?? '';
+            return (
+              <TouchableOpacity key={card.id} style={s.quickCard} onPress={() => navigation.navigate('ActionCards', { initialCardId: card.id })} accessibilityRole="button" accessibilityLabel={`Karta reakcji: ${card.title}`}>
+                <Text style={s.quickTitle}>{card.emoji} {card.title}</Text>
+                <Text style={s.quickScenario}>{preview.length > 80 ? preview.substring(0, 80) + '…' : preview}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       )}
 
@@ -189,11 +192,12 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
       </TouchableOpacity>
       <View style={{ height: 20 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   center: { justifyContent: 'center', alignItems: 'center' },
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
   retryBtn: { marginTop: theme.spacing.lg, paddingHorizontal: theme.spacing.xl, paddingVertical: theme.spacing.md, backgroundColor: theme.colors.primary, borderRadius: theme.borderRadius.full },
@@ -203,7 +207,7 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   greeting: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
   appName: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, color: theme.colors.primary, letterSpacing: 1 },
   settingsBtn: { padding: theme.spacing.sm },
-  weekCard: { margin: theme.spacing.lg, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, elevation: 2 },
+  weekCard: { margin: theme.spacing.lg, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, overflow: 'hidden' },
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text },
   notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1 },
   notifHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 8 },
@@ -212,11 +216,11 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   section: { paddingHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },
   sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
-  quickCard: { backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, marginBottom: theme.spacing.sm },
+  quickCard: { backgroundColor: theme.colors.surfaceHi, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, marginBottom: theme.spacing.sm },
   quickTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.accent },
   quickScenario: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 4 },
   moduleGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.lg },
-  moduleCard: { width: CARD_W, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, alignItems: 'center', elevation: 1 },
+  moduleCard: { width: CARD_W, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, alignItems: 'center' },
   moduleIcon: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.sm },
   moduleLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, textAlign: 'center', fontWeight: theme.fontWeight.medium },
   settingsFooter: {
