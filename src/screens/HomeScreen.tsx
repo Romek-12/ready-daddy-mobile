@@ -209,7 +209,7 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   settingsBtn: { padding: theme.spacing.sm },
   weekCard: { margin: theme.spacing.lg, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, overflow: 'hidden' },
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 800', color: theme.colors.text },
-  notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1 },
+  notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1, borderLeftWidth: 2, borderLeftColor: theme.colors.primary },
   notifHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 8 },
   notifTitle: { fontSize: theme.fontSize.md, fontFamily: theme.fonts.bold, color: theme.colors.text },
   notifText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 20 },
