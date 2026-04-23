@@ -9,6 +9,7 @@ import FetusVisualizer from '../components/FetusVisualizer';
 import type { Theme } from '../theme';
 import type { ActionCard, CheckupItem } from '../services/api';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GlassCard from '../components/ui/GlassCard';
 
 type Props = { route?: { params?: { week?: number } } };
 
@@ -104,8 +105,8 @@ export default function WeekDetailScreen({ route }: Props) {
         </View>
       </View>
 
-      {/* Fetus visualizer */}
-      <View style={s.visualizerCard}>
+      {/* Fetus visualizer hero */}
+      <GlassCard elevated style={s.heroCard}>
         <FetusVisualizer
           week={selectedWeek}
           sizeMm={w?.fetus_size_mm ?? 0}
@@ -113,7 +114,7 @@ export default function WeekDetailScreen({ route }: Props) {
           trimester={w?.trimester ?? 1}
           weekData={w ?? undefined}
         />
-      </View>
+      </GlassCard>
 
       {/* Content cards */}
       {w ? (
@@ -245,6 +246,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.cardBorder,
     borderRadius: theme.borderRadius.xl,
+    overflow: 'hidden',
+  },
+  heroCard: {
+    padding: theme.spacing.md,
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.md,
     overflow: 'hidden',
   },
   card: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl },
