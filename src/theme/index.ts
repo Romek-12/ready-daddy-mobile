@@ -32,7 +32,7 @@ const sharedTheme = {
     lg: 17,
     xl: 22,
     xxl: 28,
-    hero: 34,
+    hero: 36,
   },
   fontWeight: {
     regular: '400' as const,
@@ -57,6 +57,9 @@ const darkColors = {
   primaryLight: 'rgba(77,217,192,0.22)',
   violet: '#9B7FD4',
   violetSoft: 'rgba(155,127,212,0.22)',
+  primaryGlow: 'rgba(77,217,192,0.55)',
+  violetGlow: 'rgba(155,127,212,0.55)',
+  surfaceBase: '#0E1A17',
   accent: '#FFB547',
   accentLight: 'rgba(255,181,71,0.20)',
 
@@ -104,6 +107,9 @@ const lightColors = {
   primaryLight: 'rgba(26,158,138,0.18)',
   violet: '#7B5EA7',
   violetSoft: 'rgba(123,94,167,0.18)',
+  primaryGlow: 'rgba(26,158,138,0.45)',
+  violetGlow: 'rgba(123,94,167,0.45)',
+  surfaceBase: '#E4ECE9',
   accent: '#D97706',
   accentLight: 'rgba(217,119,6,0.18)',
 
