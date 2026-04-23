@@ -98,13 +98,13 @@ const createStyles = (theme: Theme, topInset: number) =>
     },
     headerTitle: {
       fontSize: theme.fontSize.lg,
-      fontWeight: theme.fontWeight.bold,
+      fontFamily: theme.fonts.bold,
       color: theme.colors.text,
     },
     backBtn: { padding: theme.spacing.sm, width: 40 },
     counter: {
       fontSize: theme.fontSize.md,
-      fontWeight: theme.fontWeight.bold,
+      fontFamily: theme.fonts.bold,
       color: theme.colors.primary,
       width: 40,
       textAlign: 'right',
@@ -139,7 +139,7 @@ const createStyles = (theme: Theme, topInset: number) =>
     section: { marginBottom: theme.spacing.xl },
     sectionTitle: {
       fontSize: theme.fontSize.md,
-      fontWeight: theme.fontWeight.bold,
+      fontFamily: theme.fonts.bold,
       color: theme.colors.text,
       marginBottom: theme.spacing.md,
     },

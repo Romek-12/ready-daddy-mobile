@@ -1,9 +1,13 @@
 const sharedTheme = {
   fonts: {
     title: 'ClimateCrisis',
-    body: 'ClimateCrisis',
-    mono: 'ClimateCrisis',
     display: 'ClimateCrisis',
+    body: 'SpaceGrotesk_400Regular',
+    medium: 'SpaceGrotesk_500Medium',
+    semibold: 'SpaceGrotesk_600SemiBold',
+    bold: 'SpaceGrotesk_700Bold',
+    light: 'SpaceGrotesk_300Light',
+    mono: 'SpaceGrotesk_500Medium',
   },
   spacing: {
     xs: 4,

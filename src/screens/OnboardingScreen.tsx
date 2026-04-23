@@ -188,7 +188,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent', alignItems: 'center' },
   skipBtn: { alignSelf: 'flex-end', padding: theme.spacing.lg },
-  skipText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontWeight: theme.fontWeight.medium },
+  skipText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontFamily: theme.fonts.medium },
 
   flatList: { flexGrow: 0 },
   slide: {
@@ -210,6 +210,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   slideTitle: {
     fontSize: theme.fontSize.xxl,
     fontFamily: theme.fonts.title,
+    fontVariationSettings: '"wght" 800',
     color: theme.colors.text,
     textAlign: 'center',
     marginBottom: theme.spacing.lg,
@@ -239,6 +240,6 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
     minWidth: 180,
     justifyContent: 'center',
   },
-  nextText: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.black },
+  nextText: { fontSize: theme.fontSize.lg, fontFamily: theme.fonts.bold, color: theme.colors.black },
   counter: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: theme.spacing.lg, marginBottom: theme.spacing.sm },
 });

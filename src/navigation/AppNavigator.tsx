@@ -116,7 +116,7 @@ function MainTabs() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarShowLabel: true,
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 2 },
+        tabBarLabelStyle: { fontSize: 10, fontFamily: theme.fonts.semibold, marginTop: 2 },
         headerShown: false,
         tabBarItemStyle: { justifyContent: 'center' },
         lazy: true,

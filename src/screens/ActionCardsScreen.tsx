@@ -194,7 +194,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: theme.colors.background },
   center: { justifyContent: 'center', alignItems: 'center' },
   header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
-  headerTitle: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.accent, marginTop: theme.spacing.sm },
+  headerTitle: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 800', color: theme.colors.accent, marginTop: theme.spacing.sm },
   headerSub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
 
