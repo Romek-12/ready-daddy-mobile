@@ -1,5 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { useTheme } from '../context/ThemeContext';
 import { FETUS_IMAGES } from '../data/fetusImages';
 import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
@@ -72,6 +79,19 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
   const s = React.useMemo(() => createStyles(theme), [theme]);
   const [sizeMode, setSizeMode] = useSizeMode();
 
+  const scale = useSharedValue(1);
+  useEffect(() => {
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.06, { duration: 1800 }),
+        withTiming(1.0, { duration: 1800 })
+      ),
+      -1,
+      true
+    );
+  }, [scale]);
+  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
   const fetusImage = FETUS_IMAGES[Math.min(Math.max(week, 1), 40)];
   const fruit = WEEK_TO_FRUIT[week] ?? { emoji: '👶', name: '' };
   const progress = Math.min(Math.max(Math.round(((week - 4) / 36) * 100), 2), 100);
@@ -104,7 +124,9 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
       {/* Fetus image + metrics */}
       <View style={s.row}>
         <View style={s.svgBox}>
-          <Image source={fetusImage} style={{ width: 155, height: 175 }} resizeMode="contain" />
+          <Animated.View style={pulseStyle}>
+            <Image source={fetusImage} style={{ width: 155, height: 175 }} resizeMode="contain" />
+          </Animated.View>
         </View>
 
         <View style={s.metrics}>
