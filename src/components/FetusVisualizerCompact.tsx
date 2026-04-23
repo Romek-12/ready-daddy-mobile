@@ -36,7 +36,7 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
     <View style={s.row}>
       {/* Fetus image thumbnail */}
       <View style={s.svgBox}>
-        <Image source={fetusImage} style={{ width: 68, height: 78 }} resizeMode="contain" />
+        <Image source={fetusImage} style={{ width: 58, height: 68 }} resizeMode="contain" />
       </View>
 
       {/* Metrics */}
@@ -90,8 +90,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginVertical: theme.spacing.sm,
   },
   svgBox: {
-    width: 80,
-    height: 90,
+    width: 72,
+    height: 82,
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.lg,
     justifyContent: 'center',
