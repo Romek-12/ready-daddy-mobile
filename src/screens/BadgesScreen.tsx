@@ -13,6 +13,8 @@ import { useTheme } from '../context/ThemeContext';
 import { useBadges } from '../hooks/useBadges';
 import BadgeCard from '../components/gamification/BadgeCard';
 import Icon from '../components/Icon';
+import GlassCard from '../components/ui/GlassCard';
+import GlowPill from '../components/ui/GlowPill';
 import { BADGE_DEFINITIONS } from '../data/badges-definitions';
 import type { Theme } from '../theme';
 import type { BadgeCategory } from '../types/badges.types';
@@ -60,6 +62,11 @@ export default function BadgesScreen({ navigation }: Props) {
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
+          <GlassCard elevated style={s.levelHero}>
+            <View style={s.levelBlob} pointerEvents="none" />
+            <GlowPill variant="violet" label={`Poziom ${Math.floor(earnedCount / 3) + 1}`} />
+            <Text style={s.levelText}>{earnedCount} z {totalCount} odznak odblokowanych</Text>
+          </GlassCard>
           {CATEGORIES.map(cat => {
             const defs = BADGE_DEFINITIONS.filter(b => b.category === cat.key);
             return (
@@ -147,5 +154,27 @@ const createStyles = (theme: Theme, topInset: number) =>
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: theme.spacing.sm,
+    },
+    levelHero: {
+      padding: theme.spacing.lg,
+      marginBottom: theme.spacing.lg,
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    levelBlob: {
+      position: 'absolute',
+      width: 220,
+      height: 220,
+      borderRadius: 110,
+      top: -80,
+      right: -60,
+      backgroundColor: theme.colors.violetSoft,
+      opacity: 0.6,
+    },
+    levelText: {
+      marginTop: theme.spacing.sm,
+      fontSize: theme.fontSize.sm,
+      color: theme.colors.textSecondary,
+      fontFamily: theme.fonts.body,
     },
   });
