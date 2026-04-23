@@ -52,8 +52,9 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
 
   const renderCard = (card: ReactionCard, index: number) => {
     if (!card) return null;
+    const accentColor = index % 2 === 0 ? theme.colors.primary : theme.colors.violet;
     return (
-      <View style={s.card}>
+      <View style={[s.card, { borderLeftWidth: 3, borderLeftColor: accentColor }]}>
         <View style={s.cardHeader}>
           <Text style={s.cardWeek}>{card.weekRange}</Text>
           <Text style={s.cardEmoji}>{card.emoji}</Text>
@@ -210,7 +211,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
 
   card: { flex: 1, backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.xl, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 8, borderWidth: 1, borderColor: theme.colors.cardBorder, overflow: 'hidden' },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  cardWeek: { fontSize: 13, fontWeight: '600', color: theme.colors.actionCards },
+  cardWeek: { fontSize: 10, fontFamily: 'SpaceGrotesk_600SemiBold', color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
   cardEmoji: { fontSize: 32 },
   cardTitle: { fontSize: 22, fontWeight: '700', color: theme.colors.text, marginBottom: 12 },
   cardScroll: { flex: 1 },
