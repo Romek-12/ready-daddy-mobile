@@ -6,10 +6,13 @@ interface GlassCardProps {
   children: React.ReactNode;
   style?: ViewStyle | ViewStyle[];
   elevated?: boolean;
+  accent?: 'cyan' | 'violet';
 }
 
-export default function GlassCard({ children, style, elevated = false }: GlassCardProps) {
+export default function GlassCard({ children, style, elevated = false, accent }: GlassCardProps) {
   const { theme } = useTheme();
+  const accentColor =
+    accent === 'cyan' ? theme.colors.primary : accent === 'violet' ? theme.colors.violet : undefined;
   return (
     <View
       style={[
@@ -19,6 +22,7 @@ export default function GlassCard({ children, style, elevated = false }: GlassCa
           borderColor: elevated ? theme.colors.cardBorderHi : theme.colors.cardBorder,
           borderRadius: theme.borderRadius.xl,
         },
+        accentColor && { borderLeftWidth: 3, borderLeftColor: accentColor },
         style,
       ]}
     >
