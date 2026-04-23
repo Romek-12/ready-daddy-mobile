@@ -7,6 +7,7 @@ import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
 import { useCheckupVisits } from '../hooks/useAppData';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
+import GlassCard from '../components/ui/GlassCard';
 
 interface CheckItem {
   id: number;
@@ -133,13 +134,13 @@ export default function CheckupsScreen() {
       </View>
 
       {/* Progress card */}
-      <View style={s.progressCard}>
+      <GlassCard accent="cyan" elevated style={s.progressCard}>
         <Text style={s.progressLabel}>Postęp badań</Text>
         <View style={s.progressRight}>
           <Text style={s.progressCount}>{totalChecked}/{totalItems}</Text>
           <Text style={s.progressCheckLabel}>odfajkowane zadania</Text>
         </View>
-      </View>
+      </GlassCard>
 
       {visits.map((visit, vIdx) => {
         const isExpanded = expanded === vIdx;
