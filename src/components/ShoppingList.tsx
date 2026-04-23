@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
+import NeonCheckbox from './ui/NeonCheckbox';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
@@ -337,9 +338,9 @@ export default function ShoppingList() {
                       const isChecked = checked[item.id] || false;
                       return (
                         <View key={item.id} style={[s.shopItem, isChecked && s.shopItemChecked]}>
-                          <TouchableOpacity style={s.checkBtn} onPress={() => toggleCheck(item.id)}>
-                            <Icon name={isChecked ? 'check-circle' : 'checkbox-blank'} size={22} color={isChecked ? theme.colors.primary : theme.colors.textMuted} />
-                          </TouchableOpacity>
+                          <View style={s.checkBtn}>
+                            <NeonCheckbox checked={isChecked} onPress={() => toggleCheck(item.id)} />
+                          </View>
                           <View style={s.shopInfo}>
                             <Text style={[s.shopName, isChecked && s.shopNameChecked]}>
                               {item.optional && <Text style={s.optional}>(opcja) </Text>}

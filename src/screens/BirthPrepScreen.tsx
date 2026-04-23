@@ -9,6 +9,9 @@ import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
+import NeonCheckbox from '../components/ui/NeonCheckbox';
+import GlassCard from '../components/ui/GlassCard';
+import ProgressRing from '../components/ui/ProgressRing';
 
 interface BagItem {
   name: string;
@@ -194,6 +197,7 @@ export default function BirthPrepScreen() {
     CHECKLIST.reduce((sum, p) => sum + p.categories.reduce((s, c) => s + c.items.length, 0), 0), []);
   const totalChecked = useMemo(() =>
     Object.values(checked).filter(Boolean).length, [checked]);
+  const percentPacked = totalItems ? Math.round((totalChecked / totalItems) * 100) : 0;
 
   const { user } = useAuth();
   const { queueBadgeUnlock } = useBadgeContext();
@@ -218,14 +222,16 @@ export default function BirthPrepScreen() {
         <Text style={s.title}>Misja: Porodówka</Text>
       </View>
 
-      {/* Progress */}
-      <View style={s.progressCard}>
-        <Text style={s.progressLabel}>Spakowane łupy</Text>
-        <View style={s.progressRight}>
-          <Text style={s.progressCount}>{totalChecked}/{totalItems}</Text>
-          <Text style={s.progressCheckLabel}>spakowanych rzeczy</Text>
+      {/* Progress hero */}
+      <GlassCard elevated style={s.progressHero}>
+        <ProgressRing value={percentPacked} size={80} stroke={7}>
+          <Text style={s.progressText}>{percentPacked}%</Text>
+        </ProgressRing>
+        <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
+          <Text style={s.progressTitle}>Torba na porodówkę</Text>
+          <Text style={s.progressSub}>{totalChecked} z {totalItems} spakowane</Text>
         </View>
-      </View>
+      </GlassCard>
 
       {CHECKLIST.map((person, pIdx) => {
         const isExpanded = expanded === pIdx;
@@ -268,11 +274,7 @@ export default function BirthPrepScreen() {
                       const isDone = checked[key] || false;
                       return (
                         <TouchableOpacity key={iIdx} style={[s.item, isDone && s.itemDone]} onPress={() => toggleCheck(key)} activeOpacity={0.7} accessibilityRole="checkbox" accessibilityLabel={item.name} accessibilityState={{ checked: isDone }}>
-                          <Icon
-                            name={isDone ? 'check-circle' : 'checkbox-blank'}
-                            size={22}
-                            color={isDone ? theme.colors.primary : theme.colors.textMuted}
-                          />
+                          <NeonCheckbox checked={isDone} onPress={() => toggleCheck(key)} />
                           <View style={s.itemInfo}>
                             <Text style={[s.itemName, isDone && s.itemNameDone]}>
                               {item.optional && <Text style={s.optional}>(opcja) </Text>}
@@ -322,6 +324,10 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
   progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.birth, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
+  progressHero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  progressText: { fontFamily: 'ClimateCrisis', fontSize: 16, color: theme.colors.text },
+  progressTitle: { fontFamily: 'SpaceGrotesk_700Bold', fontSize: theme.fontSize.lg, color: theme.colors.text },
+  progressSub: { fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
   progressLabel: { fontSize: theme.fontSize.lg, color: 'rgba(255,255,255,0.9)', fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   progressRight: { alignItems: 'flex-end' },
   progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },
