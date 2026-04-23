@@ -9,6 +9,8 @@ import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import Icon from '../components/Icon';
 import Logo from '../components/Logo';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -38,10 +40,11 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={s.inner}>
         <View style={s.iconWrap}><Logo width={120} height={120} color={theme.colors.primary} /></View>
-        <Text style={s.title}>Ready Daddy</Text>
+        <GradientText style={s.title}>Ready Daddy</GradientText>
         <Text style={s.subtitle}>Zaloguj się do swojego konta</Text>
 
         <Controller
@@ -92,11 +95,12 @@ export default function LoginScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flex: 1, justifyContent: 'center', padding: theme.spacing.xl },
   iconWrap: { alignItems: 'center', marginBottom: theme.spacing.md },
   title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.primary, textAlign: 'center', letterSpacing: 2 },

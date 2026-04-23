@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
 import DateScrollPicker from '../components/DateScrollPicker';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
@@ -91,13 +93,14 @@ export default function RegisterScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={s.inner} keyboardShouldPersistTaps="handled">
         <View style={s.logoWrap}>
           <Logo width={100} height={100} color={theme.colors.primary} />
         </View>
 
-        <Text style={s.title}>Dołącz do nas</Text>
+        <GradientText style={s.title}>Dołącz do nas</GradientText>
         <Text style={s.subtitle}>Hej Papa · Tata W Akcji</Text>
 
         {/* Email */}
@@ -248,13 +251,14 @@ export default function RegisterScreen({ navigation }: Props) {
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: 'transparent',
   },
   inner: {
     paddingHorizontal: theme.spacing.lg,

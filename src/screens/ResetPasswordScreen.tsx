@@ -13,6 +13,8 @@ import { resetPasswordSchema } from '../lib/validation';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import Icon from '../components/Icon';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -54,6 +56,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <SafeAreaView style={s.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={s.inner} keyboardShouldPersistTaps="handled">
@@ -64,7 +67,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
           <View style={s.iconWrap}>
             <Icon name="lock-open" size={56} color={theme.colors.primary} />
           </View>
-          <Text style={s.title}>Nowe hasło</Text>
+          <GradientText style={s.title}>Nowe hasło</GradientText>
           <Text style={s.subtitle}>Ustaw nowe hasło dla swojego konta.</Text>
 
           {/* Token field (hidden/pre-filled when arriving via deep link) */}
@@ -136,11 +139,12 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flexGrow: 1, padding: theme.spacing.xl, paddingTop: theme.spacing.md },
   backBtn: { marginBottom: theme.spacing.xl },
   iconWrap: { alignItems: 'center', marginBottom: theme.spacing.xl },

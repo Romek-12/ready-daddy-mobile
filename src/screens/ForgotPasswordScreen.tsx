@@ -13,6 +13,9 @@ import { forgotPasswordSchema } from '../lib/validation';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import Icon from '../components/Icon';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import GlassCard from '../components/ui/GlassCard';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -49,6 +52,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <SafeAreaView style={s.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={s.inner} keyboardShouldPersistTaps="handled">
@@ -57,10 +61,10 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
             <Icon name="arrow-back" size={24} color={theme.colors.text} />
           </TouchableOpacity>
 
-          <View style={s.iconWrap}>
-            <Icon name="lock-reset" size={56} color={theme.colors.primary} />
-          </View>
-          <Text style={s.title}>Zapomniane hasło?</Text>
+          <GlassCard elevated style={s.iconCard}>
+            <Icon name="lock" size={40} color={theme.colors.primary} />
+          </GlassCard>
+          <GradientText style={s.title}>Zapomniane hasło?</GradientText>
           <Text style={s.subtitle}>Wpisz swój email. Wyślemy Ci link do resetu hasła.</Text>
 
           <View style={s.inputGroup}>
@@ -98,14 +102,16 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flexGrow: 1, padding: theme.spacing.xl, paddingTop: theme.spacing.md },
   backBtn: { marginBottom: theme.spacing.xl },
   iconWrap: { alignItems: 'center', marginBottom: theme.spacing.xl },
+  iconCard: { alignSelf: 'center', padding: theme.spacing.lg, marginBottom: theme.spacing.xl },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, textAlign: 'center' },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, textAlign: 'center', marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   inputGroup: { marginBottom: theme.spacing.xl },
