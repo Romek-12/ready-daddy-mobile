@@ -144,9 +144,27 @@ export default function PostBirthScreen() {
         const isExpanded = expanded === idx;
         const key = getTaskKey(idx);
         const isDone = checked[key] || false;
+        const isLastTask = idx === TASKS.length - 1;
+        const nextDone = idx + 1 < TASKS.length ? (checked[getTaskKey(idx + 1)] || false) : false;
+        const state: 'done' | 'active' | 'future' = isDone ? 'done' : (idx === 0 || checked[getTaskKey(idx - 1)] ? 'active' : 'future');
 
         return (
-          <View key={idx} style={st.taskSection}>
+          <View key={idx} style={st.timelineWrap}>
+            <View style={st.stepCol}>
+              {state === 'done' ? (
+                <View style={[st.circleBase, { backgroundColor: theme.colors.primary }]}>
+                  <Icon name="check" size={12} color={theme.colors.black} />
+                </View>
+              ) : state === 'active' ? (
+                <View style={[st.circleBase, st.circleActive]}>
+                  <View style={st.activeDot} />
+                </View>
+              ) : (
+                <View style={[st.circleBase, st.circleFuture]} />
+              )}
+              {!isLastTask ? <View style={[st.connector, nextDone && { backgroundColor: theme.colors.primary }]} /> : null}
+            </View>
+            <View style={st.taskSection}>
             <TouchableOpacity style={[st.taskHeader, isDone && st.taskHeaderDone]} onPress={() => toggle(idx)}>
               <TouchableOpacity onPress={() => toggleCheck(key)} style={st.checkBtn}>
                 <Icon
@@ -212,6 +230,7 @@ export default function PostBirthScreen() {
                 )}
               </View>
             )}
+            </View>
           </View>
         );
       })}
@@ -283,7 +302,8 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },
   progressCheckLabel: { fontSize: theme.fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 4, fontWeight: theme.fontWeight.medium },
 
-  taskSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
+  timelineWrap: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
+  taskSection: { flex: 1, marginLeft: theme.spacing.sm },
   taskHeader: { backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder, flexDirection: 'row', alignItems: 'center' },
   taskHeaderDone: { opacity: 0.5 },
   checkBtn: { marginRight: theme.spacing.sm },
