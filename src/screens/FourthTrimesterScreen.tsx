@@ -20,6 +20,12 @@ interface FourthTrimesterWeek {
   warning_signs?: string;
 }
 
+const WEEK_EMOJI: Record<number, string> = {
+  1: '👶', 2: '😴', 3: '🍼', 4: '👀',
+  5: '😊', 6: '🤱', 7: '✨', 8: '🎵',
+  9: '🌱', 10: '💪', 11: '🌈', 12: '🎉',
+};
+
 export default function FourthTrimesterScreen() {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -71,6 +77,7 @@ export default function FourthTrimesterScreen() {
           return (
             <View key={w.id} style={s.accordionWrap}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => toggle(idx)} style={[s.cardHeader, isExpanded && s.cardHeaderActive]}>
+                <Text style={s.weekEmoji}>{WEEK_EMOJI[w.week_after_birth] ?? '👶'}</Text>
                 <View style={s.headerLeft}>
                   <View style={s.weekBadge}>
                     <Text style={s.weekBadgeText}>Tydzień {w.week_after_birth}</Text>
@@ -126,7 +133,8 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   infoText: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, lineHeight: 24 },
   listContainer: { paddingHorizontal: theme.spacing.lg },
   accordionWrap: { marginBottom: theme.spacing.sm },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
+  weekEmoji: { fontSize: 28 },
   cardHeaderActive: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
   headerLeft: { flex: 1, paddingRight: theme.spacing.md },
   weekBadge: { backgroundColor: theme.colors.fourthTrimester, paddingHorizontal: 10, paddingVertical: 4, borderRadius: theme.borderRadius.full, alignSelf: 'flex-start', marginBottom: theme.spacing.xs },

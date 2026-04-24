@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { FETUS_IMAGES } from '../data/fetusImages';
 import { formatSize, formatWeight } from './FetusVisualizer';
+import GradientProgressBar from './ui/GradientProgressBar';
 import type { SizeComparisonMode } from '../hooks/useSizeMode';
 import type { Theme } from '../theme';
 
@@ -58,9 +59,7 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
         {progress !== undefined ? (
           <>
             <View style={s.progressWrapper}>
-              <View style={s.progressBar}>
-                <View style={[s.progressFill, { width: `${Math.min(progress, 100)}%`, backgroundColor: trimesterColor }]} />
-              </View>
+              <GradientProgressBar value={Math.min(progress, 100)} height={6} glow />
               {progressLabel ? <Text style={s.progressLabel}>{progressLabel}</Text> : null}
             </View>
             {onDetails && (
