@@ -6,6 +6,8 @@ import { useFourthTrimester } from '../hooks/useAppData';
 import Icon from '../components/Icon';
 import { renderNumberedText } from '../utils/textFormatting';
 import type { Theme } from '../theme';
+import GlassCard from '../components/ui/GlassCard';
+import ProgressRing from '../components/ui/ProgressRing';
 
 interface FourthTrimesterWeek {
   id: number;
@@ -26,6 +28,8 @@ export default function FourthTrimesterScreen() {
   const weeks: FourthTrimesterWeek[] = data?.weeks ?? [];
 
   const [expanded, setExpanded] = useState<number | null>(null);
+  const currentWeek = 1;
+  const weekProgress = (currentWeek / 12) * 100;
 
   const toggle = (idx: number) => setExpanded(expanded === idx ? null : idx);
 
@@ -44,6 +48,16 @@ export default function FourthTrimesterScreen() {
         <Text style={s.title}>4. Trymestr</Text>
         <Text style={s.sub}>Pierwsze tygodnie dziecka i matki po porodzie</Text>
       </View>
+
+      <GlassCard elevated style={s.hero}>
+        <ProgressRing value={weekProgress} size={80} stroke={7}>
+          <Text style={s.ringText}>{currentWeek}</Text>
+        </ProgressRing>
+        <View style={{ flex: 1, marginLeft: 16 }}>
+          <Text style={s.heroTitle}>Tydzień {currentWeek} z 12</Text>
+          <Text style={s.heroSub}>Pierwsze miesiące po narodzinach</Text>
+        </View>
+      </GlassCard>
 
       <View style={s.infoCard}>
         <Text style={s.infoText}>
@@ -124,4 +138,9 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   sectionLabel: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },
   sectionText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 22 },
+
+  hero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  ringText: { fontFamily: 'ClimateCrisis', fontSize: 22, color: theme.colors.text },
+  heroTitle: { fontFamily: 'ClimateCrisis', fontSize: theme.fontSize.xl, color: theme.colors.text },
+  heroSub: { fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
 });
