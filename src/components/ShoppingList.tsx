@@ -411,11 +411,11 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.accent, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
-  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.accent, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
-  grandLabel: { fontSize: theme.fontSize.lg, color: 'rgba(0,0,0,0.8)', fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
+  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.accent + '40', borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
+  grandLabel: { fontSize: theme.fontSize.lg, color: theme.colors.text, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   grandRight: { alignItems: 'flex-end' },
-  grandValue: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.black },
-  grandCheckLabel: { fontSize: theme.fontSize.xs, color: 'rgba(0,0,0,0.6)', marginTop: 4, fontWeight: theme.fontWeight.medium },
+  grandValue: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.accent },
+  grandCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 4, fontWeight: theme.fontWeight.medium },
 
   triSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
   triHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, elevation: 1 },
