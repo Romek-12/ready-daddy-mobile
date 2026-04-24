@@ -7,6 +7,7 @@ import { useActionCardsDeck } from '../hooks/useAppData';
 import Icon from '../components/Icon';
 import type { AppNavigation } from '../types/navigation';
 import type { Theme } from '../theme';
+import GlassCard from '../components/ui/GlassCard';
 
 
 interface ReactionCard {
@@ -52,9 +53,9 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
 
   const renderCard = (card: ReactionCard, index: number) => {
     if (!card) return null;
-    const accentColor = index % 2 === 0 ? theme.colors.primary : theme.colors.violet;
+    const accent: 'cyan' | 'violet' = index % 2 === 0 ? 'cyan' : 'violet';
     return (
-      <View style={[s.card, { borderLeftWidth: 3, borderLeftColor: accentColor }]}>
+      <GlassCard accent={accent} elevated style={s.card}>
         <View style={s.cardHeader}>
           <Text style={s.cardWeek}>{card.weekRange}</Text>
           <Text style={s.cardEmoji}>{card.emoji}</Text>
@@ -85,7 +86,7 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
             </View>
           )}
         </ScrollView>
-      </View>
+      </GlassCard>
     );
   };
 
