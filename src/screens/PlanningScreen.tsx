@@ -6,6 +6,7 @@ import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import CostCalculator from '../components/CostCalculator';
 import ShoppingList from '../components/ShoppingList';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 export default function PlanningScreen() {
   const { theme } = useTheme();
@@ -27,6 +28,7 @@ export default function PlanningScreen() {
   };
 
   return (
+    <AuroraBackground>
     <View style={s.c}>
       <View style={s.topBar}>
         <View style={s.tabs}>
@@ -63,11 +65,12 @@ export default function PlanningScreen() {
         </View>
       </ScrollView>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   topBar: { paddingTop: topInset + 16, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.md, backgroundColor: theme.colors.background },
   tabs: { flexDirection: 'row', backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.full, padding: 4 },
   tab: { flex: 1, padding: theme.spacing.md, alignItems: 'center', borderRadius: theme.borderRadius.full },

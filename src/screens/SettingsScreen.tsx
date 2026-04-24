@@ -8,6 +8,7 @@ import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
 import Button from '../components/Button';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import BabyNameModal from '../components/BabyNameModal';
 import { api } from '../services/api';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -210,6 +211,7 @@ export default function SettingsScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <View style={s.c}>
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Wróć">
@@ -445,11 +447,12 @@ export default function SettingsScreen({ navigation }: Props) {
         </View>
       </Modal>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.md, backgroundColor: theme.colors.surface },
   backBtn: { padding: theme.spacing.sm, borderRadius: 20, backgroundColor: theme.colors.background },
   headerTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },

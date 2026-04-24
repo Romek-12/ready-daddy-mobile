@@ -12,6 +12,7 @@ import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
 import NeonCheckbox from '../components/ui/NeonCheckbox';
 import GlassCard from '../components/ui/GlassCard';
 import ProgressRing from '../components/ui/ProgressRing';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 interface BagItem {
   name: string;
@@ -216,6 +217,7 @@ export default function BirthPrepScreen() {
   }, [totalChecked, totalItems, user, queueBadgeUnlock]);
 
   return (
+    <AuroraBackground>
     <ScrollView style={s.c}>
       <View style={s.header}>
         <Icon name="hospital" size={48} color={theme.colors.birth} />
@@ -314,20 +316,21 @@ export default function BirthPrepScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.birth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
   progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.birth, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   progressHero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
-  progressText: { fontFamily: 'ClimateCrisis', fontSize: 16, color: theme.colors.text },
-  progressTitle: { fontFamily: 'SpaceGrotesk_700Bold', fontSize: theme.fontSize.lg, color: theme.colors.text },
-  progressSub: { fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
+  progressText: { fontFamily: theme.fonts.title, fontSize: 16, color: theme.colors.text },
+  progressTitle: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
+  progressSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
   progressLabel: { fontSize: theme.fontSize.lg, color: 'rgba(255,255,255,0.9)', fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   progressRight: { alignItems: 'flex-end' },
   progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },
@@ -348,7 +351,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   catSection: { marginBottom: theme.spacing.lg },
   catHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm },
   catTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.text, flex: 1 },
-  catCount: { fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.bold, backgroundColor: 'rgba(255,255,255,0.05)', paddingHorizontal: 8, paddingVertical: 2, borderRadius: theme.borderRadius.full },
+  catCount: { fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.bold, backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 2, borderRadius: theme.borderRadius.full },
 
   item: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder, gap: 10 },
   itemDone: { opacity: 0.5 },

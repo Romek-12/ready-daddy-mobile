@@ -8,6 +8,7 @@ import { useCheckupVisits } from '../hooks/useAppData';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 interface CheckItem {
   id: number;
@@ -125,6 +126,7 @@ export default function CheckupsScreen() {
   }
 
   return (
+    <AuroraBackground>
     <View style={s.container}>
       <ScrollView style={s.scroll}>
         <View style={s.header}>
@@ -277,13 +279,14 @@ export default function CheckupsScreen() {
       <View style={{ height: 40 }} />
     </ScrollView>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   scroll: { flex: 1 },
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, marginBottom: 4 },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
@@ -322,8 +325,8 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
 
   catSection: { marginBottom: 16 },
   catHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  catTitle: { fontSize: 13, fontFamily: 'SpaceGrotesk_600SemiBold', color: 'rgba(255,255,255,0.88)', flex: 1 },
-  catCount: { fontSize: 11, fontFamily: 'SpaceGrotesk_600SemiBold', backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12, color: 'rgba(255,255,255,0.5)' },
+  catTitle: { fontSize: 13, fontFamily: theme.fonts.semibold, color: theme.colors.text, flex: 1 },
+  catCount: { fontSize: 11, fontFamily: theme.fonts.semibold, backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12, color: theme.colors.textMuted },
 
   // singleCheck category styles
   singleCheckRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder },

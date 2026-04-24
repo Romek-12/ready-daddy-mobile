@@ -8,6 +8,7 @@ import Icon from '../components/Icon';
 import { useDadModule } from '../hooks/useAppData';
 import GlassCard from '../components/ui/GlassCard';
 import GlowPill from '../components/ui/GlowPill';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 const resolveIconColor = (colorKey: string, theme: Theme): string => {
   const colorMap: Record<string, string> = {
@@ -203,6 +204,7 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
   };
 
   return (
+    <AuroraBackground>
     <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <View style={s.header}>
         <Icon name="dad" size={48} color={theme.colors.dadModule} />
@@ -245,12 +247,13 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
 
       <View style={{ height: 32 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
   StyleSheet.create({
-    c: { flex: 1, backgroundColor: theme.colors.background },
+    c: { flex: 1, backgroundColor: 'transparent' },
     scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
     header: { alignItems: 'center', paddingTop: insets.top + 16, paddingBottom: 24, paddingHorizontal: 16 },
     title: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, color: theme.colors.dadModule, marginTop: 12 },

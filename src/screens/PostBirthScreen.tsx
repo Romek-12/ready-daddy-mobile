@@ -6,6 +6,7 @@ import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
@@ -123,6 +124,7 @@ export default function PostBirthScreen() {
   }, [totalChecked, totalItems, user, queueBadgeUnlock]);
 
   return (
+    <AuroraBackground>
     <ScrollView style={st.c}>
       <View style={st.header}>
         <Icon name="post-birth" size={48} color={theme.colors.postBirth} />
@@ -287,17 +289,18 @@ export default function PostBirthScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.postBirth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
   progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.postBirth, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
-  progressLabel: { fontSize: theme.fontSize.lg, color: 'rgba(255,255,255,0.9)', fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
+  progressLabel: { fontSize: theme.fontSize.lg, color: theme.colors.white, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   progressRight: { alignItems: 'flex-end' },
   progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },
   progressCheckLabel: { fontSize: theme.fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 4, fontWeight: theme.fontWeight.medium },
@@ -354,7 +357,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   circleFuture: { borderWidth: 2, borderColor: theme.colors.cardBorder },
   connector: { flex: 1, width: 2, backgroundColor: theme.colors.cardBorder, marginTop: 4 },
   stepCard: { flex: 1, marginLeft: theme.spacing.sm, padding: theme.spacing.md },
-  stepTitle: { fontFamily: 'SpaceGrotesk_600SemiBold', fontSize: theme.fontSize.md, color: theme.colors.text },
+  stepTitle: { fontFamily: theme.fonts.semibold, fontSize: theme.fontSize.md, color: theme.colors.text },
   stepDoneText: { textDecorationLine: 'line-through', color: theme.colors.textMuted },
-  stepDesc: { marginTop: 4, fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary },
+  stepDesc: { marginTop: 4, fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary },
 });

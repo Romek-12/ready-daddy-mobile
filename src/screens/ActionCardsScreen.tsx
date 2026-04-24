@@ -8,6 +8,7 @@ import Icon from '../components/Icon';
 import type { AppNavigation } from '../types/navigation';
 import type { Theme } from '../theme';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 
 interface ReactionCard {
@@ -123,7 +124,8 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
   }
 
   return (
-    <SafeAreaView style={s.c} edges={['top']}>
+    <AuroraBackground>
+    <SafeAreaView style={[s.c, { backgroundColor: 'transparent' }]} edges={['top']}>
       <View style={s.header}>
         <Icon name="bolt" size={48} color={theme.colors.accent} />
         <Text style={s.headerTitle}>Karty Reakcji</Text>
@@ -189,18 +191,19 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
       </View>
 
     </SafeAreaView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, width: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   center: { justifyContent: 'center', alignItems: 'center' },
   header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
   headerTitle: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 800', color: theme.colors.accent, marginTop: theme.spacing.sm },
   headerSub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
 
-  triNav: { flexDirection: 'row', justifyContent: 'center', gap: 8, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: theme.colors.background },
+  triNav: { flexDirection: 'row', justifyContent: 'center', gap: 8, paddingHorizontal: 16, paddingBottom: 10 },
   triChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5, borderColor: theme.colors.cardBorder, backgroundColor: theme.colors.surface },
   triChipActive: { backgroundColor: theme.colors.actionCards + '20', borderColor: theme.colors.actionCards },
   triText: { fontSize: 13, fontWeight: '600', color: theme.colors.textMuted },
@@ -212,7 +215,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
 
   card: { flex: 1, backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.xl, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 8, borderWidth: 1, borderColor: theme.colors.cardBorder, overflow: 'hidden' },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  cardWeek: { fontSize: 10, fontFamily: 'SpaceGrotesk_600SemiBold', color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
+  cardWeek: { fontSize: 10, fontFamily: theme.fonts.semibold, color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
   cardEmoji: { fontSize: 32 },
   cardTitle: { fontSize: 22, fontWeight: '700', color: theme.colors.text, marginBottom: 12 },
   cardScroll: { flex: 1 },
