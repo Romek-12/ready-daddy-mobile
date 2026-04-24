@@ -54,8 +54,8 @@ export default function FourthTrimesterScreen() {
           <Text style={s.ringText}>{currentWeek}</Text>
         </ProgressRing>
         <View style={{ flex: 1, marginLeft: 16 }}>
-          <Text style={s.heroTitle}>Tydzień {currentWeek} z 12</Text>
-          <Text style={s.heroSub}>Pierwsze miesiące po narodzinach</Text>
+          <Text style={s.heroTitle}>Czwarty trymestr</Text>
+          <Text style={s.heroSub}>Tydzień {currentWeek} z 12</Text>
         </View>
       </GlassCard>
 

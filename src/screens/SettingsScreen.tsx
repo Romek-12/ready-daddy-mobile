@@ -454,7 +454,14 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   backBtn: { padding: theme.spacing.sm, borderRadius: 20, backgroundColor: theme.colors.background },
   headerTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
   content: { padding: theme.spacing.xl, paddingBottom: 40 },
-  section: { marginBottom: theme.spacing.xxl },
+  section: {
+    marginBottom: theme.spacing.lg,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+    borderRadius: theme.borderRadius.xl,
+  },
   sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text, marginBottom: theme.spacing.xs },
   sectionDesc: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.lg, lineHeight: 20 },
   
