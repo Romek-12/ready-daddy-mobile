@@ -19,6 +19,8 @@ import { api } from '../services/api';
 import { logError } from '../utils/logError';
 import Icon from '../components/Icon';
 import NameDrawModal from '../components/NameDrawModal';
+import GlassCard from '../components/ui/GlassCard';
+import GlowPill from '../components/ui/GlowPill';
 import type { Theme } from '../theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
@@ -34,6 +36,7 @@ export default function NameDrawScreen({ navigation }: Props) {
   const { user, updateUser } = useAuth();
   const storage = useNameDrawStorage();
 
+  const [isFav, setIsFav] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPool, setModalPool] = useState<string[]>([]);
   const [modalResult, setModalResult] = useState('');
@@ -129,6 +132,15 @@ export default function NameDrawScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        <GlassCard elevated style={s.featured}>
+          <View style={s.featuredBlob} pointerEvents="none" />
+          <GlowPill label="Wylosowane" variant="violet" />
+          <Text style={s.featuredName}>{storage.lastResult ?? '—'}</Text>
+          <TouchableOpacity onPress={() => setIsFav(v => !v)} style={s.heartBtn} accessibilityRole="button" accessibilityLabel="Ulubione">
+            <Icon name="heart" size={22} color={isFav ? theme.colors.primary : theme.colors.textMuted} />
+          </TouchableOpacity>
+        </GlassCard>
+
         <Text style={s.intro}>
           Wpiszcie po 5 imion i wylosujcie jedno dla maluszka.
         </Text>
@@ -257,4 +269,8 @@ const createStyles = (theme: Theme, topInset: number) =>
       color: theme.colors.textMuted,
       textDecorationLine: 'underline',
     },
+    featured: { padding: theme.spacing.lg, marginBottom: theme.spacing.md, overflow: 'hidden' },
+    featuredBlob: { position: 'absolute', width: 220, height: 220, borderRadius: 110, top: -80, right: -60, backgroundColor: theme.colors.violetSoft, opacity: 0.6 },
+    featuredName: { fontFamily: 'ClimateCrisis', fontSize: theme.fontSize.xxl, color: theme.colors.text, marginTop: 8 },
+    heartBtn: { position: 'absolute', top: theme.spacing.md, right: theme.spacing.md },
   });
