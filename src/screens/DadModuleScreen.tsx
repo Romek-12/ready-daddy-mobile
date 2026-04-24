@@ -6,6 +6,8 @@ import type { Theme } from '../theme';
 import type { AppNavigation } from '../types/navigation';
 import Icon from '../components/Icon';
 import { useDadModule } from '../hooks/useAppData';
+import GlassCard from '../components/ui/GlassCard';
+import GlowPill from '../components/ui/GlowPill';
 
 const resolveIconColor = (colorKey: string, theme: Theme): string => {
   const colorMap: Record<string, string> = {
@@ -208,6 +210,13 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
         <Text style={s.subtitle}>Wsparcie i informacje dla przyszłych i nowych taciów</Text>
       </View>
 
+      <View style={{ paddingHorizontal: 16 }}>
+        <GlassCard elevated style={s.tipCard}>
+          <GlowPill label="Wskazówka dnia" />
+          <Text style={s.tipText}>Spędź dziś 15 minut sam na sam z partnerką bez telefonów.</Text>
+        </GlassCard>
+      </View>
+
       <View style={s.sectionGrid}>
         {content.sections.map((section) => (
           <View key={section.id} style={s.sectionButton}>
@@ -313,4 +322,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
     bibJournal: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, marginTop: 2 },
 
     placeholder: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontStyle: 'italic', padding: 16, textAlign: 'center' },
+
+    tipCard: { padding: theme.spacing.lg, marginBottom: theme.spacing.md },
+    tipText: { marginTop: 8, fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 22 },
   });

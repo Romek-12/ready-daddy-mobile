@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
+import GlassCard from '../components/ui/GlassCard';
 
 export default function DadNoworodekScreen() {
   const { theme } = useTheme();
@@ -17,7 +18,7 @@ export default function DadNoworodekScreen() {
         </Text>
       </View>
 
-      <View style={st.introCard}>
+      <GlassCard accent="cyan" style={st.introCard}>
         <View style={st.introIconWrap}>
           <Text style={st.introEmoji}>🍼</Text>
         </View>
@@ -27,7 +28,7 @@ export default function DadNoworodekScreen() {
             Dziecko przez 9 miesięcy przebywało w bezpiecznym środowisku. Nagłe pojawienie się w głośnym, jasnym świecie to dla niego szok. Układ nerwowy noworodka jest jeszcze niedojrzały i potrzebuje nieustannego poczucia bezpieczeństwa.
           </Text>
         </View>
-      </View>
+      </GlassCard>
 
       <View style={st.sectionGrid}>
         {/* 01 Bliskość */}
