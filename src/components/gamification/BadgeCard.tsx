@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
+import Icon from '../Icon';
 import type { Theme } from '../../theme';
 import type { BadgeDefinition, EarnedBadge } from '../../types/badges.types';
 
@@ -24,8 +25,14 @@ export default function BadgeCard({ definition, earned }: Props) {
     : null;
 
   return (
-    <View style={[s.card, !isEarned && s.cardLocked]}>
-      <Text style={[s.icon, !isEarned && s.iconLocked]}>{definition.icon}</Text>
+    <View style={[s.card, isEarned ? s.cardEarned : s.cardLocked]}>
+      {isEarned ? (
+        <Text style={s.icon}>{definition.icon}</Text>
+      ) : (
+        <View style={s.lockWrap}>
+          <Icon name="lock" size={28} color={theme.colors.textMuted} />
+        </View>
+      )}
       <Text style={[s.title, !isEarned && s.titleLocked]} numberOfLines={2}>
         {definition.title}
       </Text>
@@ -43,33 +50,44 @@ export default function BadgeCard({ definition, earned }: Props) {
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     card: {
-      width: '30%',
+      width: '48%',
       backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
+      borderRadius: theme.borderRadius.xl,
       padding: theme.spacing.md,
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: theme.colors.primary + '40',
-      minHeight: 110,
+      minHeight: 130,
+    },
+    cardEarned: {
+      borderColor: theme.colors.primary,
+      shadowColor: theme.colors.primary,
+      shadowOpacity: 0.5,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 0 },
+      elevation: 5,
     },
     cardLocked: {
       backgroundColor: theme.colors.surface,
       borderColor: theme.colors.cardBorder,
-      opacity: 0.6,
+      opacity: 0.55,
     },
     icon: {
-      fontSize: 32,
-      marginBottom: theme.spacing.xs,
+      fontSize: 40,
+      marginBottom: theme.spacing.sm,
     },
-    iconLocked: {
-      opacity: 0.4,
+    lockWrap: {
+      width: 40,
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: theme.spacing.sm,
     },
     title: {
-      fontSize: theme.fontSize.xs,
-      fontWeight: theme.fontWeight.bold,
+      fontSize: theme.fontSize.sm,
+      fontWeight: theme.fontWeight.semibold,
       color: theme.colors.text,
       textAlign: 'center',
-      marginBottom: 2,
+      marginBottom: 4,
     },
     titleLocked: {
       color: theme.colors.textMuted,
