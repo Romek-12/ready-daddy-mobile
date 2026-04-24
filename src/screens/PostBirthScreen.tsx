@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
+import { LinearGradient } from 'expo-linear-gradient';
+import GlassCard from '../components/ui/GlassCard';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
@@ -214,31 +216,42 @@ export default function PostBirthScreen() {
         );
       })}
 
-      {/* Other items table */}
+      {/* Other items timeline */}
       <View style={st.otherSection}>
         <View style={st.otherHeader}>
           <Icon name="checklist" size={18} color={theme.colors.postBirth} />
           <Text style={st.otherTitle}> Inne ważne zgłoszenia</Text>
         </View>
-        {OTHER_ITEMS.map((item, idx) => {
-          const isDone = otherChecked[idx] || false;
-          return (
-            <TouchableOpacity key={idx} style={[st.otherRow, isDone && st.otherRowDone]} onPress={() => toggleOther(idx)} activeOpacity={0.7}>
-              <Icon
-                name={isDone ? 'check-circle' : 'checkbox-blank'}
-                size={20}
-                color={isDone ? theme.colors.primary : theme.colors.textMuted}
-              />
-              <View style={st.otherInfo}>
-                <Text style={[st.otherName, isDone && st.otherNameDone]}>{item.name}</Text>
-                <View style={st.otherMeta}>
-                  <Text style={st.otherDeadline}>{item.deadline}</Text>
-                  <Text style={st.otherWhere}>{item.where}</Text>
+        {(() => {
+          const activeIdx = OTHER_ITEMS.findIndex((_, i) => !otherChecked[i]);
+          return OTHER_ITEMS.map((item, idx) => {
+            const isLast = idx === OTHER_ITEMS.length - 1;
+            const state: 'done' | 'active' | 'future' =
+              activeIdx === -1 || idx < activeIdx ? 'done' : idx === activeIdx ? 'active' : 'future';
+            return (
+              <TouchableOpacity key={idx} activeOpacity={0.7} onPress={() => toggleOther(idx)} style={st.step}>
+                <View style={st.stepCol}>
+                  {state === 'done' ? (
+                    <LinearGradient colors={[theme.colors.primary, theme.colors.violet]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.circleBase}>
+                      <Icon name="check" size={12} color={theme.colors.black} />
+                    </LinearGradient>
+                  ) : state === 'active' ? (
+                    <View style={[st.circleBase, st.circleActive]}>
+                      <View style={st.activeDot} />
+                    </View>
+                  ) : (
+                    <View style={[st.circleBase, st.circleFuture]} />
+                  )}
+                  {!isLast && <View style={st.connector} />}
                 </View>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+                <GlassCard style={st.stepCard}>
+                  <Text style={[st.stepTitle, state === 'done' && st.stepDoneText]}>{item.name}</Text>
+                  <Text style={st.stepDesc}>{item.deadline} · {item.where}</Text>
+                </GlassCard>
+              </TouchableOpacity>
+            );
+          });
+        })()}
       </View>
 
       {/* Pro tip */}
@@ -312,4 +325,16 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
 
   disclaimer: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginHorizontal: theme.spacing.lg, marginTop: theme.spacing.md, padding: theme.spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
   disclaimerText: { flex: 1, fontSize: 11, color: theme.colors.textMuted, lineHeight: 16, fontStyle: 'italic' },
+
+  step: { flexDirection: 'row', alignItems: 'stretch', marginBottom: theme.spacing.md },
+  stepCol: { width: 24, alignItems: 'center' },
+  circleBase: { width: 20, height: 20, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginTop: 6 },
+  circleActive: { borderWidth: 2, borderColor: theme.colors.primary },
+  activeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.primary },
+  circleFuture: { borderWidth: 2, borderColor: theme.colors.cardBorder },
+  connector: { flex: 1, width: 2, backgroundColor: theme.colors.cardBorder, marginTop: 4 },
+  stepCard: { flex: 1, marginLeft: theme.spacing.sm, padding: theme.spacing.md },
+  stepTitle: { fontFamily: 'SpaceGrotesk_600SemiBold', fontSize: theme.fontSize.md, color: theme.colors.text },
+  stepDoneText: { textDecorationLine: 'line-through', color: theme.colors.textMuted },
+  stepDesc: { marginTop: 4, fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary },
 });
