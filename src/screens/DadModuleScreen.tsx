@@ -218,17 +218,27 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
       </View>
 
       <View style={s.sectionGrid}>
-        {content.sections.map((section) => (
-          <View key={section.id} style={s.sectionButton}>
-            <TouchableOpacity
-              style={[s.sectionButtonInner, activeSection === section.id && s.sectionButtonActive]}
-              onPress={() => setActiveSection(activeSection === section.id ? null : section.id)}
-            >
-              <Icon name={section.icon} size={28} color={resolveIconColor(section.iconColorKey, theme)} />
-              <Text style={s.sectionButtonText}>{section.title}</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+        {content.sections.map((section, i) => {
+          const isActive = activeSection === section.id;
+          const accent: 'cyan' | 'violet' = i % 2 === 0 ? 'cyan' : 'violet';
+          return (
+            <View key={section.id} style={s.sectionButton}>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => setActiveSection(isActive ? null : section.id)}
+              >
+                <GlassCard
+                  accent={accent}
+                  elevated={isActive}
+                  style={s.sectionCard}
+                >
+                  <Icon name={section.icon} size={40} color={resolveIconColor(section.iconColorKey, theme)} />
+                  <Text style={s.sectionButtonText}>{section.title}</Text>
+                </GlassCard>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
       </View>
 
       {activeSection && renderSectionContent(activeSection)}
@@ -252,18 +262,11 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
       paddingHorizontal: 8,
       marginBottom: 12,
     },
-    sectionButtonInner: {
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
-      padding: 12,
+    sectionCard: {
+      padding: 16,
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: 100,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
-    },
-    sectionButtonActive: {
-      borderColor: theme.colors.dadModule,
+      minHeight: 120,
     },
     sectionButtonText: { fontSize: theme.fontSize.xs, color: theme.colors.text, marginTop: 8, textAlign: 'center', fontWeight: theme.fontWeight.bold },
 
