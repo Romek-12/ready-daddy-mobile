@@ -10,12 +10,12 @@ import { z } from 'zod';
 import { useTheme } from '../context/ThemeContext';
 import { supabase } from '../lib/supabase';
 import { forgotPasswordSchema } from '../lib/validation';
-import FormInput from '../components/FormInput';
-import Button from '../components/Button';
 import Icon from '../components/Icon';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GradientText from '../components/ui/GradientText';
 import GlassCard from '../components/ui/GlassCard';
+import GlassInput from '../components/ui/GlassInput';
+import GradientButton from '../components/ui/GradientButton';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -72,14 +72,14 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
               control={control}
               name="email"
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                <FormInput
+                <GlassInput
                   label="Adres email"
+                  icon="mail"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   error={error?.message}
                   placeholder="twoj@email.pl"
-                  placeholderTextColor={theme.colors.textMuted}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoComplete="email"
@@ -90,7 +90,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
             />
           </View>
 
-          <Button
+          <GradientButton
             title="Wyślij link"
             onPress={handleSubmit(onSubmit)}
             loading={isSubmitting}

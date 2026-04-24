@@ -5,12 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { loginSchema, type LoginForm } from '../lib/validation';
-import FormInput from '../components/FormInput';
-import Button from '../components/Button';
-import Icon from '../components/Icon';
 import Logo from '../components/Logo';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GradientText from '../components/ui/GradientText';
+import GlassInput from '../components/ui/GlassInput';
+import GradientButton from '../components/ui/GradientButton';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -51,8 +50,9 @@ export default function LoginScreen({ navigation }: Props) {
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-            <FormInput
+            <GlassInput
               label="Email"
+              icon="mail"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -68,8 +68,9 @@ export default function LoginScreen({ navigation }: Props) {
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-            <FormInput
+            <GlassInput
               label="Hasło"
+              icon="lock"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -80,7 +81,7 @@ export default function LoginScreen({ navigation }: Props) {
           )}
         />
 
-        <Button
+        <GradientButton
           title="Zaloguj się"
           onPress={handleSubmit(onSubmit)}
           loading={loading}
@@ -103,7 +104,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flex: 1, justifyContent: 'center', padding: theme.spacing.xl },
   iconWrap: { alignItems: 'center', marginBottom: theme.spacing.md },
-  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.primary, textAlign: 'center', letterSpacing: 2 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text, textAlign: 'center', letterSpacing: 2 },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, textAlign: 'center', marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   link: { marginTop: theme.spacing.xl, alignItems: 'center' },
   linkText: { color: theme.colors.textSecondary, fontSize: theme.fontSize.md },

@@ -8,8 +8,9 @@ import Logo from '../components/Logo';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GradientText from '../components/ui/GradientText';
 import DateScrollPicker from '../components/DateScrollPicker';
-import FormInput from '../components/FormInput';
-import Button from '../components/Button';
+import GlassInput from '../components/ui/GlassInput';
+import GradientButton from '../components/ui/GradientButton';
+import GlassCard from '../components/ui/GlassCard';
 import { PREGNANCY_DAYS } from '../constants';
 import Icon from '../components/Icon';
 import { registerSchema, type RegisterForm } from '../lib/validation';
@@ -108,8 +109,9 @@ export default function RegisterScreen({ navigation }: Props) {
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-            <FormInput
+            <GlassInput
               label="Email"
+              icon="mail"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -126,8 +128,9 @@ export default function RegisterScreen({ navigation }: Props) {
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-            <FormInput
+            <GlassInput
               label="Hasło"
+              icon="lock"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -143,8 +146,9 @@ export default function RegisterScreen({ navigation }: Props) {
           control={control}
           name="partnerName"
           render={({ field: { onChange, value } }) => (
-            <FormInput
+            <GlassInput
               label="Imię partnerki (opcjonalne)"
+              icon="partner"
               value={value}
               onChangeText={onChange}
               placeholder="np. Anna"
@@ -173,12 +177,18 @@ export default function RegisterScreen({ navigation }: Props) {
           control={control}
           name="conceptionDate"
           render={({ field: { value } }) => (
-            <View style={s.datePickerContainer}>
+            <GlassCard style={s.datePickerCard}>
+              <View style={s.datePickerHead}>
+                <Icon name="calendar" size={18} color={theme.colors.textMuted} />
+                <Text style={s.datePickerLabel}>
+                  {dateType === 'conception' ? 'Data poczęcia' : 'Termin porodu'}
+                </Text>
+              </View>
               <DateScrollPicker
                 initialDate={value}
                 onDateChange={(date) => setValue('conceptionDate', date)}
               />
-            </View>
+            </GlassCard>
           )}
         />
 
@@ -201,8 +211,9 @@ export default function RegisterScreen({ navigation }: Props) {
               control={control}
               name="babyName1"
               render={({ field: { onChange, value } }) => (
-                <FormInput
+                <GlassInput
                   label="Imię dziecka"
+                  icon="baby"
                   value={value}
                   onChangeText={onChange}
                   placeholder="np. Zosia"
@@ -215,8 +226,9 @@ export default function RegisterScreen({ navigation }: Props) {
               name="babyName2"
               render={({ field: { onChange, value } }) => (
                 <View>
-                  <FormInput
+                  <GlassInput
                     label="Drugie imię (opcjonalne)"
+                    icon="baby"
                     value={value}
                     onChangeText={onChange}
                     placeholder="np. Piotrek"
@@ -231,7 +243,7 @@ export default function RegisterScreen({ navigation }: Props) {
         )}
 
         {/* Register Button */}
-        <Button
+        <GradientButton
           title="Zarejestruj się"
           onPress={handleSubmit(onSubmit)}
           loading={loading}
@@ -272,7 +284,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   title: {
     fontSize: theme.fontSize.hero,
     fontFamily: 'SpaceGrotesk_700Bold',
-    color: theme.colors.primary,
+    color: theme.colors.text,
     textAlign: 'center',
     letterSpacing: 1,
     marginBottom: theme.spacing.sm,
@@ -313,6 +325,22 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   datePickerContainer: {
     marginBottom: theme.spacing.lg,
+  },
+  datePickerCard: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: theme.spacing.lg,
+  },
+  datePickerHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: theme.spacing.sm,
+  },
+  datePickerLabel: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
+    fontFamily: 'SpaceGrotesk_500Medium',
   },
   babyNamesToggle: {
     flexDirection: 'row',
