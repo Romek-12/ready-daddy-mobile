@@ -146,23 +146,33 @@ export default function CheckupsScreen() {
         const isExpanded = expanded === vIdx;
         const visitItemCount = countCheckable(visit);
         const visitChecked = countCheckedInVisit(visit, vIdx, checked);
+        const isLast = vIdx === visits.length - 1;
+        const isDone = visitItemCount > 0 && visitChecked === visitItemCount;
+        const visitColor = resolveColor(visit.colorKey, theme);
 
         return (
-          <View key={vIdx} style={s.visitSection}>
-            <TouchableOpacity style={[s.visitHeader, { borderLeftColor: resolveColor(visit.colorKey, theme) }]} onPress={() => toggle(vIdx)} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
+          <View key={vIdx} style={s.timelineRow}>
+            <View style={s.timelineCol}>
+              <View style={[s.timelineDot, { backgroundColor: isDone ? theme.colors.primary : visitColor, shadowColor: isDone ? theme.colors.primary : visitColor }]} />
+              {!isLast ? <View style={s.timelineLine} /> : null}
+            </View>
+            <View style={s.timelineContent}>
+            <TouchableOpacity onPress={() => toggle(vIdx)} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
+            <GlassCard style={s.visitHeader}>
               <View style={s.visitHeaderLeft}>
-                <View style={[s.weekBadge, { backgroundColor: resolveColor(visit.colorKey, theme) }]}>
+                <View style={[s.weekBadge, { backgroundColor: visitColor }]}>
                   <Text style={s.weekBadgeText}>{visit.weekRange}</Text>
                 </View>
                 <Text style={s.visitTitle}>{visit.title}</Text>
                 <Text style={s.visitSubtitle} numberOfLines={2}>{visit.subtitle}</Text>
               </View>
               <View style={s.visitHeaderRight}>
-                <Text style={[s.visitProgress, { color: visitChecked === visitItemCount && visitItemCount > 0 ? theme.colors.primary : theme.colors.textMuted }]}>
+                <Text style={[s.visitProgress, { color: isDone ? theme.colors.primary : theme.colors.textMuted }]}>
                   {visitChecked}/{visitItemCount}
                 </Text>
                 <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
               </View>
+            </GlassCard>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -255,6 +265,7 @@ export default function CheckupsScreen() {
                 })}
               </View>
             )}
+            </View>
           </View>
         );
       })}
@@ -284,7 +295,21 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   progressCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },
 
   visitSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
-  visitHeader: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, flexDirection: 'row', alignItems: 'center' },
+  timelineRow: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  timelineCol: { width: 24, alignItems: 'center' },
+  timelineDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginTop: 14,
+    shadowOpacity: 0.7,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 4,
+  },
+  timelineLine: { flex: 1, width: 2, backgroundColor: theme.colors.cardBorder, marginTop: 6 },
+  timelineContent: { flex: 1, marginLeft: theme.spacing.sm },
+  visitHeader: { padding: theme.spacing.md, flexDirection: 'row', alignItems: 'center' },
   visitHeaderLeft: { flex: 1 },
   weekBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start', marginBottom: 6 },
   weekBadgeText: { fontSize: 11, fontWeight: theme.fontWeight.semibold, color: '#FFFFFF' },
