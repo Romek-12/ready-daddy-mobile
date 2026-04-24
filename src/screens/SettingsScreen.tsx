@@ -7,6 +7,7 @@ import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
 import Button from '../components/Button';
+import GlassCard from '../components/ui/GlassCard';
 import BabyNameModal from '../components/BabyNameModal';
 import { api } from '../services/api';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -218,7 +219,17 @@ export default function SettingsScreen({ navigation }: Props) {
         <View style={{ width: 44 }} />
       </View>
       <ScrollView contentContainerStyle={s.content}>
-        
+
+        <GlassCard elevated style={s.profileHero}>
+          <View style={s.avatar}>
+            <Text style={s.avatarInitial}>{((user?.partnerName || 'Tata').trim()[0] || 'T').toUpperCase()}</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
+            <Text style={s.profileName}>{user?.partnerName || 'Tata'}</Text>
+            <Text style={s.profileEmail}>{user?.email || ''}</Text>
+          </View>
+        </GlassCard>
+
         <View style={s.section}>
           <Text style={s.sectionTitle}>Motyw aplikacji</Text>
           <Text style={s.sectionDesc}>Wybierz w jakim trybie ma działać aplikacja, lub zdaj się na ustawienia systemowe.</Text>
@@ -501,4 +512,10 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   genderButtonEmoji: { fontSize: 28 },
   genderButtonText: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold, color: theme.colors.text },
 
+  profileHero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginBottom: theme.spacing.md },
+  avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: theme.colors.primaryLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.primary },
+  avatarInitial: { fontFamily: 'ClimateCrisis', fontSize: 22, color: theme.colors.primary },
+  profileName: { fontFamily: 'SpaceGrotesk_700Bold', fontSize: theme.fontSize.lg, color: theme.colors.text },
+  profileEmail: { fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
+  group: { paddingVertical: 6, marginBottom: theme.spacing.md },
 });
