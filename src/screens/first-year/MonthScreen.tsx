@@ -176,7 +176,6 @@ const createStyles = (theme: Theme) =>
     header: {
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
     },
     backButton: {
       alignSelf: 'flex-start',

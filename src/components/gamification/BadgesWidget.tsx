@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useBadges } from '../../hooks/useBadges';
 import { getBadgeDefinition } from '../../services/gamification/BadgeService';
+import GlassCard from '../ui/GlassCard';
 import type { Theme } from '../../theme';
 
 interface Props {
@@ -23,43 +24,42 @@ export default function BadgesWidget({ onPressAll }: Props) {
 
   return (
     <TouchableOpacity
-      style={s.card}
+      style={s.wrap}
       onPress={onPressAll}
       activeOpacity={0.8}
       accessibilityRole="button"
       accessibilityLabel="Zobacz odznaki"
     >
-      <View style={s.left}>
-        <Text style={s.emoji}>{lastDef ? lastDef.icon : '🏆'}</Text>
-        <View style={s.textCol}>
-          <Text style={s.title}>
-            {lastDef ? lastDef.title : 'Zdobądź pierwszą odznakę!'}
-          </Text>
-          <Text style={s.sub}>
-            {earnedCount > 0
-              ? `${earnedCount} z ${totalCount} odznaki`
-              : 'Brak odznak — zacznij działać!'}
-          </Text>
+      <GlassCard elevated accent="cyan" style={s.card}>
+        <View style={s.left}>
+          <Text style={s.emoji}>{lastDef ? lastDef.icon : '🏆'}</Text>
+          <View style={s.textCol}>
+            <Text style={s.title}>
+              {lastDef ? lastDef.title : 'Zdobądź pierwszą odznakę!'}
+            </Text>
+            <Text style={s.sub}>
+              {earnedCount > 0
+                ? `${earnedCount} z ${totalCount} odznaki`
+                : 'Brak odznak — zacznij działać!'}
+            </Text>
+          </View>
         </View>
-      </View>
-      <Text style={s.arrow}>›</Text>
+        <Text style={s.arrow}>›</Text>
+      </GlassCard>
     </TouchableOpacity>
   );
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    card: {
+    wrap: {
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.lg,
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.xl,
+    },
+    card: {
       padding: theme.spacing.lg,
       flexDirection: 'row',
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: theme.colors.primary + '30',
-      elevation: 1,
     },
     left: {
       flex: 1,

@@ -56,12 +56,12 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
 
       {/* Progress card */}
       {currentMonth >= 0 && (
-        <View style={s.progressCard}>
+        <GlassCard elevated accent="cyan" style={s.progressCard}>
           <Text style={s.progressLabel}>{`Miesiąc ${currentMonth} z 12`}</Text>
           <View style={s.progressTrack}>
             <View style={[s.progressFill, { width: `${progressPercent}%` }]} />
           </View>
-        </View>
+        </GlassCard>
       )}
 
       {/* Month grid */}
@@ -90,12 +90,12 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
       </View>
 
       {/* Badge teaser */}
-      <View style={s.badgeTeaser}>
+      <GlassCard style={s.badgeTeaser}>
         <Text style={s.badgeTitle}>{'🏆 Tata Pierwszego Roku'}</Text>
         <Text style={s.badgeSubtitle}>
           {'Odznaka za przejście całego pierwszego roku'}
         </Text>
-      </View>
+      </GlassCard>
 
       <View style={s.bottomSpacer} />
     </ScrollView>
@@ -129,11 +129,7 @@ const createStyles = (theme: Theme) =>
     progressCard: {
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.lg,
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
       padding: theme.spacing.md,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
     },
     progressLabel: {
       fontSize: theme.fontSize.sm,
@@ -158,11 +154,7 @@ const createStyles = (theme: Theme) =>
     badgeTeaser: {
       marginHorizontal: theme.spacing.lg,
       marginTop: theme.spacing.md,
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
       padding: theme.spacing.md,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
       alignItems: 'center',
     },
     badgeTitle: {

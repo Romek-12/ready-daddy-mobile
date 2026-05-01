@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
+import GlassCard from '../ui/GlassCard';
 import type { Theme } from '../../theme';
 import type { DevelopmentMilestone } from '../../types/first-year.types';
 
@@ -13,8 +14,7 @@ export default function DevelopmentMilestoneCard({ milestone }: Props) {
   const s = useMemo(() => createStyles(theme), [theme]);
 
   return (
-    <View style={s.card}>
-      {/* Top row: trophy + title */}
+    <GlassCard accent="cyan" style={s.card}>
       <View style={s.topRow}>
         <Text style={s.trophy}>{'🏆'}</Text>
         <Text style={s.title} numberOfLines={2}>
@@ -22,27 +22,21 @@ export default function DevelopmentMilestoneCard({ milestone }: Props) {
         </Text>
       </View>
 
-      {/* Description */}
       <Text style={s.description}>{milestone.description}</Text>
 
-      {/* For dad */}
       <View style={s.forDadRow}>
         <Text style={s.forDadLabel}>{'Dla taty: '}</Text>
         <Text style={s.forDadText}>{milestone.forDad}</Text>
       </View>
-    </View>
+    </GlassCard>
   );
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     card: {
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
       padding: theme.spacing.md,
       marginBottom: theme.spacing.sm,
-      borderWidth: 1,
-      borderColor: theme.colors.primary + '33',
     },
     topRow: {
       flexDirection: 'row',

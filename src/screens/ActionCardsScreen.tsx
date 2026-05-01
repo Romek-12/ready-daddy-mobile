@@ -213,7 +213,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   swiperWrapper: { backgroundColor: 'transparent' },
   cardContainer: { top: 0, left: 0, bottom: 0, right: 0, height: '100%', width: width * 0.9, marginLeft: width * 0.05, marginTop: 5 },
 
-  card: { flex: 1, backgroundColor: theme.colors.bg2, borderRadius: theme.borderRadius.xl, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 8, borderWidth: 1, borderColor: theme.colors.cardBorder, overflow: 'hidden' },
+  card: { flex: 1, padding: 16 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
   cardWeek: { fontSize: 10, fontFamily: theme.fonts.semibold, color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
   cardEmoji: { fontSize: 32 },

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
+import GlassCard from '../ui/GlassCard';
 import type { Theme } from '../../theme';
 import type { VaccineInfo } from '../../types/first-year.types';
 
@@ -13,11 +14,9 @@ export default function VaccineItem({ vaccine }: Props) {
   const s = useMemo(() => createStyles(theme), [theme]);
 
   return (
-    <View style={s.row}>
-      {/* Left: colored dot */}
+    <GlassCard style={s.row}>
       <View style={[s.dot, { backgroundColor: vaccine.mandatory ? theme.colors.primary : theme.colors.accent }]} />
 
-      {/* Center: name, description, when */}
       <View style={s.center}>
         <Text style={s.name}>{vaccine.name}</Text>
         <Text style={s.description} numberOfLines={2}>
@@ -26,13 +25,12 @@ export default function VaccineItem({ vaccine }: Props) {
         <Text style={s.when}>{vaccine.when}</Text>
       </View>
 
-      {/* Right: badge */}
       <View style={[s.badge, vaccine.mandatory ? s.badgeMandatory : s.badgeOptional]}>
         <Text style={[s.badgeText, vaccine.mandatory ? s.badgeTextMandatory : s.badgeTextOptional]}>
           {vaccine.mandatory ? 'Obowiązkowe' : 'Zalecane'}
         </Text>
       </View>
-    </View>
+    </GlassCard>
   );
 }
 
@@ -43,11 +41,7 @@ const createStyles = (theme: Theme) =>
       alignItems: 'flex-start',
       paddingVertical: theme.spacing.sm,
       paddingHorizontal: theme.spacing.md,
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.md,
       marginBottom: theme.spacing.xs,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
     },
     dot: {
       width: 10,

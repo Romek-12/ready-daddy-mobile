@@ -9,6 +9,7 @@ import Animated, {
 import { useTheme } from '../../context/ThemeContext';
 import { useBadgeContext } from '../../context/BadgeContext';
 import { getBadgeDefinition } from '../../services/gamification/BadgeService';
+import GlassCard from '../ui/GlassCard';
 import type { Theme } from '../../theme';
 
 export default function BadgeUnlockModal() {
@@ -47,14 +48,16 @@ export default function BadgeUnlockModal() {
       statusBarTranslucent
     >
       <View style={s.overlay}>
-        <Animated.View style={[s.card, animatedCardStyle]}>
-          <Text style={s.emoji}>{definition.icon}</Text>
-          <Text style={s.headline}>Nowa odznaka!</Text>
-          <Text style={s.title}>{definition.title}</Text>
-          <Text style={s.description}>{definition.description}</Text>
-          <TouchableOpacity style={s.btn} onPress={dismissCurrent} activeOpacity={0.8}>
-            <Text style={s.btnText}>Super! 🎉</Text>
-          </TouchableOpacity>
+        <Animated.View style={[s.animWrap, animatedCardStyle]}>
+          <GlassCard elevated accent="cyan" style={s.card}>
+            <Text style={s.emoji}>{definition.icon}</Text>
+            <Text style={s.headline}>Nowa odznaka!</Text>
+            <Text style={s.title}>{definition.title}</Text>
+            <Text style={s.description}>{definition.description}</Text>
+            <TouchableOpacity style={s.btn} onPress={dismissCurrent} activeOpacity={0.8}>
+              <Text style={s.btnText}>Super! 🎉</Text>
+            </TouchableOpacity>
+          </GlassCard>
         </Animated.View>
       </View>
     </Modal>
@@ -70,15 +73,13 @@ const createStyles = (theme: Theme) =>
       alignItems: 'center',
       padding: theme.spacing.xl,
     },
-    card: {
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.xxl,
-      padding: theme.spacing.xl,
-      alignItems: 'center',
+    animWrap: {
       width: '100%',
       maxWidth: 320,
-      borderWidth: 1,
-      borderColor: theme.colors.primary + '40',
+    },
+    card: {
+      padding: theme.spacing.xl,
+      alignItems: 'center',
     },
     emoji: {
       fontSize: 64,
