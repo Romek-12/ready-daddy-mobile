@@ -38,7 +38,7 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
   const s = useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
   const { user } = useAuth();
   const { add } = useJournal();
-  const { data } = useCurrentWeek(user?.conceptionDate);
+  const { data } = useCurrentWeek(user?.conceptionDate ?? undefined);
 
   const defaultWeek = data?.currentWeek ? String(data.currentWeek + 1) : '';
 

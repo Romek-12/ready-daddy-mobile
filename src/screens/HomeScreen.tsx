@@ -24,7 +24,7 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
   const s = React.useMemo(() => createStyles(theme, CARD_W, insets.top), [theme, CARD_W, insets.top]);
   const { user } = useAuth();
 
-  const { data, isLoading, error, refetch, isRefetching } = useCurrentWeek(user?.conceptionDate);
+  const { data, isLoading, error, refetch, isRefetching } = useCurrentWeek(user?.conceptionDate ?? undefined);
   const [sizeMode] = useSizeMode();
   const { queueBadgeUnlock } = useBadgeContext();
   const checkedWeekRef = React.useRef<number | null>(null);
