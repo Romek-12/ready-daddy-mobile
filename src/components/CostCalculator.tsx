@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 
 import { useTheme } from '../context/ThemeContext';
 import { Theme } from '../theme';
 import Icon from './Icon';
+import GlassCard from './ui/GlassCard';
 
 interface CostItem {
   id: string;
@@ -232,12 +233,12 @@ export default function CostCalculator() {
       </View>
 
       {/* Grand total card */}
-      <View style={s.grandTotal}>
+      <GlassCard elevated style={s.grandTotal}>
         <Text style={s.grandLabel}>Dotychczasowy koszt:</Text>
         <View style={s.grandRight}>
           <Text style={s.grandValue}>{fmt(grandTotal)}</Text>
         </View>
-      </View>
+      </GlassCard>
 
       {TRIMESTERS.map((tri, tIdx) => {
         const isExpanded = expandedTri === tIdx;
@@ -245,7 +246,8 @@ export default function CostCalculator() {
 
         return (
           <View key={tIdx} style={s.triSection}>
-            <TouchableOpacity style={[s.triHeader, { borderLeftColor: tri.color }]} onPress={() => toggleTrimester(tIdx)}>
+            <TouchableOpacity onPress={() => toggleTrimester(tIdx)}>
+          <GlassCard style={[s.triHeader, { borderLeftColor: tri.color }]}>
               <View style={s.triHeaderLeft}>
                 <Text style={[s.triTitle, { color: tri.color }]}>{tri.title}</Text>
                 <Text style={s.triSubtitle}>{tri.subtitle}</Text>
@@ -254,6 +256,7 @@ export default function CostCalculator() {
                 <Text style={[s.triTotal, { color: tri.color }]}>{fmt(triTotal)}</Text>
                 <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
               </View>
+            </GlassCard>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -341,18 +344,18 @@ export default function CostCalculator() {
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.planning, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
-  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.planning + '40', borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
+  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   grandLabel: { fontSize: theme.fontSize.lg, color: theme.colors.text, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   grandRight: { alignItems: 'flex-end' },
   grandValue: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.planning },
 
   triSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
-  triHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, elevation: 1 },
+  triHeader: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.xl, borderLeftWidth: 3 },
   triHeaderLeft: { flex: 1 },
   triTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold },
   triSubtitle: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },

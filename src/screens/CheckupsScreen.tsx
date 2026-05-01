@@ -288,10 +288,10 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   scroll: { flex: 1 },
   c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, marginBottom: 4 },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.checkups, marginBottom: 4 },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
 
-  progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.lg, minHeight: 90 },
+  progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.lg, minHeight: 90 },
   progressLabel: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold, color: theme.colors.text, flex: 1, marginRight: 12 },
   progressRight: { alignItems: 'flex-end' },
   progressCount: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },

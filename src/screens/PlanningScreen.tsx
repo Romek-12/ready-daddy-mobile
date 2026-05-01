@@ -71,7 +71,7 @@ export default function PlanningScreen() {
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
-  topBar: { paddingTop: topInset + 16, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.md, backgroundColor: theme.colors.background },
+  topBar: { paddingTop: topInset + 16, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.md, backgroundColor: 'transparent' },
   tabs: { flexDirection: 'row', backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.full, padding: 4 },
   tab: { flex: 1, padding: theme.spacing.md, alignItems: 'center', borderRadius: theme.borderRadius.full },
   tabActive: { backgroundColor: theme.colors.surfaceLight, elevation: 1 },

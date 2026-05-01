@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
+import GlassCard from './ui/GlassCard';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
 import NeonCheckbox from './ui/NeonCheckbox';
 import { useAuth } from '../context/AuthContext';
@@ -287,13 +288,13 @@ export default function ShoppingList() {
       </View>
 
       {/* Grand total */}
-      <View style={s.grandTotal}>
+      <GlassCard elevated style={s.grandTotal}>
         <Text style={s.grandLabel}>Dotychczasowy koszt:</Text>
         <View style={s.grandRight}>
           <Text style={s.grandValue}>{fmt(grandTotal)}</Text>
           <Text style={s.grandCheckLabel}>{totalChecked}/{totalItems} odznaczone</Text>
         </View>
-      </View>
+      </GlassCard>
 
       {TRIMESTERS.map((tri, tIdx) => {
         const isExpanded = expandedTri === tIdx;
@@ -303,7 +304,8 @@ export default function ShoppingList() {
 
         return (
           <View key={tIdx} style={s.triSection}>
-            <TouchableOpacity style={[s.triHeader, { borderLeftColor: tri.color }]} onPress={() => toggleTrimester(tIdx)}>
+            <TouchableOpacity onPress={() => toggleTrimester(tIdx)}>
+          <GlassCard style={[s.triHeader, { borderLeftColor: tri.color }]}>
               <View style={s.triHeaderLeft}>
                 <Text style={[s.triTitle, { color: tri.color }]}>{tri.title}</Text>
                 <Text style={s.triSubtitle} numberOfLines={2}>{tri.subtitle}</Text>
@@ -313,6 +315,7 @@ export default function ShoppingList() {
                 <Text style={s.triCount}>{triChecked}/{triItems}</Text>
                 <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
               </View>
+            </GlassCard>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -406,19 +409,19 @@ export default function ShoppingList() {
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.accent, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
-  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.accent + '40', borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
+  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   grandLabel: { fontSize: theme.fontSize.lg, color: theme.colors.text, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   grandRight: { alignItems: 'flex-end' },
   grandValue: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.accent },
   grandCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 4, fontWeight: theme.fontWeight.medium },
 
   triSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
-  triHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, elevation: 1 },
+  triHeader: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.xl, borderLeftWidth: 3 },
   triHeaderLeft: { flex: 1 },
   triTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold },
   triSubtitle: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },

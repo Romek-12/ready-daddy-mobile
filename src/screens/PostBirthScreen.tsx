@@ -167,7 +167,8 @@ export default function PostBirthScreen() {
               {!isLastTask ? <View style={[st.connector, nextDone && { backgroundColor: theme.colors.primary, opacity: 0.6 }]} /> : null}
             </View>
             <View style={st.taskSection}>
-            <TouchableOpacity style={[st.taskHeader, isDone && st.taskHeaderDone]} onPress={() => toggle(idx)}>
+            <GlassCard style={[st.taskHeader, isDone && st.taskHeaderDone]}>
+            <TouchableOpacity style={st.taskHeaderInner} onPress={() => toggle(idx)}>
               <TouchableOpacity onPress={() => toggleCheck(key)} style={st.checkBtn}>
                 <Icon
                   name={isDone ? 'check-circle' : 'checkbox-blank'}
@@ -190,6 +191,7 @@ export default function PostBirthScreen() {
               </View>
               <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
             </TouchableOpacity>
+            </GlassCard>
 
             {isExpanded && (
               <View style={st.taskContent}>
@@ -307,7 +309,8 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
 
   timelineWrap: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
   taskSection: { flex: 1, marginLeft: theme.spacing.sm },
-  taskHeader: { backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder, flexDirection: 'row', alignItems: 'center' },
+  taskHeader: { },
+  taskHeaderInner: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.lg },
   taskHeaderDone: { opacity: 0.5 },
   checkBtn: { marginRight: theme.spacing.sm },
   taskHeaderInfo: { flex: 1 },
