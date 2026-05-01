@@ -9,6 +9,7 @@ import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import Icon from '../components/Icon';
 import Logo from '../components/Logo';
+import SocialAuthButtons from '../components/SocialAuthButtons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -83,6 +84,8 @@ export default function LoginScreen({ navigation }: Props) {
           loading={loading}
           accessibilityLabel="Zaloguj się"
         />
+
+        <SocialAuthButtons />
 
         <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} style={s.link} accessibilityRole="button" accessibilityLabel="Przejdź do resetu hasła">
           <Text style={s.linkText}>Nie pamiętasz hasła? <Text style={s.linkBold}>Zresetuj je</Text></Text>

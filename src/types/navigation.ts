@@ -3,6 +3,7 @@ export type RootStackParamList = {
   Register: undefined;
   Main: undefined;
   Onboarding: undefined;
+  ProfileSetup: undefined;
   ForgotPassword: undefined;
   ResetPassword: { token?: string };
 };

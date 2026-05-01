@@ -13,11 +13,13 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
 import { CONCEPTION_DAYS } from '../constants';
+import { supabase } from '../lib/supabase';
+import type { UserIdentity } from '@supabase/supabase-js';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 
 export default function SettingsScreen({ navigation }: Props) {
-  const { user, updateUser, logout } = useAuth();
+  const { user, updateUser, logout, linkGoogleAccount, linkFacebookAccount } = useAuth();
   const { theme, mode, setThemeMode } = useTheme();
   const insets = useSafeAreaInsets();
   const [sizeMode, setSizeMode] = useSizeMode();
@@ -28,11 +30,23 @@ export default function SettingsScreen({ navigation }: Props) {
   const [selectedDate, setSelectedDate] = useState(user?.conceptionDate || '');
   const [saving, setSaving] = useState(false);
 
+  const [identities, setIdentities] = useState<UserIdentity[]>([]);
+  const [linkingProvider, setLinkingProvider] = useState<'google' | 'facebook' | null>(null);
+
   // Baby names modal states
   const [babyNameEditModal, setBabyNameEditModal] = useState<'name1' | 'name2' | null>(null);
   const [editingBabyName, setEditingBabyName] = useState('');
   const [savingBabyName, setSavingBabyName] = useState(false);
   const [showGenderPickerAlert, setShowGenderPickerAlert] = useState(false);
+
+  const loadIdentities = async () => {
+    const { data, error } = await supabase.auth.getUserIdentities();
+    if (!error && data?.identities) setIdentities(data.identities);
+  };
+
+  React.useEffect(() => {
+    loadIdentities();
+  }, []);
 
   const handleLogout = async () => {
     Alert.alert('Wylogowanie', 'Czy na pewno chcesz się wylogować?', [
@@ -152,6 +166,49 @@ export default function SettingsScreen({ navigation }: Props) {
     );
   };
 
+  const handleLinkProvider = async (provider: 'google' | 'facebook') => {
+    setLinkingProvider(provider);
+    try {
+      if (provider === 'google') {
+        await linkGoogleAccount();
+      } else {
+        await linkFacebookAccount();
+      }
+      await loadIdentities();
+      Alert.alert('Sukces', `Konto ${provider === 'google' ? 'Google' : 'Facebook'} zostało połączone.`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Coś poszło nie tak';
+      Alert.alert('Błąd', message);
+    } finally {
+      setLinkingProvider(null);
+    }
+  };
+
+  const handleUnlinkProvider = (identity: UserIdentity) => {
+    const providerName = identity.provider === 'google' ? 'Google' : 'Facebook';
+    Alert.alert(
+      `Odłącz ${providerName}`,
+      `Czy na pewno chcesz odłączyć konto ${providerName}? Nie będziesz już mógł logować się przez ${providerName}.`,
+      [
+        { text: 'Anuluj', style: 'cancel' },
+        {
+          text: 'Odłącz',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const { error } = await supabase.auth.unlinkIdentity(identity);
+              if (error) throw new Error(error.message);
+              await loadIdentities();
+              Alert.alert('Sukces', `Konto ${providerName} zostało odłączone.`);
+            } catch (err: unknown) {
+              Alert.alert('Błąd', err instanceof Error ? err.message : 'Nie udało się odłączyć konta.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const renderThemeOption = (targetMode: ThemeMode, label: string, icon: string) => {
     const isSelected = mode === targetMode;
     return (
@@ -200,6 +257,13 @@ export default function SettingsScreen({ navigation }: Props) {
     );
   };
 
+  const hasEmailIdentity = identities.some(i => i.provider === 'email');
+  const googleIdentity = identities.find(i => i.provider === 'google');
+  const facebookIdentity = identities.find(i => i.provider === 'facebook');
+
+  const canUnlinkGoogle = Boolean(googleIdentity) && (hasEmailIdentity || Boolean(facebookIdentity));
+  const canUnlinkFacebook = Boolean(facebookIdentity) && (hasEmailIdentity || Boolean(googleIdentity));
+
   // Format daty dla wyświetlania
   const formatDateForDisplay = (isoString?: string) => {
     if (!isoString) return 'Nie podano';
@@ -239,11 +303,96 @@ export default function SettingsScreen({ navigation }: Props) {
               </View>
               <View>
                 <Text style={s.listButtonText}>Zmień termin poczęcia</Text>
-                <Text style={s.listButtonSub}>{formatDateForDisplay(user?.conceptionDate)}</Text>
+                <Text style={s.listButtonSub}>{formatDateForDisplay(user?.conceptionDate ?? undefined)}</Text>
               </View>
             </View>
             <Icon name="arrow-forward" size={16} color={theme.colors.textMuted} />
           </TouchableOpacity>
+        </View>
+
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>Połączone konta</Text>
+          <Text style={s.sectionDesc}>
+            Po połączeniu konta możesz logować się przez Google lub Facebook bez hasła.
+          </Text>
+
+          {/* Google */}
+          <View style={s.linkedAccountRow}>
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: '#4285F420' }]}>
+                <Text style={s.providerLetter}>G</Text>
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Google</Text>
+                <Text style={s.listButtonSub}>
+                  {googleIdentity ? 'Połączone' : 'Nie połączone'}
+                </Text>
+              </View>
+            </View>
+            {googleIdentity ? (
+              <TouchableOpacity
+                onPress={() => canUnlinkGoogle && handleUnlinkProvider(googleIdentity)}
+                disabled={!canUnlinkGoogle || linkingProvider !== null}
+                style={[s.linkBtn, s.unlinkBtn, !canUnlinkGoogle && s.linkBtnDisabled]}
+              >
+                <Text style={s.unlinkBtnText}>Odłącz</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => handleLinkProvider('google')}
+                disabled={linkingProvider !== null}
+                style={[s.linkBtn, linkingProvider !== null && s.linkBtnDisabled]}
+              >
+                {linkingProvider === 'google' ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={s.linkBtnText}>Połącz</Text>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Facebook */}
+          <View style={[s.linkedAccountRow, { marginTop: theme.spacing.md }]}>
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: '#1877F220' }]}>
+                <Text style={[s.providerLetter, { color: '#1877F2' }]}>f</Text>
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Facebook</Text>
+                <Text style={s.listButtonSub}>
+                  {facebookIdentity ? 'Połączone' : 'Nie połączone'}
+                </Text>
+              </View>
+            </View>
+            {facebookIdentity ? (
+              <TouchableOpacity
+                onPress={() => canUnlinkFacebook && handleUnlinkProvider(facebookIdentity)}
+                disabled={!canUnlinkFacebook || linkingProvider !== null}
+                style={[s.linkBtn, s.unlinkBtn, !canUnlinkFacebook && s.linkBtnDisabled]}
+              >
+                <Text style={s.unlinkBtnText}>Odłącz</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => handleLinkProvider('facebook')}
+                disabled={linkingProvider !== null}
+                style={[s.linkBtn, linkingProvider !== null && s.linkBtnDisabled]}
+              >
+                {linkingProvider === 'facebook' ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={s.linkBtnText}>Połącz</Text>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {((!canUnlinkGoogle && googleIdentity) || (!canUnlinkFacebook && facebookIdentity)) ? (
+            <Text style={s.unlinkHint}>
+              Nie możesz odłączyć jedynego sposobu logowania.
+            </Text>
+          ) : null}
         </View>
 
         {/* O dziecku Section */}
@@ -413,7 +562,7 @@ export default function SettingsScreen({ navigation }: Props) {
               </View>
 
               <DateScrollPicker 
-                initialDate={selectedDate || user?.conceptionDate} 
+                initialDate={selectedDate || (user?.conceptionDate ?? undefined)}
                 onDateChange={setSelectedDate}
                 allowFuture={dateType === 'due'}
                 maxDaysBack={dateType === 'conception' ? 366 : 30}
@@ -461,6 +610,52 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   listButtonIcon: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginRight: theme.spacing.md },
   listButtonText: { fontSize: theme.fontSize.md, color: theme.colors.text, fontWeight: '500' },
   listButtonSub: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, marginTop: 2 },
+
+  linkedAccountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: theme.colors.surface,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
+  },
+  providerLetter: {
+    fontSize: 18,
+    fontWeight: '700' as const,
+    color: '#4285F4',
+  },
+  linkBtn: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    minWidth: 72,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    minHeight: 36,
+  },
+  linkBtnText: {
+    color: '#fff',
+    fontSize: theme.fontSize.sm,
+    fontWeight: theme.fontWeight.semibold,
+  },
+  linkBtnDisabled: { opacity: 0.5 },
+  unlinkBtn: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: theme.colors.danger + '60',
+  },
+  unlinkBtnText: {
+    color: theme.colors.danger,
+    fontSize: theme.fontSize.sm,
+    fontWeight: theme.fontWeight.medium,
+  },
+  unlinkHint: {
+    fontSize: theme.fontSize.xs,
+    color: theme.colors.textMuted,
+    marginTop: theme.spacing.sm,
+    textAlign: 'center' as const,
+  },
 
   spacer: { flex: 1, minHeight: 40 },
   

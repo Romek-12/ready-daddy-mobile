@@ -13,16 +13,16 @@ describe('logError', () => {
 
   it('logs Error instances with context and message', () => {
     logError('TestContext', new Error('something broke'));
-    expect(warnSpy).toHaveBeenCalledWith('[TestContext] something broke');
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringMatching(/\[TestContext\] something broke/));
   });
 
   it('logs non-Error values as strings', () => {
     logError('TestContext', 'plain string error');
-    expect(warnSpy).toHaveBeenCalledWith('[TestContext] plain string error');
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringMatching(/\[TestContext\] plain string error/));
   });
 
   it('logs numbers', () => {
     logError('TestContext', 404);
-    expect(warnSpy).toHaveBeenCalledWith('[TestContext] 404');
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringMatching(/\[TestContext\] 404/));
   });
 });

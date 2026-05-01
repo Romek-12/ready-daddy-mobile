@@ -10,6 +10,7 @@ import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import { PREGNANCY_DAYS } from '../constants';
 import Icon from '../components/Icon';
+import SocialAuthButtons from '../components/SocialAuthButtons';
 import { registerSchema, type RegisterForm } from '../lib/validation';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
@@ -234,6 +235,8 @@ export default function RegisterScreen({ navigation }: Props) {
           loading={loading}
           accessibilityLabel="Zarejestruj się"
         />
+
+        <SocialAuthButtons />
 
         {/* Login Link */}
         <TouchableOpacity

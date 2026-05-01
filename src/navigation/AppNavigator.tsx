@@ -26,6 +26,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
+import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 
 import DadPologScreen from '../screens/DadPologScreen';
 import DadRelacjaScreen from '../screens/DadRelacjaScreen';
@@ -165,7 +166,9 @@ export default function AppNavigator() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}>
           {user ? (
-            isFirstLogin ? (
+            !user.conceptionDate ? (
+              <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
+            ) : isFirstLogin ? (
               <Stack.Screen name="Onboarding">
                 {() => <OnboardingScreen onDone={clearFirstLogin} />}
               </Stack.Screen>

@@ -37,7 +37,7 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const s = useMemo(() => createStyles(theme), [theme]);
 
-  const currentMonth = getCurrentFirstYearMonth(user?.conceptionDate);
+  const currentMonth = getCurrentFirstYearMonth(user?.conceptionDate ?? undefined);
 
   const progressPercent = currentMonth >= 0 ? (currentMonth / 12) * 100 : 0;
 

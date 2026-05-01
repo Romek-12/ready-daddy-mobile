@@ -5,6 +5,7 @@
     "slug": "ready-daddy",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "readydaddy",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -14,7 +15,24 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.readydaddy.mobile"
+      "bundleIdentifier": "com.readydaddy.mobile",
+      "infoPlist": {
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +42,10 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": true,
-      "package": "com.readydaddy.mobile"
+      "package": "com.readydaddy.mobile",
+      "permissions": [
+        "android.permission.INTERNET"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,7 +59,25 @@
       "expo-font",
       "expo-asset",
       "expo-splash-screen",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.644789089672-bh6vc5567316ivbboaoq6eoe00pmcn55"
+        }
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "2042396430045688",
+          "clientToken": "05ba97cc6a5c36f4ceb6aea97557de7e",
+          "displayName": "Ready Daddy",
+          "scheme": "fb2042396430045688",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true
+        }
+      ]
     ]
   }
 }
