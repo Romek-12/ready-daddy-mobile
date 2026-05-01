@@ -107,7 +107,7 @@ function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: 'rgba(11,21,18,0.85)',
           borderTopWidth: 1,
           borderTopColor: theme.colors.cardBorder,
           elevation: 0,

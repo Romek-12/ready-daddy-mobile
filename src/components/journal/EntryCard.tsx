@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import Icon from '../Icon';
+import GlassCard from '../ui/GlassCard';
 import type { JournalEntry, EntryType } from '../../types/journal.types';
 import type { Theme } from '../../theme';
 
@@ -31,47 +32,48 @@ export default function EntryCard({ entry, onPress }: Props) {
   });
 
   return (
-    <TouchableOpacity style={s.card} onPress={onPress} activeOpacity={0.75}>
-      <View style={[s.colorBar, { backgroundColor: color }]} />
-      <View style={s.content}>
-        <View style={s.row}>
-          <Text style={s.date}>{displayDate}</Text>
-          <Text style={s.title} numberOfLines={1}>{entry.title}</Text>
-        </View>
-        <View style={s.tagRow}>
-          <View style={[s.tagChip, { borderColor: color }]}>
-            <Text style={[s.tagLabel, { color }]}>{config.label}</Text>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.75} style={s.wrap}>
+      <GlassCard style={s.card}>
+        <View style={[s.colorBar, { backgroundColor: color }]} />
+        <View style={s.content}>
+          <View style={s.row}>
+            <Text style={s.date}>{displayDate}</Text>
+            <Text style={s.title} numberOfLines={1}>{entry.title}</Text>
           </View>
-          {entry.week !== undefined && (
-            <Text style={s.week}>Tydzień {entry.week}</Text>
-          )}
-        </View>
-        {photos.length > 0 ? (
-          <View style={s.photoRow}>
-            {photos.map((uri, i) => (
-              <Image key={i} source={{ uri }} style={s.photoThumb} />
-            ))}
+          <View style={s.tagRow}>
+            <View style={[s.tagChip, { borderColor: color }]}>
+              <Text style={[s.tagLabel, { color }]}>{config.label}</Text>
+            </View>
+            {entry.week !== undefined && (
+              <Text style={s.week}>Tydzień {entry.week}</Text>
+            )}
           </View>
-        ) : null}
-        {entry.notes ? (
-          <Text style={s.notes} numberOfLines={2}>{entry.notes}</Text>
-        ) : null}
-      </View>
+          {photos.length > 0 ? (
+            <View style={s.photoRow}>
+              {photos.map((uri, i) => (
+                <Image key={i} source={{ uri }} style={s.photoThumb} />
+              ))}
+            </View>
+          ) : null}
+          {entry.notes ? (
+            <Text style={s.notes} numberOfLines={2}>{entry.notes}</Text>
+          ) : null}
+        </View>
+      </GlassCard>
     </TouchableOpacity>
   );
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    card: {
-      flexDirection: 'row',
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.borderRadius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
+    wrap: {
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.sm,
+    },
+    card: {
+      flexDirection: 'row',
       overflow: 'hidden',
+      padding: 0,
     },
     colorBar: {
       width: 4,
