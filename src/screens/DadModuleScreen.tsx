@@ -18,7 +18,7 @@ const resolveIconColor = (colorKey: string, theme: Theme): string => {
     accent: theme.colors.accent,
     danger: theme.colors.danger,
     dadModule: theme.colors.dadModule,
-    rose: '#A05070',
+    rose: theme.colors.partner,
   };
   return colorMap[colorKey] || theme.colors.primary;
 };

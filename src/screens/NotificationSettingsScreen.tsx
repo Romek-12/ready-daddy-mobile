@@ -18,6 +18,7 @@ import { useBadgeContext } from '../context/BadgeContext';
 import { checkNotificationsBadge } from '../services/gamification/BadgeChecker';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import { PREGNANCY_DAYS, TAB_BAR_HEIGHT } from '../constants';
 import type { Theme } from '../theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -112,6 +113,7 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
   }
 
   return (
+    <AuroraBackground>
     <View style={s.container}>
       {/* Header */}
       <View style={s.header}>
@@ -181,12 +183,13 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
         </Text>
       </View>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.background },
+    container: { flex: 1, backgroundColor: 'transparent' },
     center: { justifyContent: 'center', alignItems: 'center' },
     header: {
       flexDirection: 'row',
@@ -195,7 +198,7 @@ const createStyles = (theme: Theme, topInset: number) =>
       paddingHorizontal: theme.spacing.lg,
       paddingTop: topInset + 16,
       paddingBottom: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: 'transparent',
     },
     headerTitle: {
       fontSize: theme.fontSize.lg,

@@ -347,7 +347,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   checkNameDone: { textDecorationLine: 'line-through', color: theme.colors.textMuted },
   optional: { color: theme.colors.textMuted, fontStyle: 'italic', fontSize: theme.fontSize.xs },
   checkNote: { fontSize: 11, color: theme.colors.textMuted, fontStyle: 'italic', marginTop: 1 },
-  calBtn: { padding: 6, borderRadius: theme.borderRadius.sm, backgroundColor: 'rgba(92, 168, 255, 0.1)' },
+  calBtn: { padding: 6, borderRadius: theme.borderRadius.sm, backgroundColor: theme.colors.primaryLight },
 
   disclaimer: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginHorizontal: theme.spacing.lg, marginTop: theme.spacing.lg, padding: theme.spacing.xl, backgroundColor: theme.colors.surfaceLight, borderRadius: theme.borderRadius.xl },
   disclaimerText: { flex: 1, fontSize: 11, color: theme.colors.textMuted, lineHeight: 16, fontStyle: 'italic' },

@@ -129,7 +129,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   header: { alignItems: 'center', paddingTop: insets.top + theme.spacing.md, paddingBottom: theme.spacing.xl },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.fourthTrimester, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
-  infoCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: 'rgba(255,107,157,0.1)', borderRadius: theme.borderRadius.lg, padding: theme.spacing.xl, borderWidth: 1, borderColor: 'rgba(255,107,157,0.2)' },
+  infoCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.lg, padding: theme.spacing.xl, borderWidth: 1, borderColor: theme.colors.accent + '33' },
   infoText: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, lineHeight: 24 },
   listContainer: { paddingHorizontal: theme.spacing.lg },
   accordionWrap: { marginBottom: theme.spacing.sm },

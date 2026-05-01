@@ -195,7 +195,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
 
   sliderSection: {
-    backgroundColor: theme.colors.bg2,
+    backgroundColor: theme.colors.surface,
     paddingTop: 50,
     paddingHorizontal: theme.spacing.lg,
     paddingBottom: theme.spacing.sm,

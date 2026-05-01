@@ -6,7 +6,6 @@ import { useTheme, ThemeMode } from '../context/ThemeContext';
 import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
-import Button from '../components/Button';
 import GlassCard from '../components/ui/GlassCard';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import BabyNameModal from '../components/BabyNameModal';

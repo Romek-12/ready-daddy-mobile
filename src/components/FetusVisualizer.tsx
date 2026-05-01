@@ -76,6 +76,26 @@ const SIZE_MODES: { mode: SizeComparisonMode; label: string; icon: string }[] = 
   { mode: 'sweet',  label: 'Słodycz', icon: 'size-sweet' },
 ];
 
+function MetricTile({ icon, color, value, label, theme }: { icon: string; color: string; value: string; label: string; theme: import('../theme').Theme }) {
+  const parts = value.match(/^([\d.,<]+\s*)(.*)$/) ?? [value, value, ''];
+  const num = parts[1].trim();
+  const unit = parts[2].trim();
+  const s = React.useMemo(() => StyleSheet.create({
+    tile: { flex: 1, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.cardBorder, alignItems: 'flex-start', gap: 2 },
+    num: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xxl, lineHeight: theme.fontSize.xxl + 4, color },
+    unit: { fontFamily: theme.fonts.semibold, fontSize: theme.fontSize.xs, color, letterSpacing: 1, textTransform: 'uppercase' as const },
+    lbl: { marginTop: 2 },
+  }), [theme, color]);
+  return (
+    <View style={s.tile}>
+      <Icon name={icon} size={16} color={color} />
+      <Text style={s.num}>{num}</Text>
+      {unit ? <Text style={s.unit}>{unit}</Text> : null}
+      <Kicker style={s.lbl}>{label}</Kicker>
+    </View>
+  );
+}
+
 export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimester = 1, weekData }: Props) {
   const { theme } = useTheme();
   const s = React.useMemo(() => createStyles(theme), [theme]);
@@ -100,11 +120,7 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
 
   const displayName = weekData ? getSizeComparison(weekData, sizeMode) : (sizeMode === 'fruit' ? fruit.name : '');
 
-  const trimesterColor = trimester === 1
-    ? theme.colors.trimester1
-    : trimester === 2
-    ? theme.colors.trimester2
-    : theme.colors.trimester3;
+  const trimesterColor = theme.colors.primary;
 
   return (
     <View style={s.container}>
@@ -112,10 +128,9 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
       <View style={s.trimRow}>
         {(['I', 'II', 'III'] as const).map((label, i) => {
           const isActive = trimester === i + 1;
-          const color = [theme.colors.trimester1, theme.colors.trimester2, theme.colors.trimester3][i];
           return (
-            <View key={label} style={[s.trimPill, { borderColor: color }, isActive && { backgroundColor: color }]}>
-              <Text style={[s.trimLabel, { color: isActive ? theme.colors.background : color }]}>
+            <View key={label} style={[s.trimPill, isActive ? s.trimPillActive : s.trimPillInactive]}>
+              <Text style={[s.trimLabel, { color: isActive ? theme.colors.background : theme.colors.textSecondary }]}>
                 {label} trym.
               </Text>
             </View>
@@ -139,16 +154,8 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
 
       {/* Big metric tiles */}
       <View style={s.metricRow}>
-        <View style={s.metricTile}>
-          <Icon name="size-fruit" size={18} color={theme.colors.primary} />
-          <Text style={[s.metricValue, { color: theme.colors.primary }]}>{formatSize(sizeMm)}</Text>
-          <Kicker style={s.metricLabel}>Długość</Kicker>
-        </View>
-        <View style={s.metricTile}>
-          <Icon name="size-sweet" size={18} color={theme.colors.accent} />
-          <Text style={[s.metricValue, { color: theme.colors.accent }]}>{formatWeight(weightG)}</Text>
-          <Kicker style={s.metricLabel}>Waga</Kicker>
-        </View>
+        <MetricTile icon="size-fruit" color={theme.colors.primary} value={formatSize(sizeMm)} label="Długość" theme={theme} />
+        <MetricTile icon="size-sweet" color={theme.colors.accent} value={formatWeight(weightG)} label="Waga" theme={theme} />
       </View>
 
       {/* Compare to */}
@@ -207,6 +214,14 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
   },
+  trimPillActive: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  trimPillInactive: {
+    backgroundColor: 'transparent',
+    borderColor: theme.colors.cardBorderHi,
+  },
   trimLabel: {
     fontSize: theme.fontSize.sm,
     fontFamily: theme.fonts.semibold,
@@ -245,24 +260,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   metricRow: {
     flexDirection: 'row',
     gap: theme.spacing.sm,
-  },
-  metricTile: {
-    flex: 1,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
-    borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
-    alignItems: 'flex-start',
-    gap: 4,
-  },
-  metricValue: {
-    fontFamily: theme.fonts.title,
-    fontSize: theme.fontSize.display,
-    lineHeight: theme.fontSize.display,
-  },
-  metricLabel: {
-    marginTop: 2,
   },
   compareSection: {
     gap: theme.spacing.sm,

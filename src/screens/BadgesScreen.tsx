@@ -15,6 +15,8 @@ import BadgeCard from '../components/gamification/BadgeCard';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
 import GlowPill from '../components/ui/GlowPill';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientProgressBar from '../components/ui/GradientProgressBar';
 import { BADGE_DEFINITIONS } from '../data/badges-definitions';
 import type { Theme } from '../theme';
 import type { BadgeCategory } from '../types/badges.types';
@@ -38,6 +40,7 @@ export default function BadgesScreen({ navigation }: Props) {
   const progress = totalCount > 0 ? earnedCount / totalCount : 0;
 
   return (
+    <AuroraBackground>
     <View style={s.container}>
       {/* Header */}
       <View style={s.header}>
@@ -50,9 +53,7 @@ export default function BadgesScreen({ navigation }: Props) {
 
       {/* Progress bar */}
       <View style={s.progressContainer}>
-        <View style={s.progressBg}>
-          <View style={[s.progressFill, { width: `${progress * 100}%` }]} />
-        </View>
+        <GradientProgressBar value={Math.round(progress * 100)} height={6} glow />
         <Text style={s.progressLabel}>{Math.round(progress * 100)}% odblokowanych</Text>
       </View>
 
@@ -87,12 +88,13 @@ export default function BadgesScreen({ navigation }: Props) {
         </ScrollView>
       )}
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.background },
+    container: { flex: 1, backgroundColor: 'transparent' },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     header: {
       flexDirection: 'row',
@@ -101,7 +103,7 @@ const createStyles = (theme: Theme, topInset: number) =>
       paddingHorizontal: theme.spacing.lg,
       paddingTop: topInset + 16,
       paddingBottom: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: 'transparent',
     },
     headerTitle: {
       fontSize: theme.fontSize.lg,
@@ -119,20 +121,7 @@ const createStyles = (theme: Theme, topInset: number) =>
     progressContainer: {
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.cardBorder,
-    },
-    progressBg: {
-      height: 6,
-      backgroundColor: theme.colors.surfaceLight,
-      borderRadius: theme.borderRadius.full,
-      overflow: 'hidden',
-    },
-    progressFill: {
-      height: '100%',
-      backgroundColor: theme.colors.primary,
-      borderRadius: theme.borderRadius.full,
+      backgroundColor: 'transparent',
     },
     progressLabel: {
       fontSize: theme.fontSize.xs,

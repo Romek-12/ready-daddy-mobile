@@ -16,6 +16,7 @@ import { useBadgeContext } from '../context/BadgeContext';
 import type { ActionCard } from '../services/api';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GlowPill from '../components/ui/GlowPill';
+import GlassCard from '../components/ui/GlassCard';
 
 export default function HomeScreen({ navigation }: { navigation: AppNavigation }) {
   const { theme } = useTheme();
@@ -114,7 +115,8 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
       </View>
 
       {w && (
-        <TouchableOpacity style={s.weekCard} onPress={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })} accessibilityRole="button" accessibilityLabel={`Tydzień ${data.currentWeek} – sprawdź szczegóły`}>
+        <TouchableOpacity onPress={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })} accessibilityRole="button" accessibilityLabel={`Tydzień ${data.currentWeek} – sprawdź szczegóły`} style={s.weekCardWrap}>
+        <GlassCard elevated style={s.weekCard}>
           <View style={{ marginBottom: theme.spacing.sm }}>
             <GlowPill label={`${data.trimester}. trymestr`} variant={data.trimester === 2 ? 'violet' : 'cyan'} />
           </View>
@@ -130,6 +132,7 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
             progressLabel={`${progress}% ciąży za nami`}
             onDetails={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })}
           />
+        </GlassCard>
         </TouchableOpacity>
       )}
 
@@ -152,9 +155,11 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
           {data?.actionCards.slice(0, 2).map((card: ActionCard) => {
             const preview = card.herSide?.[0] ?? '';
             return (
-              <TouchableOpacity key={card.id} style={s.quickCard} onPress={() => navigation.navigate('ActionCards', { initialCardId: card.id })} accessibilityRole="button" accessibilityLabel={`Karta reakcji: ${card.title}`}>
-                <Text style={s.quickTitle}>{card.emoji} {card.title}</Text>
-                <Text style={s.quickScenario}>{preview.length > 80 ? preview.substring(0, 80) + '…' : preview}</Text>
+              <TouchableOpacity key={card.id} onPress={() => navigation.navigate('ActionCards', { initialCardId: card.id })} accessibilityRole="button" accessibilityLabel={`Karta reakcji: ${card.title}`}>
+                <GlassCard style={s.quickCard}>
+                  <Text style={s.quickTitle}>{card.emoji} {card.title}</Text>
+                  <Text style={s.quickScenario}>{preview.length > 80 ? preview.substring(0, 80) + '…' : preview}</Text>
+                </GlassCard>
               </TouchableOpacity>
             );
           })}
@@ -166,17 +171,19 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
       <View style={s.section}>
         <View style={s.moduleGrid}>
           {MODULES.map(m => (
-            <TouchableOpacity key={m.key} style={s.moduleCard} onPress={() => {
+            <TouchableOpacity key={m.key} style={s.moduleCardWrap} onPress={() => {
               if (m.isTab) {
                 navigation.navigate(m.key, m.key === 'WeekDetailTab' ? { week: data?.currentWeek } : undefined);
               } else {
                 navigation.navigate(m.key);
               }
             }} accessibilityRole="button" accessibilityLabel={m.label}>
-              <View style={[s.moduleIcon, { backgroundColor: m.color + '20' }]}>
-                <Icon name={m.icon} size={28} color={m.color} />
-              </View>
-              <Text style={s.moduleLabel}>{m.label}</Text>
+              <GlassCard style={s.moduleCard}>
+                <View style={[s.moduleIcon, { backgroundColor: m.color + '20' }]}>
+                  <Icon name={m.icon} size={28} color={m.color} />
+                </View>
+                <Text style={s.moduleLabel}>{m.label}</Text>
+              </GlassCard>
             </TouchableOpacity>
           ))}
         </View>
@@ -207,7 +214,8 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   greeting: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
   appName: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.primary, letterSpacing: 1 },
   settingsBtn: { padding: theme.spacing.sm },
-  weekCard: { margin: theme.spacing.lg, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, overflow: 'hidden' },
+  weekCardWrap: { margin: theme.spacing.lg },
+  weekCard: { padding: theme.spacing.xl, overflow: 'hidden' },
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 800', color: theme.colors.text },
   notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1, borderLeftWidth: 2, borderLeftColor: theme.colors.primary },
   notifHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 8 },
@@ -216,11 +224,12 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   section: { paddingHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },
   sectionTitle: { fontSize: theme.fontSize.lg, fontFamily: theme.fonts.bold, color: theme.colors.text },
-  quickCard: { backgroundColor: theme.colors.surfaceHi, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, marginBottom: theme.spacing.sm },
+  quickCard: { padding: theme.spacing.md, marginBottom: theme.spacing.sm },
   quickTitle: { fontSize: theme.fontSize.md, fontFamily: theme.fonts.bold, color: theme.colors.accent },
   quickScenario: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 4 },
   moduleGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.lg },
-  moduleCard: { width: CARD_W, backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, alignItems: 'center' },
+  moduleCardWrap: { width: CARD_W },
+  moduleCard: { padding: theme.spacing.lg, alignItems: 'center' },
   moduleIcon: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.sm },
   moduleLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, textAlign: 'center', fontFamily: theme.fonts.medium },
   settingsFooter: {
