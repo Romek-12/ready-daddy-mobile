@@ -7,6 +7,8 @@ import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
 import { useCheckupVisits } from '../hooks/useAppData';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
+import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 interface CheckItem {
   id: number;
@@ -124,6 +126,7 @@ export default function CheckupsScreen() {
   }
 
   return (
+    <AuroraBackground>
     <View style={s.container}>
       <ScrollView style={s.scroll}>
         <View style={s.header}>
@@ -133,35 +136,45 @@ export default function CheckupsScreen() {
       </View>
 
       {/* Progress card */}
-      <View style={s.progressCard}>
+      <GlassCard accent="cyan" elevated style={s.progressCard}>
         <Text style={s.progressLabel}>Postęp badań</Text>
         <View style={s.progressRight}>
           <Text style={s.progressCount}>{totalChecked}/{totalItems}</Text>
           <Text style={s.progressCheckLabel}>odfajkowane zadania</Text>
         </View>
-      </View>
+      </GlassCard>
 
       {visits.map((visit, vIdx) => {
         const isExpanded = expanded === vIdx;
         const visitItemCount = countCheckable(visit);
         const visitChecked = countCheckedInVisit(visit, vIdx, checked);
+        const isLast = vIdx === visits.length - 1;
+        const isDone = visitItemCount > 0 && visitChecked === visitItemCount;
+        const visitColor = resolveColor(visit.colorKey, theme);
 
         return (
-          <View key={vIdx} style={s.visitSection}>
-            <TouchableOpacity style={[s.visitHeader, { borderLeftColor: resolveColor(visit.colorKey, theme) }]} onPress={() => toggle(vIdx)} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
+          <View key={vIdx} style={s.timelineRow}>
+            <View style={s.timelineCol}>
+              <View style={[s.timelineDot, { backgroundColor: isDone ? theme.colors.primary : visitColor, shadowColor: isDone ? theme.colors.primary : visitColor }]} />
+              {!isLast ? <View style={s.timelineLine} /> : null}
+            </View>
+            <View style={s.timelineContent}>
+            <TouchableOpacity onPress={() => toggle(vIdx)} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
+            <GlassCard style={s.visitHeader}>
               <View style={s.visitHeaderLeft}>
-                <View style={[s.weekBadge, { backgroundColor: resolveColor(visit.colorKey, theme) }]}>
+                <View style={[s.weekBadge, { backgroundColor: visitColor }]}>
                   <Text style={s.weekBadgeText}>{visit.weekRange}</Text>
                 </View>
                 <Text style={s.visitTitle}>{visit.title}</Text>
                 <Text style={s.visitSubtitle} numberOfLines={2}>{visit.subtitle}</Text>
               </View>
               <View style={s.visitHeaderRight}>
-                <Text style={[s.visitProgress, { color: visitChecked === visitItemCount && visitItemCount > 0 ? theme.colors.primary : theme.colors.textMuted }]}>
+                <Text style={[s.visitProgress, { color: isDone ? theme.colors.primary : theme.colors.textMuted }]}>
                   {visitChecked}/{visitItemCount}
                 </Text>
                 <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
               </View>
+            </GlassCard>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -254,6 +267,7 @@ export default function CheckupsScreen() {
                 })}
               </View>
             )}
+            </View>
           </View>
         );
       })}
@@ -265,13 +279,14 @@ export default function CheckupsScreen() {
       <View style={{ height: 40 }} />
     </ScrollView>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   scroll: { flex: 1 },
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, marginBottom: 4 },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
@@ -283,7 +298,21 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   progressCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },
 
   visitSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
-  visitHeader: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, flexDirection: 'row', alignItems: 'center' },
+  timelineRow: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  timelineCol: { width: 24, alignItems: 'center' },
+  timelineDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginTop: 14,
+    shadowOpacity: 0.7,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 4,
+  },
+  timelineLine: { flex: 1, width: 2, backgroundColor: theme.colors.cardBorder, marginTop: 6 },
+  timelineContent: { flex: 1, marginLeft: theme.spacing.sm },
+  visitHeader: { padding: theme.spacing.md, flexDirection: 'row', alignItems: 'center' },
   visitHeaderLeft: { flex: 1 },
   weekBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start', marginBottom: 6 },
   weekBadgeText: { fontSize: 11, fontWeight: theme.fontWeight.semibold, color: '#FFFFFF' },
@@ -296,8 +325,8 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
 
   catSection: { marginBottom: 16 },
   catHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  catTitle: { fontSize: 13, fontFamily: 'SpaceGrotesk_600SemiBold', color: 'rgba(255,255,255,0.88)', flex: 1 },
-  catCount: { fontSize: 11, fontFamily: 'SpaceGrotesk_600SemiBold', backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12, color: 'rgba(255,255,255,0.5)' },
+  catTitle: { fontSize: 13, fontFamily: theme.fonts.semibold, color: theme.colors.text, flex: 1 },
+  catCount: { fontSize: 11, fontFamily: theme.fonts.semibold, backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12, color: theme.colors.textMuted },
 
   // singleCheck category styles
   singleCheckRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder },

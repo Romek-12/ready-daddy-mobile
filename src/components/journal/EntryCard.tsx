@@ -22,7 +22,7 @@ export default function EntryCard({ entry, onPress }: Props) {
   const s = useMemo(() => createStyles(theme), [theme]);
   const config = ENTRY_CONFIG[entry.type];
   const color = config.color(theme);
-  const firstPhoto = entry.photos?.[0];
+  const photos = (entry.photos ?? []).slice(0, 3);
 
   const displayDate = new Date(entry.date).toLocaleDateString('pl-PL', {
     day: 'numeric',
@@ -35,32 +35,28 @@ export default function EntryCard({ entry, onPress }: Props) {
       <View style={[s.colorBar, { backgroundColor: color }]} />
       <View style={s.content}>
         <View style={s.row}>
-          <View style={[s.badge, { backgroundColor: color + '20' }]}>
-            <Icon name={config.icon} size={14} color={color} />
-            <Text style={[s.badgeLabel, { color }]}>{config.label}</Text>
+          <Text style={s.date}>{displayDate}</Text>
+          <Text style={s.title} numberOfLines={1}>{entry.title}</Text>
+        </View>
+        <View style={s.tagRow}>
+          <View style={[s.tagChip, { borderColor: color }]}>
+            <Text style={[s.tagLabel, { color }]}>{config.label}</Text>
           </View>
           {entry.week !== undefined && (
             <Text style={s.week}>Tydzień {entry.week}</Text>
           )}
         </View>
-        <Text style={s.title} numberOfLines={2}>{entry.title}</Text>
-        <View style={s.meta}>
-          <Icon name="date-range" size={13} color={theme.colors.textMuted} />
-          <Text style={s.date}>{displayDate}</Text>
-          {entry.doctor ? (
-            <>
-              <Text style={s.dot}>·</Text>
-              <Text style={s.date} numberOfLines={1}>{entry.doctor}</Text>
-            </>
-          ) : null}
-        </View>
+        {photos.length > 0 ? (
+          <View style={s.photoRow}>
+            {photos.map((uri, i) => (
+              <Image key={i} source={{ uri }} style={s.photoThumb} />
+            ))}
+          </View>
+        ) : null}
         {entry.notes ? (
           <Text style={s.notes} numberOfLines={2}>{entry.notes}</Text>
         ) : null}
       </View>
-      {firstPhoto ? (
-        <Image source={{ uri: firstPhoto }} style={s.thumbnail} />
-      ) : null}
     </TouchableOpacity>
   );
 }
@@ -102,6 +98,35 @@ const createStyles = (theme: Theme) =>
       fontSize: 11,
       fontWeight: '600',
     },
+    tagRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginTop: 4,
+    },
+    tagChip: {
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 999,
+      borderWidth: 1,
+    },
+    tagLabel: {
+      fontSize: 10,
+      fontWeight: '600',
+      letterSpacing: 1,
+      textTransform: 'uppercase',
+    },
+    photoRow: {
+      flexDirection: 'row',
+      gap: 8,
+      marginTop: 8,
+    },
+    photoThumb: {
+      width: 56,
+      height: 56,
+      borderRadius: theme.borderRadius.md,
+      backgroundColor: theme.colors.surface,
+    },
     week: {
       fontSize: 11,
       color: theme.colors.textMuted,
@@ -119,6 +144,8 @@ const createStyles = (theme: Theme) =>
     date: {
       fontSize: theme.fontSize.xs,
       color: theme.colors.textMuted,
+      fontFamily: theme.fonts.medium,
+      letterSpacing: 0.5,
     },
     dot: {
       fontSize: theme.fontSize.xs,

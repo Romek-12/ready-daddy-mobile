@@ -9,6 +9,7 @@ import FetusVisualizer from '../components/FetusVisualizer';
 import type { Theme } from '../theme';
 import type { ActionCard, CheckupItem } from '../services/api';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GlassCard from '../components/ui/GlassCard';
 
 type Props = { route?: { params?: { week?: number } } };
 
@@ -104,8 +105,8 @@ export default function WeekDetailScreen({ route }: Props) {
         </View>
       </View>
 
-      {/* Fetus visualizer */}
-      <View style={s.visualizerCard}>
+      {/* Fetus visualizer hero */}
+      <GlassCard elevated style={s.heroCard}>
         <FetusVisualizer
           week={selectedWeek}
           sizeMm={w?.fetus_size_mm ?? 0}
@@ -113,7 +114,7 @@ export default function WeekDetailScreen({ route }: Props) {
           trimester={w?.trimester ?? 1}
           weekData={w ?? undefined}
         />
-      </View>
+      </GlassCard>
 
       {/* Content cards */}
       {w ? (
@@ -194,7 +195,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
 
   sliderSection: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.bg2,
     paddingTop: 50,
     paddingHorizontal: theme.spacing.lg,
     paddingBottom: theme.spacing.sm,
@@ -216,10 +217,11 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   weekLabel: {
     fontSize: theme.fontSize.xxl,
     fontFamily: theme.fonts.title,
+    fontVariationSettings: '"wght" 800',
   },
   trimLabel: {
     fontSize: theme.fontSize.xs,
-    fontWeight: theme.fontWeight.semibold,
+    fontFamily: theme.fonts.semibold,
     marginTop: 2,
   },
   slider: {
@@ -246,22 +248,29 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: theme.borderRadius.xl,
     overflow: 'hidden',
   },
+  heroCard: {
+    padding: theme.spacing.md,
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    overflow: 'hidden',
+  },
   card: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },
-  cardTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
+  cardTitle: { fontSize: theme.fontSize.lg, fontFamily: theme.fonts.bold, color: theme.colors.text },
   desc: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, lineHeight: 24, marginTop: theme.spacing.sm },
-  tipLabel: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.bold, color: theme.colors.primary, marginTop: theme.spacing.md },
+  tipLabel: { fontSize: theme.fontSize.sm, fontFamily: theme.fonts.bold, color: theme.colors.primary, marginTop: theme.spacing.md },
   tipText: { fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 24, marginTop: 4 },
   section: { paddingHorizontal: theme.spacing.lg, marginTop: theme.spacing.md },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },
-  sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
+  sectionTitle: { fontSize: theme.fontSize.lg, fontFamily: theme.fonts.bold, color: theme.colors.text },
   actionCard: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.xl, padding: theme.spacing.xl, marginBottom: theme.spacing.md },
-  actionTitle: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.accent },
+  actionTitle: { fontSize: theme.fontSize.md, fontFamily: theme.fonts.bold, color: theme.colors.accent },
   science: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontStyle: 'italic', marginTop: theme.spacing.sm, lineHeight: 20 },
   actionBox: { backgroundColor: theme.colors.primaryLight, borderRadius: theme.borderRadius.md, padding: theme.spacing.md, marginTop: theme.spacing.md },
   actionBoxHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  actionBoxLabel: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },
+  actionBoxLabel: { fontSize: theme.fontSize.sm, fontFamily: theme.fonts.bold, color: theme.colors.primary },
   actionBoxText: { fontSize: theme.fontSize.sm, color: theme.colors.text, lineHeight: 22 },
   checkupCard: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.cardBorder, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, marginBottom: theme.spacing.sm },
-  checkupName: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, color: theme.colors.checkups },
+  checkupName: { fontSize: theme.fontSize.md, fontFamily: theme.fonts.bold, color: theme.colors.checkups },
 });

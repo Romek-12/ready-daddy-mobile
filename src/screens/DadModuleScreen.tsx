@@ -6,6 +6,11 @@ import type { Theme } from '../theme';
 import type { AppNavigation } from '../types/navigation';
 import Icon from '../components/Icon';
 import { useDadModule } from '../hooks/useAppData';
+import GlassCard from '../components/ui/GlassCard';
+import GlowPill from '../components/ui/GlowPill';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
 
 const resolveIconColor = (colorKey: string, theme: Theme): string => {
   const colorMap: Record<string, string> = {
@@ -201,62 +206,112 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
   };
 
   return (
+    <AuroraBackground>
     <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <View style={s.header}>
-        <Icon name="dad" size={48} color={theme.colors.dadModule} />
-        <Text style={s.title}>Moduł dla Ojców</Text>
-        <Text style={s.subtitle}>Wsparcie i informacje dla przyszłych i nowych taciów</Text>
+        <Kicker style={s.headerKicker}>Moduł taty</Kicker>
+        <View style={s.titleStack}>
+          <Text style={s.title}>Twój</Text>
+          <GradientText style={s.title}>poradnik.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Praktyczne porady dla ojców — od narodzin do pierwszego roku.</Text>
       </View>
 
-      <View style={s.sectionGrid}>
-        {content.sections.map((section) => (
-          <View key={section.id} style={s.sectionButton}>
+      <View style={{ paddingHorizontal: 16 }}>
+        <GlassCard elevated style={s.tipCard}>
+          <GlowPill label="Wskazówka dnia" />
+          <Text style={s.tipQuote}>„Twoja obecność na sali porodowej robi różnicę — nawet jeśli czujesz się bezradny."</Text>
+          <Text style={s.tipMeta}>Moduł: Poród · Rozdział 3</Text>
+        </GlassCard>
+      </View>
+
+      <View style={s.sectionsHeader}>
+        <Kicker>Sekcje</Kicker>
+      </View>
+
+      <View style={s.sectionList}>
+        {content.sections.map((section, i) => {
+          const isActive = activeSection === section.id;
+          const accent: 'cyan' | 'violet' = i % 2 === 0 ? 'cyan' : 'violet';
+          return (
             <TouchableOpacity
-              style={[s.sectionButtonInner, activeSection === section.id && s.sectionButtonActive]}
-              onPress={() => setActiveSection(activeSection === section.id ? null : section.id)}
+              key={section.id}
+              activeOpacity={0.85}
+              onPress={() => setActiveSection(isActive ? null : section.id)}
+              style={s.sectionRowWrap}
             >
-              <Icon name={section.icon} size={28} color={resolveIconColor(section.iconColorKey, theme)} />
-              <Text style={s.sectionButtonText}>{section.title}</Text>
+              <GlassCard
+                accent={accent}
+                elevated={isActive}
+                style={s.sectionRow}
+              >
+                <View style={s.sectionRowIcon}>
+                  <Icon name={section.icon} size={36} color={resolveIconColor(section.iconColorKey, theme)} />
+                </View>
+                <View style={s.sectionRowText}>
+                  <Text style={s.sectionRowTitle}>{section.title}</Text>
+                  {section.subtitle ? (
+                    <Text style={s.sectionRowSubtitle} numberOfLines={2}>{section.subtitle}</Text>
+                  ) : null}
+                </View>
+                <Icon
+                  name={isActive ? 'expand-less' : 'arrow-forward'}
+                  size={20}
+                  color={theme.colors.textMuted}
+                />
+              </GlassCard>
             </TouchableOpacity>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       {activeSection && renderSectionContent(activeSection)}
 
       <View style={{ height: 32 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
   StyleSheet.create({
-    c: { flex: 1, backgroundColor: theme.colors.background },
+    c: { flex: 1, backgroundColor: 'transparent' },
     scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
-    header: { alignItems: 'center', paddingTop: insets.top + 16, paddingBottom: 24, paddingHorizontal: 16 },
-    title: { fontSize: theme.fontSize.xl, fontFamily: theme.fonts.title, color: theme.colors.dadModule, marginTop: 12 },
-    subtitle: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 8, textAlign: 'center' },
+    header: { alignItems: 'flex-start', paddingTop: insets.top + 16, paddingBottom: 24, paddingHorizontal: 16, gap: 8 },
+    headerKicker: { marginBottom: 4 },
+    titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+    title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text, letterSpacing: 1 },
+    subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
+    sectionsHeader: { paddingHorizontal: 16, marginBottom: 8 },
 
-    sectionGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 8, marginBottom: 24 },
-    sectionButton: {
-      width: '50%',
-      paddingHorizontal: 8,
-      marginBottom: 12,
-    },
-    sectionButtonInner: {
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
-      padding: 12,
+    sectionList: { paddingHorizontal: 16, marginBottom: 24, gap: 12 },
+    sectionRowWrap: {},
+    sectionRow: {
+      flexDirection: 'row',
       alignItems: 'center',
+      padding: 16,
+      gap: 14,
+    },
+    sectionRowIcon: {
+      width: 56,
+      height: 56,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.surfaceHi,
       justifyContent: 'center',
-      minHeight: 100,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
+      alignItems: 'center',
     },
-    sectionButtonActive: {
-      borderColor: theme.colors.dadModule,
+    sectionRowText: { flex: 1 },
+    sectionRowTitle: {
+      fontSize: theme.fontSize.md,
+      fontFamily: theme.fonts.bold,
+      color: theme.colors.text,
     },
-    sectionButtonText: { fontSize: theme.fontSize.xs, color: theme.colors.text, marginTop: 8, textAlign: 'center', fontWeight: theme.fontWeight.bold },
+    sectionRowSubtitle: {
+      fontSize: theme.fontSize.sm,
+      fontFamily: theme.fonts.body,
+      color: theme.colors.textSecondary,
+      marginTop: 2,
+    },
 
     sectionContent: { paddingHorizontal: 16, marginBottom: 24 },
     subheading: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text, marginBottom: 12 },
@@ -313,4 +368,9 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
     bibJournal: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, marginTop: 2 },
 
     placeholder: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontStyle: 'italic', padding: 16, textAlign: 'center' },
+
+    tipCard: { padding: theme.spacing.lg, marginBottom: theme.spacing.md },
+    tipText: { marginTop: 8, fontFamily: theme.fonts.body, fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 22 },
+    tipQuote: { marginTop: 12, fontFamily: theme.fonts.semibold, fontSize: theme.fontSize.lg, color: theme.colors.text, lineHeight: 26, fontStyle: 'italic' },
+    tipMeta: { marginTop: 12, fontFamily: theme.fonts.medium, fontSize: theme.fontSize.xs, color: theme.colors.textMuted, letterSpacing: 1 },
   });

@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
+import GlassCard from '../components/ui/GlassCard';
 
 export default function DadPologScreen() {
   const { theme } = useTheme();
@@ -18,7 +19,7 @@ export default function DadPologScreen() {
         </Text>
       </View>
 
-      <View style={st.introCard}>
+      <GlassCard accent="violet" style={st.introCard}>
         <View style={st.introIconWrap}>
           <Text style={st.introEmoji}>🤝</Text>
         </View>
@@ -28,7 +29,7 @@ export default function DadPologScreen() {
             Kobieta wykonała niesamowitą i wyczerpującą pracę. By ustabilizować waszą nową rzeczywistość, musisz teraz przejąć wiele obowiązków i być murem obronnym rodziny. Jeśli Ty staniesz na wysokości zadania – noworodek i partnerka też poczują się bezpieczniej.
           </Text>
         </View>
-      </View>
+      </GlassCard>
 
       <View style={st.sectionGrid}>
         {/* 01 Czym jest połóg */}

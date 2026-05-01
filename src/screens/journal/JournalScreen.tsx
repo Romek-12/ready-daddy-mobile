@@ -14,6 +14,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useJournal } from '../../hooks/useJournal';
 import EntryCard from '../../components/journal/EntryCard';
 import Icon from '../../components/Icon';
+import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { JournalStackParamList } from '../../types/navigation';
 import type { Theme } from '../../theme';
 import { TAB_BAR_HEIGHT } from '../../constants';
@@ -48,6 +49,7 @@ export default function JournalScreen({ navigation }: Props) {
   }, [entries, activeFilter]);
 
   return (
+    <AuroraBackground>
     <View style={s.container}>
       {/* Header */}
       <View style={s.header}>
@@ -102,6 +104,7 @@ export default function JournalScreen({ navigation }: Props) {
         />
       )}
     </View>
+    </AuroraBackground>
   );
 }
 
@@ -109,7 +112,7 @@ const createStyles = (theme: Theme, topInset: number, bottomInset: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
     },
     header: {
       flexDirection: 'row',

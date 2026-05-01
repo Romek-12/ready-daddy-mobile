@@ -10,6 +10,7 @@ import Icon from '../components/Icon';
 import type { Theme } from '../theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
 
 const SLIDES = [
   {
@@ -107,7 +108,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <View style={[s.iconCircle, { backgroundColor: color + '20', borderColor: color + '40' }]}>
           <Icon name={item.icon} size={56} color={color} />
         </View>
-        <Text style={s.slideTitle}>{item.title}</Text>
+        <GradientText style={s.slideTitle}>{item.title}</GradientText>
         <Text style={s.slideDesc}>{item.desc}</Text>
       </View>
     );
@@ -188,7 +189,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent', alignItems: 'center' },
   skipBtn: { alignSelf: 'flex-end', padding: theme.spacing.lg },
-  skipText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontWeight: theme.fontWeight.medium },
+  skipText: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted, fontFamily: theme.fonts.medium },
 
   flatList: { flexGrow: 0 },
   slide: {
@@ -210,6 +211,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   slideTitle: {
     fontSize: theme.fontSize.xxl,
     fontFamily: theme.fonts.title,
+    fontVariationSettings: '"wght" 800',
     color: theme.colors.text,
     textAlign: 'center',
     marginBottom: theme.spacing.lg,
@@ -239,6 +241,6 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
     minWidth: 180,
     justifyContent: 'center',
   },
-  nextText: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.black },
+  nextText: { fontSize: theme.fontSize.lg, fontFamily: theme.fonts.bold, color: theme.colors.black },
   counter: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: theme.spacing.lg, marginBottom: theme.spacing.sm },
 });

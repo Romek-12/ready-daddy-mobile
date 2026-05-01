@@ -10,9 +10,12 @@ import { z } from 'zod';
 import { useTheme } from '../context/ThemeContext';
 import { supabase } from '../lib/supabase';
 import { resetPasswordSchema } from '../lib/validation';
-import FormInput from '../components/FormInput';
-import Button from '../components/Button';
 import Icon from '../components/Icon';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import GlassCard from '../components/ui/GlassCard';
+import GlassInput from '../components/ui/GlassInput';
+import GradientButton from '../components/ui/GradientButton';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
@@ -54,6 +57,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <SafeAreaView style={s.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={s.inner} keyboardShouldPersistTaps="handled">
@@ -61,10 +65,10 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
             <Icon name="arrow-back" size={24} color={theme.colors.text} />
           </TouchableOpacity>
 
-          <View style={s.iconWrap}>
-            <Icon name="lock-open" size={56} color={theme.colors.primary} />
-          </View>
-          <Text style={s.title}>Nowe hasło</Text>
+          <GlassCard elevated style={s.iconCard}>
+            <Icon name="lock-open" size={40} color={theme.colors.primary} />
+          </GlassCard>
+          <GradientText style={s.title}>Nowe hasło</GradientText>
           <Text style={s.subtitle}>Ustaw nowe hasło dla swojego konta.</Text>
 
           {/* Token field (hidden/pre-filled when arriving via deep link) */}
@@ -73,14 +77,14 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
               control={control}
               name="token"
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                <FormInput
+                <GlassInput
                   label="Kod resetowania"
+                  icon="vpn-key"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   error={error?.message}
                   placeholder="Wklej kod tutaj"
-                  placeholderTextColor={theme.colors.textMuted}
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
@@ -94,14 +98,14 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
               control={control}
               name="newPassword"
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                <FormInput
+                <GlassInput
                   label="Nowe hasło"
+                  icon="lock"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   error={error?.message}
                   placeholder="Min. 6 znaków"
-                  placeholderTextColor={theme.colors.textMuted}
                   isPassword
                 />
               )}
@@ -114,21 +118,21 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
               control={control}
               name="confirmPassword"
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                <FormInput
+                <GlassInput
                   label="Potwierdź hasło"
+                  icon="lock"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   error={error?.message}
                   placeholder="Powtórz hasło"
-                  placeholderTextColor={theme.colors.textMuted}
                   isPassword
                 />
               )}
             />
           </View>
 
-          <Button
+          <GradientButton
             title="Ustaw nowe hasło"
             onPress={handleSubmit(onSubmit)}
             loading={isSubmitting}
@@ -136,14 +140,16 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flexGrow: 1, padding: theme.spacing.xl, paddingTop: theme.spacing.md },
   backBtn: { marginBottom: theme.spacing.xl },
   iconWrap: { alignItems: 'center', marginBottom: theme.spacing.xl },
+  iconCard: { alignSelf: 'center', padding: theme.spacing.lg, marginBottom: theme.spacing.xl },
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, textAlign: 'center' },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, textAlign: 'center', marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   inputGroup: { marginBottom: theme.spacing.lg },

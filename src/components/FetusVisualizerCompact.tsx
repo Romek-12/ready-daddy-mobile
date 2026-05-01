@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { useTheme } from '../context/ThemeContext';
 import { FETUS_IMAGES } from '../data/fetusImages';
 import { formatSize, formatWeight } from './FetusVisualizer';
+import GradientProgressBar from './ui/GradientProgressBar';
 import type { SizeComparisonMode } from '../hooks/useSizeMode';
 import type { Theme } from '../theme';
 
@@ -24,6 +32,19 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
   const { theme } = useTheme();
   const s = React.useMemo(() => createStyles(theme), [theme]);
 
+  const scale = useSharedValue(1);
+  useEffect(() => {
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.06, { duration: 1800 }),
+        withTiming(1.0, { duration: 1800 })
+      ),
+      -1,
+      true
+    );
+  }, [scale]);
+  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
   const fetusImage = FETUS_IMAGES[Math.min(Math.max(week, 1), 40)];
 
   const trimesterColor = trimester === 1
@@ -36,7 +57,9 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
     <View style={s.row}>
       {/* Fetus image thumbnail */}
       <View style={s.svgBox}>
-        <Image source={fetusImage} style={{ width: 68, height: 78 }} resizeMode="contain" />
+        <Animated.View style={pulseStyle}>
+          <Image source={fetusImage} style={{ width: 58, height: 68 }} resizeMode="contain" />
+        </Animated.View>
       </View>
 
       {/* Metrics */}
@@ -58,9 +81,7 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
         {progress !== undefined ? (
           <>
             <View style={s.progressWrapper}>
-              <View style={s.progressBar}>
-                <View style={[s.progressFill, { width: `${Math.min(progress, 100)}%`, backgroundColor: trimesterColor }]} />
-              </View>
+              <GradientProgressBar value={Math.min(progress, 100)} height={6} glow />
               {progressLabel ? <Text style={s.progressLabel}>{progressLabel}</Text> : null}
             </View>
             {onDetails && (
@@ -90,8 +111,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginVertical: theme.spacing.sm,
   },
   svgBox: {
-    width: 80,
-    height: 90,
+    width: 72,
+    height: 82,
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.lg,
     justifyContent: 'center',
@@ -150,14 +171,14 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   progressLabel: {
     fontSize: 11,
     color: theme.colors.textMuted,
-    fontFamily: 'SpaceGrotesk_400Regular',
+    fontFamily: theme.fonts.body,
   },
   detailsBtn: {
     marginTop: 2,
   },
   detailsLink: {
     fontSize: theme.fontSize.sm,
-    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontFamily: theme.fonts.semibold,
     fontWeight: theme.fontWeight.semibold,
   },
 });

@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
+import GlassCard from '../components/ui/GlassCard';
 
 export default function DadRelacjaScreen() {
   const { theme } = useTheme();
@@ -17,7 +18,7 @@ export default function DadRelacjaScreen() {
         </Text>
       </View>
 
-      <View style={st.introCard}>
+      <GlassCard accent="cyan" style={st.introCard}>
         <View style={st.introIconWrap}>
           <Text style={st.introEmoji}>💑</Text>
         </View>
@@ -27,7 +28,7 @@ export default function DadRelacjaScreen() {
             Ustabilizowanie waszej relacji i unikanie zbędnych nieporozumień zadecyduje o atmosferze, w jakiej będzie wychowywało się dziecko. Świadome obniżenie oczekiwań w pierwszych tygodniach pomoże wam działać w zespole, zamiast rzucać sobie kłody pod nogi.
           </Text>
         </View>
-      </View>
+      </GlassCard>
 
       <View style={st.sectionGrid}>
         {/* 01 Co się zmienia */}

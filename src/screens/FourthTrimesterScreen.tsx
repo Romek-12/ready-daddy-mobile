@@ -6,6 +6,8 @@ import { useFourthTrimester } from '../hooks/useAppData';
 import Icon from '../components/Icon';
 import { renderNumberedText } from '../utils/textFormatting';
 import type { Theme } from '../theme';
+import GlassCard from '../components/ui/GlassCard';
+import ProgressRing from '../components/ui/ProgressRing';
 
 interface FourthTrimesterWeek {
   id: number;
@@ -18,6 +20,12 @@ interface FourthTrimesterWeek {
   warning_signs?: string;
 }
 
+const WEEK_EMOJI: Record<number, string> = {
+  1: '👶', 2: '😴', 3: '🍼', 4: '👀',
+  5: '😊', 6: '🤱', 7: '✨', 8: '🎵',
+  9: '🌱', 10: '💪', 11: '🌈', 12: '🎉',
+};
+
 export default function FourthTrimesterScreen() {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -26,6 +34,8 @@ export default function FourthTrimesterScreen() {
   const weeks: FourthTrimesterWeek[] = data?.weeks ?? [];
 
   const [expanded, setExpanded] = useState<number | null>(null);
+  const currentWeek = 1;
+  const weekProgress = (currentWeek / 12) * 100;
 
   const toggle = (idx: number) => setExpanded(expanded === idx ? null : idx);
 
@@ -45,6 +55,16 @@ export default function FourthTrimesterScreen() {
         <Text style={s.sub}>Pierwsze tygodnie dziecka i matki po porodzie</Text>
       </View>
 
+      <GlassCard elevated style={s.hero}>
+        <ProgressRing value={weekProgress} size={80} stroke={7}>
+          <Text style={s.ringText}>{currentWeek}</Text>
+        </ProgressRing>
+        <View style={{ flex: 1, marginLeft: 16 }}>
+          <Text style={s.heroTitle}>Czwarty trymestr</Text>
+          <Text style={s.heroSub}>Tydzień {currentWeek} z 12</Text>
+        </View>
+      </GlassCard>
+
       <View style={s.infoCard}>
         <Text style={s.infoText}>
           Czwarty trymestr to pierwsze 12 tygodni życia noworodka poza łonem matki. Niemowlę powoli adaptuje się do nowych bodźców, dźwięków i bodźców, a dla Was to bardzo wymagający okres wdrażania się w nową rolę.
@@ -57,6 +77,7 @@ export default function FourthTrimesterScreen() {
           return (
             <View key={w.id} style={s.accordionWrap}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => toggle(idx)} style={[s.cardHeader, isExpanded && s.cardHeaderActive]}>
+                <Text style={s.weekEmoji}>{WEEK_EMOJI[w.week_after_birth] ?? '👶'}</Text>
                 <View style={s.headerLeft}>
                   <View style={s.weekBadge}>
                     <Text style={s.weekBadgeText}>Tydzień {w.week_after_birth}</Text>
@@ -112,7 +133,8 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   infoText: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, lineHeight: 24 },
   listContainer: { paddingHorizontal: theme.spacing.lg },
   accordionWrap: { marginBottom: theme.spacing.sm },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing.sm, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
+  weekEmoji: { fontSize: 28 },
   cardHeaderActive: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
   headerLeft: { flex: 1, paddingRight: theme.spacing.md },
   weekBadge: { backgroundColor: theme.colors.fourthTrimester, paddingHorizontal: 10, paddingVertical: 4, borderRadius: theme.borderRadius.full, alignSelf: 'flex-start', marginBottom: theme.spacing.xs },
@@ -124,4 +146,9 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   sectionLabel: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },
   sectionText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 22 },
+
+  hero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  ringText: { fontFamily: theme.fonts.title, fontSize: 22, color: theme.colors.text },
+  heroTitle: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xl, color: theme.colors.text },
+  heroSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
 });

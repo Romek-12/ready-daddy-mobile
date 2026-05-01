@@ -7,6 +7,8 @@ import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
 import Button from '../components/Button';
+import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import BabyNameModal from '../components/BabyNameModal';
 import { api } from '../services/api';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -273,6 +275,7 @@ export default function SettingsScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <View style={s.c}>
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Wróć">
@@ -282,7 +285,17 @@ export default function SettingsScreen({ navigation }: Props) {
         <View style={{ width: 44 }} />
       </View>
       <ScrollView contentContainerStyle={s.content}>
-        
+
+        <GlassCard elevated style={s.profileHero}>
+          <View style={s.avatar}>
+            <Text style={s.avatarInitial}>{((user?.partnerName || 'Tata').trim()[0] || 'T').toUpperCase()}</Text>
+          </View>
+          <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
+            <Text style={s.profileName}>{user?.partnerName || 'Tata'}</Text>
+            <Text style={s.profileEmail}>{user?.email || ''}</Text>
+          </View>
+        </GlassCard>
+
         <View style={s.section}>
           <Text style={s.sectionTitle}>Motyw aplikacji</Text>
           <Text style={s.sectionDesc}>Wybierz w jakim trybie ma działać aplikacja, lub zdaj się na ustawienia systemowe.</Text>
@@ -583,16 +596,24 @@ export default function SettingsScreen({ navigation }: Props) {
         </View>
       </Modal>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.md, backgroundColor: theme.colors.surface },
   backBtn: { padding: theme.spacing.sm, borderRadius: 20, backgroundColor: theme.colors.background },
   headerTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
   content: { padding: theme.spacing.xl, paddingBottom: 40 },
-  section: { marginBottom: theme.spacing.xxl },
+  section: {
+    marginBottom: theme.spacing.lg,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+    borderRadius: theme.borderRadius.xl,
+  },
   sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text, marginBottom: theme.spacing.xs },
   sectionDesc: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.lg, lineHeight: 20 },
   
@@ -696,4 +717,10 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   genderButtonEmoji: { fontSize: 28 },
   genderButtonText: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.semibold, color: theme.colors.text },
 
+  profileHero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginBottom: theme.spacing.md },
+  avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: theme.colors.primaryLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.primary },
+  avatarInitial: { fontFamily: theme.fonts.title, fontSize: 22, color: theme.colors.primary },
+  profileName: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
+  profileEmail: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
+  group: { paddingVertical: 6, marginBottom: theme.spacing.md },
 });

@@ -1,14 +1,16 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { loginSchema, type LoginForm } from '../lib/validation';
-import FormInput from '../components/FormInput';
-import Button from '../components/Button';
-import Icon from '../components/Icon';
-import Logo from '../components/Logo';
+import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import GlassInput from '../components/ui/GlassInput';
+import GradientButton from '../components/ui/GradientButton';
+import Kicker from '../components/ui/Kicker';
 import SocialAuthButtons from '../components/SocialAuthButtons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types/navigation';
@@ -39,18 +41,32 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={s.inner}>
-        <View style={s.iconWrap}><Logo width={120} height={120} color={theme.colors.primary} /></View>
-        <Text style={s.title}>Ready Daddy</Text>
-        <Text style={s.subtitle}>Zaloguj się do swojego konta</Text>
+        <Kicker style={s.kicker}>Ready Daddy · 1.0</Kicker>
+        <View style={s.orbWrap}>
+          <LinearGradient
+            colors={[theme.colors.primaryGlow, theme.colors.violetGlow, 'transparent']}
+            start={{ x: 0.3, y: 0.3 }}
+            end={{ x: 1, y: 1 }}
+            style={s.orb}
+          />
+          <Text style={s.orbLabel}>WITAJ Z POWROTEM</Text>
+        </View>
+        <View style={s.titleRow}>
+          <Text style={s.title}>Wróciłeś.</Text>
+          <GradientText style={s.title}>Dobry ruch.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Zaloguj się, żeby śledzić ciążę razem z partnerką.</Text>
 
         <Controller
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-            <FormInput
+            <GlassInput
               label="Email"
+              icon="mail"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -66,8 +82,9 @@ export default function LoginScreen({ navigation }: Props) {
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-            <FormInput
+            <GlassInput
               label="Hasło"
+              icon="lock"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -78,7 +95,7 @@ export default function LoginScreen({ navigation }: Props) {
           )}
         />
 
-        <Button
+        <GradientButton
           title="Zaloguj się"
           onPress={handleSubmit(onSubmit)}
           loading={loading}
@@ -95,15 +112,26 @@ export default function LoginScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flex: 1, justifyContent: 'center', padding: theme.spacing.xl },
-  iconWrap: { alignItems: 'center', marginBottom: theme.spacing.md },
-  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.primary, textAlign: 'center', letterSpacing: 2 },
-  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, textAlign: 'center', marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
+  kicker: { marginBottom: theme.spacing.lg },
+  orbWrap: { alignItems: 'center', marginBottom: theme.spacing.xl, height: 180, justifyContent: 'center' },
+  orb: { width: 180, height: 180, borderRadius: 90, position: 'absolute' },
+  orbLabel: {
+    fontFamily: theme.fonts.mono,
+    fontSize: theme.fontSize.kicker,
+    color: theme.colors.white,
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+  },
+  titleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text, letterSpacing: 1 },
+  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   link: { marginTop: theme.spacing.xl, alignItems: 'center' },
   linkText: { color: theme.colors.textSecondary, fontSize: theme.fontSize.md },
   linkBold: { color: theme.colors.primary, fontWeight: theme.fontWeight.semibold },

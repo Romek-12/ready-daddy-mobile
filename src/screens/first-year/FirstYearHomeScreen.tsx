@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import MonthCard from '../../components/first-year/MonthCard';
-import { FIRST_YEAR_CONTENT } from '../../data/first-year-content';
+import GlassCard from '../../components/ui/GlassCard';
 import type { Theme } from '../../theme';
 import type { AppNavigation } from '../../types/navigation';
 import { PREGNANCY_DAYS } from '../../constants';
@@ -63,17 +62,29 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
         </View>
       )}
 
-      {/* Month cards */}
+      {/* Month grid */}
       <View style={s.listContainer}>
-        {FIRST_YEAR_CONTENT.map((content) => (
-          <MonthCard
-            key={content.month}
-            content={content}
-            isCurrentMonth={content.month === currentMonth}
-            // 'Month' screen registered in AppNavigator (Task 7)
-            onPress={() => navigation.navigate('Month', { month: content.month })}
-          />
-        ))}
+        <View style={s.grid}>
+          {Array.from({ length: 12 }).map((_, i) => {
+            const month = i + 1;
+            const isActive = month === currentMonth;
+            const isDone = month < currentMonth;
+            const isFuture = currentMonth >= 0 && month > currentMonth;
+            return (
+              <TouchableOpacity key={month} onPress={() => navigation.navigate('Month', { month })} style={s.tileWrap}>
+                <GlassCard style={[
+                  s.tile,
+                  ...(isActive ? [{ borderColor: theme.colors.primary, shadowColor: theme.colors.primary, shadowOpacity: 0.6, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 }] : []),
+                  ...(isDone ? [{ opacity: 0.75 }] : []),
+                  ...(isFuture ? [{ opacity: 0.45 }] : []),
+                ]}>
+                  <Text style={[s.tileNum, isActive && { color: theme.colors.primary }]}>{month}</Text>
+                  <Text style={s.tileLbl}>mies.</Text>
+                </GlassCard>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
 
       {/* Badge teaser */}
@@ -165,4 +176,9 @@ const createStyles = (theme: Theme) =>
     bottomSpacer: {
       height: 40,
     },
+    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    tileWrap: { width: '23%' },
+    tile: { aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
+    tileNum: { fontFamily: theme.fonts.title, fontSize: 26, color: theme.colors.text },
+    tileLbl: { fontFamily: theme.fonts.medium, fontSize: 10, color: theme.colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 },
   });

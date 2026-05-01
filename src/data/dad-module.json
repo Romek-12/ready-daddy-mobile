@@ -4,49 +4,57 @@
       "id": "ciaza",
       "icon": "mom",
       "iconColorKey": "primary",
-      "title": "Ciąża z perspektywy ojca"
+      "title": "Ciąża z perspektywy ojca",
+      "subtitle": "Twoje emocje przez 9 miesięcy"
     },
     {
       "id": "po-porodzie",
       "icon": "baby",
       "iconColorKey": "primary",
-      "title": "Po narodzinach dziecka"
+      "title": "Po narodzinach dziecka",
+      "subtitle": "Pierwsze dni z noworodkiem"
     },
     {
       "id": "konflikty",
       "icon": "partner",
       "iconColorKey": "accent",
-      "title": "Wewnętrzne rozterki ojców"
+      "title": "Wewnętrzne rozterki ojców",
+      "subtitle": "Co czujesz vs co mówisz"
     },
     {
       "id": "sygnaly",
       "icon": "warning",
       "iconColorKey": "danger",
-      "title": "Niepokojące sygnały ostrzegawcze"
+      "title": "Niepokojące sygnały ostrzegawcze",
+      "subtitle": "Kiedy zwrócić uwagę"
     },
     {
       "id": "pomoc",
       "icon": "lightbulb",
       "iconColorKey": "primary",
-      "title": "Jak sobie pomóc na co dzień"
+      "title": "Jak sobie pomóc na co dzień",
+      "subtitle": "Praktyczne wskazówki"
     },
     {
       "id": "specjalista",
       "icon": "hospital",
       "iconColorKey": "accent",
-      "title": "Kiedy skorzystać z pomocy specjalisty"
+      "title": "Kiedy skorzystać z pomocy specjalisty",
+      "subtitle": "Terapia, wsparcie, grupy"
     },
     {
       "id": "wspolzycie",
       "icon": "couple",
       "iconColorKey": "rose",
-      "title": "Życie intymne i współżycie"
+      "title": "Życie intymne i współżycie",
+      "subtitle": "Bliskość w ciąży i po porodzie"
     },
     {
       "id": "bibliografia",
       "icon": "science",
       "iconColorKey": "dadModule",
-      "title": "Bibliografia i źródła medyczne"
+      "title": "Bibliografia i źródła medyczne",
+      "subtitle": "Naukowe podstawy treści"
     }
   ],
   "emotions": [

@@ -17,6 +17,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkNotificationsBadge } from '../services/gamification/BadgeChecker';
 import Icon from '../components/Icon';
+import GlassCard from '../components/ui/GlassCard';
 import { PREGNANCY_DAYS, TAB_BAR_HEIGHT } from '../constants';
 import type { Theme } from '../theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -122,7 +123,7 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
       </View>
 
       {/* Toggle główny */}
-      <View style={s.card}>
+      <GlassCard style={s.card}>
         <View style={s.row}>
           <View style={s.rowLeft}>
             <Icon name="notifications" size={24} color={theme.colors.primary} />
@@ -144,10 +145,10 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
             />
           )}
         </View>
-      </View>
+      </GlassCard>
 
       {/* Info: data porodu */}
-      <View style={s.card}>
+      <GlassCard style={s.card}>
         <View style={s.row}>
           <Icon name="date-range" size={24} color={theme.colors.accent} />
           <View style={s.rowText}>
@@ -155,7 +156,7 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
             <Text style={s.rowSub}>{dueDateFormatted}</Text>
           </View>
         </View>
-      </View>
+      </GlassCard>
 
       {/* Następne powiadomienie */}
       {settings?.enabled && nextNotif && (
