@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import Icon from '../Icon';
+import GlassCard from '../ui/GlassCard';
 import type { Theme } from '../../theme';
 import type { BadgeDefinition, EarnedBadge } from '../../types/badges.types';
 
@@ -25,7 +26,13 @@ export default function BadgeCard({ definition, earned }: Props) {
     : null;
 
   return (
-    <View style={[s.card, isEarned ? s.cardEarned : s.cardLocked]}>
+    <GlassCard
+      elevated={isEarned}
+      style={[
+        s.card,
+        isEarned ? s.cardEarned : s.cardLocked,
+      ]}
+    >
       {isEarned ? (
         <Text style={s.icon}>{definition.icon}</Text>
       ) : (
@@ -43,7 +50,7 @@ export default function BadgeCard({ definition, earned }: Props) {
           {definition.description}
         </Text>
       )}
-    </View>
+    </GlassCard>
   );
 }
 
@@ -51,15 +58,11 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     card: {
       width: '48%',
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.xl,
       padding: theme.spacing.md,
       alignItems: 'center',
-      borderWidth: 1,
       minHeight: 130,
     },
     cardEarned: {
-      borderColor: theme.colors.primary,
       shadowColor: theme.colors.primary,
       shadowOpacity: 0.5,
       shadowRadius: 12,
@@ -67,8 +70,6 @@ const createStyles = (theme: Theme) =>
       elevation: 5,
     },
     cardLocked: {
-      backgroundColor: theme.colors.surface,
-      borderColor: theme.colors.cardBorder,
       opacity: 0.55,
     },
     icon: {
