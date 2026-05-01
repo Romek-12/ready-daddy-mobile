@@ -8,6 +8,7 @@ import { renderNumberedText } from '../utils/textFormatting';
 import type { Theme } from '../theme';
 import GlassCard from '../components/ui/GlassCard';
 import ProgressRing from '../components/ui/ProgressRing';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 interface FourthTrimesterWeek {
   id: number;
@@ -48,6 +49,7 @@ export default function FourthTrimesterScreen() {
   }
 
   return (
+    <AuroraBackground>
     <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <View style={s.header}>
         <Icon name="baby" size={48} color={theme.colors.fourthTrimester} />
@@ -119,11 +121,12 @@ export default function FourthTrimesterScreen() {
       </View>
       <View style={{ height: 40 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
   center: { justifyContent: 'center', alignItems: 'center' },
   header: { alignItems: 'center', paddingTop: insets.top + theme.spacing.md, paddingBottom: theme.spacing.xl },

@@ -20,6 +20,7 @@ import { addCalendarEvent } from '../services/calendar/CalendarService';
 import Icon from '../components/Icon';
 import DatePickerModal from '../components/DatePickerModal';
 import TimePickerModal from '../components/TimePickerModal';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import type { Theme } from '../theme';
 import type { AppNavigation } from '../types/navigation';
 import { logError } from '../utils/logError';
@@ -107,6 +108,7 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
   };
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView
       style={s.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -241,12 +243,13 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
         />
       </ScrollView>
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.background },
+    container: { flex: 1, backgroundColor: 'transparent' },
     header: {
       flexDirection: 'row',
       alignItems: 'center',

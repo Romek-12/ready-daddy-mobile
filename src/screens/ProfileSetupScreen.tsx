@@ -18,6 +18,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { supabase } from '../lib/supabase';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import type { RootStackParamList } from '../types/navigation';
 import type { Theme } from '../theme';
 
@@ -74,6 +75,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView
       style={s.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -135,6 +137,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
@@ -142,7 +145,7 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
     },
     content: {
       padding: theme.spacing.lg,

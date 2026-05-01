@@ -18,6 +18,7 @@ import { pickRandomFromPool, computeSaveSlot } from '../utils/nameDraw';
 import { api } from '../services/api';
 import { logError } from '../utils/logError';
 import Icon from '../components/Icon';
+import AuroraBackground from '../components/ui/AuroraBackground';
 import NameDrawModal from '../components/NameDrawModal';
 import GlassCard from '../components/ui/GlassCard';
 import GlowPill from '../components/ui/GlowPill';
@@ -110,6 +111,7 @@ export default function NameDrawScreen({ navigation }: Props) {
   );
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView
       style={s.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -182,12 +184,13 @@ export default function NameDrawScreen({ navigation }: Props) {
         onDismiss={() => setModalVisible(false)}
       />
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.background },
+    container: { flex: 1, backgroundColor: 'transparent' },
     header: {
       flexDirection: 'row',
       alignItems: 'center',

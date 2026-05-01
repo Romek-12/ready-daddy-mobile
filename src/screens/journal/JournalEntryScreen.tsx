@@ -16,6 +16,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '../../context/ThemeContext';
 import { useJournal } from '../../hooks/useJournal';
 import Icon from '../../components/Icon';
+import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { JournalStackParamList } from '../../types/navigation';
 import type { Theme } from '../../theme';
 import type { EntryType } from '../../types/journal.types';
@@ -87,6 +88,7 @@ export default function JournalEntryScreen({ navigation, route }: Props) {
   const iconColor = theme.colors[entry.type === 'visit' ? 'checkups' : entry.type === 'exam' ? 'primary' : entry.type === 'milestone' ? 'accent' : 'textSecondary'];
 
   return (
+    <AuroraBackground>
     <View style={s.container}>
       {/* Lightbox — fullscreen photo viewer */}
       <Modal
@@ -202,12 +204,13 @@ export default function JournalEntryScreen({ navigation, route }: Props) {
         ) : null}
       </ScrollView>
     </View>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.background },
+    container: { flex: 1, backgroundColor: 'transparent' },
     header: {
       flexDirection: 'row',
       alignItems: 'center',

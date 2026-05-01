@@ -11,6 +11,7 @@ import { useTheme } from '../../context/ThemeContext';
 import DevelopmentMilestoneCard from '../../components/first-year/DevelopmentMilestone';
 import VaccineItem from '../../components/first-year/VaccineItem';
 import { FIRST_YEAR_CONTENT } from '../../data/first-year-content';
+import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { Theme } from '../../theme';
 import type { AppNavigation } from '../../types/navigation';
 
@@ -47,6 +48,7 @@ export default function MonthScreen({ navigation, route }: Props) {
   const circleColor = getMonthColor(content.month, theme);
 
   return (
+    <AuroraBackground>
     <ScrollView
       style={s.scrollView}
       contentContainerStyle={s.content}
@@ -133,6 +135,7 @@ export default function MonthScreen({ navigation, route }: Props) {
       {/* 8. Bottom spacer */}
       <View style={s.bottomSpacer} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
@@ -140,7 +143,7 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     scrollView: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
     },
     content: {
       paddingBottom: theme.spacing.xl,

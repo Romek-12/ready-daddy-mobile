@@ -5,12 +5,14 @@ import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 export default function DadPologScreen() {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const st = React.useMemo(() => createStyles(theme, insets), [theme, insets]);
   return (
+    <AuroraBackground>
     <ScrollView style={st.c} contentContainerStyle={st.scrollContent}>
       <View style={st.header}>
         <Text style={st.title}>Połóg, baby blues i zdrowie psychiczne</Text>
@@ -160,11 +162,12 @@ export default function DadPologScreen() {
       </View>
       <View style={{ height: 40 }} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
   header: { padding: theme.spacing.xl, paddingTop: insets.top + theme.spacing.md, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder },
   title: { fontSize: 24, fontWeight: 'bold', color: theme.colors.text, marginBottom: 8, letterSpacing: 0.5 },

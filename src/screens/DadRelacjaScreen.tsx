@@ -4,12 +4,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import GlassCard from '../components/ui/GlassCard';
+import AuroraBackground from '../components/ui/AuroraBackground';
 
 export default function DadRelacjaScreen() {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const st = React.useMemo(() => createStyles(theme, insets), [theme, insets]);
   return (
+    <AuroraBackground>
     <ScrollView style={st.c} contentContainerStyle={st.scrollContent}>
       <View style={st.header}>
         <Text style={st.title}>Budowanie relacji partnerskiej po narodzinach</Text>
@@ -181,11 +183,12 @@ export default function DadRelacjaScreen() {
         <Text style={st.footerText}>Podtrzymywanie relacji romantycznych często jest traktowane marginalnie przez mężczyzn na korzyść bezosobowego załatwiania spraw z zadaniami noworodka. W konsekwencji ulegasz oddaleniu. Buduj to od początku dbając tak samo na i noworodka u relacji we was!</Text>
       </View>
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background },
+  c: { flex: 1, backgroundColor: 'transparent' },
   scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
   header: { padding: theme.spacing.xl, paddingTop: insets.top + theme.spacing.md, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: theme.colors.cardBorder },
   title: { fontSize: 24, fontWeight: 'bold', color: theme.colors.text, marginBottom: 8, letterSpacing: 0.5 },

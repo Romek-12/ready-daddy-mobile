@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import GlassCard from '../../components/ui/GlassCard';
+import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { Theme } from '../../theme';
 import type { AppNavigation } from '../../types/navigation';
 import { PREGNANCY_DAYS } from '../../constants';
@@ -41,6 +42,7 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
   const progressPercent = currentMonth >= 0 ? (currentMonth / 12) * 100 : 0;
 
   return (
+    <AuroraBackground>
     <ScrollView
       style={s.scrollView}
       contentContainerStyle={[s.content, { paddingTop: insets.top + theme.spacing.md }]}
@@ -97,6 +99,7 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
 
       <View style={s.bottomSpacer} />
     </ScrollView>
+    </AuroraBackground>
   );
 }
 
@@ -104,7 +107,7 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     scrollView: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
     },
     content: {
       paddingBottom: theme.spacing.xl,

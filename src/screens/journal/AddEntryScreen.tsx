@@ -21,6 +21,7 @@ import { useBadgeContext } from '../../context/BadgeContext';
 import { checkJournalBadges } from '../../services/gamification/BadgeChecker';
 import { pickAndSavePhoto, deletePhoto } from '../../services/journal/ImageService';
 import Icon from '../../components/Icon';
+import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { JournalStackParamList } from '../../types/navigation';
 import type { Theme } from '../../theme';
 import type { EntryType } from '../../types/journal.types';
@@ -143,6 +144,7 @@ export default function AddEntryScreen({ navigation, route }: Props) {
   };
 
   return (
+    <AuroraBackground>
     <KeyboardAvoidingView
       style={s.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -281,12 +283,13 @@ export default function AddEntryScreen({ navigation, route }: Props) {
         <Text style={s.photoHint}>Przytrzymaj zdjęcie, aby je usunąć</Text>
       </ScrollView>
     </KeyboardAvoidingView>
+    </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.background },
+    container: { flex: 1, backgroundColor: 'transparent' },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
