@@ -27,6 +27,7 @@ export type HomeStackParamList = {
   NameDraw: undefined;
   FirstYear: undefined;
   Month: { month: number };
+  BlurSpike: undefined;
 };
 
 export type DadStackParamList = {

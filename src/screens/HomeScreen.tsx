@@ -197,6 +197,14 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
         <Icon name="gear" size={16} color={theme.colors.textMuted} />
         <Text style={s.settingsFooterLabel}>Ustawienia</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('BlurSpike')}
+        style={s.settingsFooter}
+        accessibilityRole="button"
+        accessibilityLabel="Blur Spike Test"
+      >
+        <Text style={[s.settingsFooterLabel, { color: theme.colors.primary }]}>⚗️ Blur Spike Test (Faza 0)</Text>
+      </TouchableOpacity>
       <View style={{ height: 20 }} />
     </ScrollView>
     </AuroraBackground>
