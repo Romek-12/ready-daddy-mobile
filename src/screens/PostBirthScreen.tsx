@@ -164,7 +164,7 @@ export default function PostBirthScreen() {
               ) : (
                 <View style={[st.circleBase, st.circleFuture]} />
               )}
-              {!isLastTask ? <View style={[st.connector, nextDone && { backgroundColor: theme.colors.primary }]} /> : null}
+              {!isLastTask ? <View style={[st.connector, nextDone && { backgroundColor: theme.colors.primary, opacity: 0.6 }]} /> : null}
             </View>
             <View style={st.taskSection}>
             <TouchableOpacity style={[st.taskHeader, isDone && st.taskHeaderDone]} onPress={() => toggle(idx)}>

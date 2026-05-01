@@ -144,7 +144,7 @@ const createStyles = (theme: Theme) =>
     date: {
       fontSize: theme.fontSize.xs,
       color: theme.colors.textMuted,
-      fontFamily: 'SpaceGrotesk_500Medium',
+      fontFamily: theme.fonts.medium,
       letterSpacing: 0.5,
     },
     dot: {

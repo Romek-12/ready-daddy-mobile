@@ -33,6 +33,9 @@ const sharedTheme = {
     xl: 22,
     xxl: 28,
     hero: 36,
+    display: 56,
+    displayLg: 80,
+    kicker: 11,
   },
   fontWeight: {
     regular: '400' as const,

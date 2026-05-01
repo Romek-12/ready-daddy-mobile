@@ -12,6 +12,8 @@ import { FETUS_IMAGES } from '../data/fetusImages';
 import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import { getSizeComparison } from '../utils/sizeComparison';
 import Icon from './Icon';
+import Kicker from './ui/Kicker';
+import GradientProgressBar from './ui/GradientProgressBar';
 import type { Theme } from '../theme';
 
 
@@ -114,70 +116,75 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
           return (
             <View key={label} style={[s.trimPill, { borderColor: color }, isActive && { backgroundColor: color }]}>
               <Text style={[s.trimLabel, { color: isActive ? theme.colors.background : color }]}>
-                {label} trymestr
+                {label} trym.
               </Text>
             </View>
           );
         })}
       </View>
 
-      {/* Fetus image + metrics */}
-      <View style={s.row}>
+      {/* Hero: fetus + giant week number */}
+      <View style={s.heroRow}>
         <View style={s.svgBox}>
           <Animated.View style={pulseStyle}>
-            <Image source={fetusImage} style={{ width: 155, height: 175 }} resizeMode="contain" />
+            <Image source={fetusImage} style={{ width: 140, height: 160 }} resizeMode="contain" />
           </Animated.View>
         </View>
-
-        <View style={s.metrics}>
-          {/* Size & weight */}
-          <View style={s.metricRow}>
-            <View style={[s.metricBox, { borderColor: theme.colors.primary + '40' }]}>
-              <Text style={[s.metricValue, { color: theme.colors.primary }]}>{formatSize(sizeMm)}</Text>
-              <Text style={s.metricLabel}>Długość</Text>
-            </View>
-            <View style={[s.metricBox, { borderColor: theme.colors.accent + '40' }]}>
-              <Text style={[s.metricValue, { color: theme.colors.accent }]}>{formatWeight(weightG)}</Text>
-              <Text style={s.metricLabel}>Waga</Text>
-            </View>
-          </View>
-
-          {/* Size comparison */}
-          <View style={[s.fruitBox, { backgroundColor: trimesterColor + '18' }]}>
-            {displayName ? <Text style={[s.fruitName, { color: trimesterColor }]}>Jestem jak {displayName}</Text> : null}
-          </View>
-
-          {/* Mode toggle buttons */}
-          <View style={s.modeRow}>
-            {SIZE_MODES.map(({ mode, icon }) => {
-              const isActive = sizeMode === mode;
-              return (
-                <TouchableOpacity
-                  key={mode}
-                  style={[s.modeBtn, isActive && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }]}
-                  onPress={() => setSizeMode(mode)}
-                  activeOpacity={0.7}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isActive }}
-                >
-                  <Icon
-                    name={icon}
-                    size={18}
-                    color={isActive ? theme.colors.background : theme.colors.textSecondary}
-                  />
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* Progress */}
-          <View style={s.progressWrap}>
-            <View style={s.progressBar}>
-              <View style={[s.progressFill, { width: `${progress}%`, backgroundColor: trimesterColor }]} />
-            </View>
-            <Text style={s.progressText}>{progress}% ciąży</Text>
-          </View>
+        <View style={s.heroRight}>
+          <Kicker color={trimesterColor}>Tydzień</Kicker>
+          <Text style={[s.heroNumber, { color: theme.colors.text }]}>{week}</Text>
+          {displayName ? <Text style={s.heroFruit}>Jestem jak {displayName}</Text> : null}
         </View>
+      </View>
+
+      {/* Big metric tiles */}
+      <View style={s.metricRow}>
+        <View style={s.metricTile}>
+          <Icon name="size-fruit" size={18} color={theme.colors.primary} />
+          <Text style={[s.metricValue, { color: theme.colors.primary }]}>{formatSize(sizeMm)}</Text>
+          <Kicker style={s.metricLabel}>Długość</Kicker>
+        </View>
+        <View style={s.metricTile}>
+          <Icon name="size-sweet" size={18} color={theme.colors.accent} />
+          <Text style={[s.metricValue, { color: theme.colors.accent }]}>{formatWeight(weightG)}</Text>
+          <Kicker style={s.metricLabel}>Waga</Kicker>
+        </View>
+      </View>
+
+      {/* Compare to */}
+      <View style={s.compareSection}>
+        <Kicker style={s.compareKicker}>Porównaj do</Kicker>
+        <View style={s.modeRow}>
+          {SIZE_MODES.map(({ mode, label, icon }) => {
+            const isActive = sizeMode === mode;
+            return (
+              <TouchableOpacity
+                key={mode}
+                style={[s.modeBtn, isActive && s.modeBtnActive]}
+                onPress={() => setSizeMode(mode)}
+                activeOpacity={0.7}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: isActive }}
+              >
+                <Icon
+                  name={icon}
+                  size={22}
+                  color={isActive ? theme.colors.black : theme.colors.textSecondary}
+                />
+                <Text style={[s.modeLabel, isActive && { color: theme.colors.black }]}>{label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
+      {/* Progress */}
+      <View style={s.progressSection}>
+        <View style={s.progressRow}>
+          <Kicker>Postęp</Kicker>
+          <Text style={[s.progressPct, { color: theme.colors.primary }]}>{progress}%</Text>
+        </View>
+        <GradientProgressBar value={progress} height={6} glow />
       </View>
     </View>
   );
@@ -187,105 +194,114 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
+    gap: theme.spacing.lg,
   },
   trimRow: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: theme.spacing.md,
   },
   trimPill: {
     flex: 1,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: theme.borderRadius.full,
     borderWidth: 1.5,
     alignItems: 'center',
   },
   trimLabel: {
-    fontSize: theme.fontSize.xs,
+    fontSize: theme.fontSize.sm,
+    fontFamily: theme.fonts.semibold,
     fontWeight: theme.fontWeight.semibold,
   },
-  row: {
+  heroRow: {
     flexDirection: 'row',
-    gap: theme.spacing.md,
     alignItems: 'center',
+    gap: theme.spacing.md,
   },
   svgBox: {
-    width: 155,
-    height: 175,
+    width: 140,
+    height: 160,
     backgroundColor: theme.colors.surfaceLight,
     borderRadius: theme.borderRadius.xl,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
   },
-  metrics: {
+  heroRight: {
     flex: 1,
-    gap: theme.spacing.sm,
+    alignItems: 'flex-start',
+  },
+  heroNumber: {
+    fontFamily: theme.fonts.title,
+    fontSize: theme.fontSize.displayLg,
+    lineHeight: theme.fontSize.displayLg,
+    marginTop: 4,
+  },
+  heroFruit: {
+    fontFamily: theme.fonts.semibold,
+    fontSize: theme.fontSize.md,
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.sm,
   },
   metricRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: theme.spacing.sm,
   },
-  metricBox: {
+  metricTile: {
     flex: 1,
-    backgroundColor: theme.colors.surfaceLight,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.sm,
-    alignItems: 'center',
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
     borderWidth: 1,
-  },
-  metricValue: {
-    fontSize: theme.fontSize.md,
-    fontWeight: theme.fontWeight.bold,
-  },
-  metricLabel: {
-    fontSize: theme.fontSize.xs,
-    color: theme.colors.textMuted,
-    marginTop: 2,
-  },
-  fruitBox: {
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  fruitName: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.semibold,
-  },
-  progressWrap: {
+    borderColor: theme.colors.cardBorder,
+    alignItems: 'flex-start',
     gap: 4,
   },
-  progressBar: {
-    height: 7,
-    backgroundColor: theme.colors.surfaceLight,
-    borderRadius: 4,
+  metricValue: {
+    fontFamily: theme.fonts.title,
+    fontSize: theme.fontSize.display,
+    lineHeight: theme.fontSize.display,
   },
-  progressFill: {
-    height: 7,
-    borderRadius: 4,
+  metricLabel: {
+    marginTop: 2,
   },
-  progressText: {
-    fontSize: theme.fontSize.xs,
-    color: theme.colors.textMuted,
+  compareSection: {
+    gap: theme.spacing.sm,
   },
+  compareKicker: {},
   modeRow: {
     flexDirection: 'row',
-    gap: theme.spacing.xs,
+    gap: theme.spacing.sm,
   },
   modeBtn: {
     flex: 1,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.sm,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
     alignItems: 'center',
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.cardBorder,
+    gap: 4,
   },
-  modeBtnText: {
-    fontFamily: 'SpaceGrotesk_500Medium',
-    fontSize: 12,
+  modeBtnActive: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  modeLabel: {
+    fontFamily: theme.fonts.medium,
+    fontSize: theme.fontSize.sm,
     color: theme.colors.textSecondary,
+  },
+  progressSection: {
+    gap: theme.spacing.sm,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progressPct: {
+    fontFamily: theme.fonts.bold,
+    fontSize: theme.fontSize.lg,
   },
 });

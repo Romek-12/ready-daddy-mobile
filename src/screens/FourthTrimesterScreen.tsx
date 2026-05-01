@@ -148,7 +148,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   sectionText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 22 },
 
   hero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
-  ringText: { fontFamily: 'ClimateCrisis', fontSize: 22, color: theme.colors.text },
-  heroTitle: { fontFamily: 'ClimateCrisis', fontSize: theme.fontSize.xl, color: theme.colors.text },
-  heroSub: { fontFamily: 'SpaceGrotesk_400Regular', fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
+  ringText: { fontFamily: theme.fonts.title, fontSize: 22, color: theme.colors.text },
+  heroTitle: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xl, color: theme.colors.text },
+  heroSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
 });

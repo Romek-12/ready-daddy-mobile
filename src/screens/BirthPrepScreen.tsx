@@ -331,7 +331,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   progressText: { fontFamily: theme.fonts.title, fontSize: 16, color: theme.colors.text },
   progressTitle: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
   progressSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
-  progressLabel: { fontSize: theme.fontSize.lg, color: 'rgba(255,255,255,0.9)', fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
+  progressLabel: { fontSize: theme.fontSize.lg, color: theme.colors.white, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   progressRight: { alignItems: 'flex-end' },
   progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },
   progressCheckLabel: { fontSize: theme.fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 4, fontWeight: theme.fontWeight.medium },

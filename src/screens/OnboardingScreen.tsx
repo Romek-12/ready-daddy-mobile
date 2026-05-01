@@ -10,6 +10,7 @@ import Icon from '../components/Icon';
 import type { Theme } from '../theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
 
 const SLIDES = [
   {
@@ -107,7 +108,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <View style={[s.iconCircle, { backgroundColor: color + '20', borderColor: color + '40' }]}>
           <Icon name={item.icon} size={56} color={color} />
         </View>
-        <Text style={s.slideTitle}>{item.title}</Text>
+        <GradientText style={s.slideTitle}>{item.title}</GradientText>
         <Text style={s.slideDesc}>{item.desc}</Text>
       </View>
     );

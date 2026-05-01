@@ -4,9 +4,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import Logo from '../components/Logo';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
 import DateScrollPicker from '../components/DateScrollPicker';
 import GlassInput from '../components/ui/GlassInput';
 import GradientButton from '../components/ui/GradientButton';
@@ -97,12 +97,16 @@ export default function RegisterScreen({ navigation }: Props) {
     <AuroraBackground>
     <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={s.inner} keyboardShouldPersistTaps="handled">
-        <View style={s.logoWrap}>
-          <Logo width={100} height={100} color={theme.colors.primary} />
-        </View>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backRow} accessibilityRole="button" accessibilityLabel="Wróć">
+          <Text style={s.backChevron}>‹</Text>
+          <Kicker>Rejestracja</Kicker>
+        </TouchableOpacity>
 
-        <GradientText style={s.title}>Dołącz do nas</GradientText>
-        <Text style={s.subtitle}>Hej Papa · Tata W Akcji</Text>
+        <View style={s.titleStack}>
+          <Text style={s.title}>Twoja ciąża.</Text>
+          <GradientText style={s.title}>Twoje ojcostwo.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Kilka szczegółów i zaczynamy.</Text>
 
         {/* Email */}
         <Controller
@@ -277,23 +281,31 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     paddingTop: theme.spacing.xxl,
     paddingBottom: theme.spacing.xxl,
   },
-  logoWrap: {
+  backRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
     marginBottom: theme.spacing.lg,
+  },
+  backChevron: {
+    fontSize: 28,
+    color: theme.colors.textMuted,
+    marginTop: -4,
+  },
+  titleStack: {
+    marginBottom: theme.spacing.sm,
   },
   title: {
     fontSize: theme.fontSize.hero,
-    fontFamily: 'SpaceGrotesk_700Bold',
+    fontFamily: theme.fonts.title,
     color: theme.colors.text,
-    textAlign: 'center',
     letterSpacing: 1,
-    marginBottom: theme.spacing.sm,
+    lineHeight: theme.fontSize.hero * 1.05,
   },
   subtitle: {
     fontSize: theme.fontSize.md,
-    fontFamily: 'SpaceGrotesk_400Regular',
+    fontFamily: theme.fonts.body,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
     marginBottom: theme.spacing.xxl,
   },
   dateTypeContainer: {
@@ -317,7 +329,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   dateTypeText: {
     fontSize: theme.fontSize.sm,
-    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontFamily: theme.fonts.semibold,
     color: theme.colors.textSecondary,
   },
   dateTypeTextActive: {
@@ -340,7 +352,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   datePickerLabel: {
     fontSize: theme.fontSize.sm,
     color: theme.colors.textSecondary,
-    fontFamily: 'SpaceGrotesk_500Medium',
+    fontFamily: theme.fonts.medium,
   },
   babyNamesToggle: {
     flexDirection: 'row',
@@ -357,7 +369,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   babyNamesToggleText: {
     flex: 1,
     fontSize: theme.fontSize.md,
-    fontFamily: 'SpaceGrotesk_500Medium',
+    fontFamily: theme.fonts.medium,
     color: theme.colors.primary,
   },
   babyNamesSection: {
@@ -369,7 +381,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   babyNamesHelper: {
     fontSize: theme.fontSize.xs,
-    fontFamily: 'SpaceGrotesk_400Regular',
+    fontFamily: theme.fonts.body,
     color: theme.colors.textMuted,
     marginTop: theme.spacing.xs,
     fontStyle: 'italic',
@@ -380,11 +392,11 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   linkText: {
     fontSize: theme.fontSize.md,
-    fontFamily: 'SpaceGrotesk_400Regular',
+    fontFamily: theme.fonts.body,
     color: theme.colors.textSecondary,
   },
   linkBold: {
     color: theme.colors.primary,
-    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontFamily: theme.fonts.semibold,
   },
 });

@@ -80,7 +80,7 @@ export interface DadModuleSafePractice { title: string; desc: string; }
 export interface DadModulePostBirth { title: string; desc: string; }
 export interface DadModuleTalkStep { title: string; desc: string; }
 export interface DadModuleBibliography { id: string; authors: string; title: string; journal: string; }
-export interface DadModuleSection { id: string; icon: string; iconColorKey: string; title: string; }
+export interface DadModuleSection { id: string; icon: string; iconColorKey: string; title: string; subtitle?: string; }
 export interface DadModuleContent {
   sections: DadModuleSection[];
   emotions: DadModuleEmotion[];

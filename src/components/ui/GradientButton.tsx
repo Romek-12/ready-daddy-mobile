@@ -60,7 +60,7 @@ const createStyles = (theme: Theme) =>
     },
     text: {
       color: theme.colors.black,
-      fontFamily: 'SpaceGrotesk_700Bold',
+      fontFamily: theme.fonts.bold,
       fontSize: theme.fontSize.md,
       letterSpacing: 0.5,
     },

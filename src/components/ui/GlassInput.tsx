@@ -52,7 +52,7 @@ const createStyles = (theme: Theme) =>
       fontSize: theme.fontSize.sm,
       color: theme.colors.textSecondary,
       marginBottom: theme.spacing.xs,
-      fontFamily: 'SpaceGrotesk_500Medium',
+      fontFamily: theme.fonts.medium,
     },
     card: {
       flexDirection: 'row',
@@ -72,7 +72,7 @@ const createStyles = (theme: Theme) =>
       flex: 1,
       fontSize: theme.fontSize.md,
       color: theme.colors.text,
-      fontFamily: 'SpaceGrotesk_400Regular',
+      fontFamily: theme.fonts.body,
       padding: 0,
     },
     eyeBtn: { padding: 4 },

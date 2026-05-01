@@ -69,12 +69,14 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
             const month = i + 1;
             const isActive = month === currentMonth;
             const isDone = month < currentMonth;
+            const isFuture = currentMonth >= 0 && month > currentMonth;
             return (
               <TouchableOpacity key={month} onPress={() => navigation.navigate('Month', { month })} style={s.tileWrap}>
                 <GlassCard style={[
                   s.tile,
                   ...(isActive ? [{ borderColor: theme.colors.primary, shadowColor: theme.colors.primary, shadowOpacity: 0.6, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 }] : []),
                   ...(isDone ? [{ opacity: 0.75 }] : []),
+                  ...(isFuture ? [{ opacity: 0.45 }] : []),
                 ]}>
                   <Text style={[s.tileNum, isActive && { color: theme.colors.primary }]}>{month}</Text>
                   <Text style={s.tileLbl}>mies.</Text>
@@ -177,6 +179,6 @@ const createStyles = (theme: Theme) =>
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     tileWrap: { width: '23%' },
     tile: { aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
-    tileNum: { fontFamily: 'ClimateCrisis', fontSize: 26, color: theme.colors.text },
-    tileLbl: { fontFamily: 'SpaceGrotesk_500Medium', fontSize: 10, color: theme.colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 },
+    tileNum: { fontFamily: theme.fonts.title, fontSize: 26, color: theme.colors.text },
+    tileLbl: { fontFamily: theme.fonts.medium, fontSize: 10, color: theme.colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 },
   });

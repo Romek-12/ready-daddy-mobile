@@ -26,6 +26,7 @@ export default function GlassCard({ children, style, elevated = false, accent }:
         style,
       ]}
     >
+      <View pointerEvents="none" style={[styles.highlight, { borderTopLeftRadius: theme.borderRadius.xl, borderTopRightRadius: theme.borderRadius.xl }]} />
       {children}
     </View>
   );
@@ -35,5 +36,13 @@ const styles = StyleSheet.create({
   base: {
     borderWidth: 1,
     overflow: 'hidden',
+  },
+  highlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.18)',
   },
 });

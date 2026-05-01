@@ -271,6 +271,6 @@ const createStyles = (theme: Theme, topInset: number) =>
     },
     featured: { padding: theme.spacing.lg, marginBottom: theme.spacing.md, overflow: 'hidden' },
     featuredBlob: { position: 'absolute', width: 220, height: 220, borderRadius: 110, top: -80, right: -60, backgroundColor: theme.colors.violetSoft, opacity: 0.6 },
-    featuredName: { fontFamily: 'ClimateCrisis', fontSize: theme.fontSize.xxl, color: theme.colors.text, marginTop: 8 },
+    featuredName: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xxl, color: theme.colors.text, marginTop: 8 },
     heartBtn: { position: 'absolute', top: theme.spacing.md, right: theme.spacing.md },
   });
