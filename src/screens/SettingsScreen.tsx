@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator, Switch } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, ThemeMode } from '../context/ThemeContext';
@@ -16,6 +16,7 @@ import type { Theme } from '../theme';
 import { CONCEPTION_DAYS } from '../constants';
 import { supabase } from '../lib/supabase';
 import type { UserIdentity } from '@supabase/supabase-js';
+import { useGlassToggle } from '../hooks/useGlassFeatureFlag';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 
@@ -24,6 +25,7 @@ export default function SettingsScreen({ navigation }: Props) {
   const { theme, mode, setThemeMode } = useTheme();
   const insets = useSafeAreaInsets();
   const [sizeMode, setSizeMode] = useSizeMode();
+  const [glassEnabled, toggleGlass] = useGlassToggle();
   const s = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -303,6 +305,24 @@ export default function SettingsScreen({ navigation }: Props) {
             {renderThemeOption('light', 'Jasny', 'lightbulb')}
             {renderThemeOption('dark', 'Ciemny', 'moon')}
             {renderThemeOption('system', 'Systemowy', 'phone')}
+          </View>
+
+          <View style={s.listButton}>
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: theme.colors.primaryLight }]}>
+                <Icon name="sparkles" size={20} color={theme.colors.primary} />
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Efekty glass</Text>
+                <Text style={s.listButtonSub}>Przezroczyste karty i tła</Text>
+              </View>
+            </View>
+            <Switch
+              value={glassEnabled}
+              onValueChange={toggleGlass}
+              trackColor={{ false: theme.colors.cardBorder, true: theme.colors.primary + '66' }}
+              thumbColor={glassEnabled ? theme.colors.primary : theme.colors.textMuted}
+            />
           </View>
         </View>
 

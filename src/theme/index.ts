@@ -7,7 +7,8 @@ const sharedTheme = {
     semibold: 'SpaceGrotesk_600SemiBold',
     bold: 'SpaceGrotesk_700Bold',
     light: 'SpaceGrotesk_300Light',
-    mono: 'SpaceGrotesk_500Medium',
+    mono: 'JetBrainsMono_400Regular',
+    monoMedium: 'JetBrainsMono_500Medium',
   },
   spacing: {
     xs: 4,
