@@ -142,6 +142,7 @@ const createStyles = (theme: Theme) =>
     },
     title: {
       fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 700',
       fontSize: theme.fontSize.xxl,
       color: theme.colors.primary,
       marginBottom: theme.spacing.xs,
@@ -188,7 +189,7 @@ const createStyles = (theme: Theme) =>
     tileWrap: { width: '23%' },
     tile: { aspectRatio: 1, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
     doneTint: { ...StyleSheet.absoluteFillObject, opacity: 0.45 },
-    tileNum: { fontFamily: theme.fonts.title, fontSize: 26, color: theme.colors.text },
+    tileNum: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: 26, color: theme.colors.text },
     tileBar: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 0 },
     tileBarFill: { height: 3, borderRadius: 0 },
   });

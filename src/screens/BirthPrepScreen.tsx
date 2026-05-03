@@ -323,12 +323,12 @@ export default function BirthPrepScreen() {
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.birth, marginTop: theme.spacing.sm },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.birth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
   progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.birth, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   progressHero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
-  progressText: { fontFamily: theme.fonts.title, fontSize: 16, color: theme.colors.text },
+  progressText: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: 16, color: theme.colors.text },
   progressTitle: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
   progressSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
   progressLabel: { fontSize: theme.fontSize.lg, color: theme.colors.white, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },

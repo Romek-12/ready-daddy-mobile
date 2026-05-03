@@ -301,6 +301,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   title: {
     fontSize: theme.fontSize.hero,
     fontFamily: theme.fonts.title,
+    fontVariationSettings: '"wght" 700',
     color: theme.colors.text,
     letterSpacing: 1,
     lineHeight: theme.fontSize.hero * 1.05,

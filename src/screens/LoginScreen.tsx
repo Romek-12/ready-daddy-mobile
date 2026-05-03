@@ -130,7 +130,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     textTransform: 'uppercase',
   },
   titleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
-  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text, letterSpacing: 1 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   link: { marginTop: theme.spacing.xl, alignItems: 'center' },
   linkText: { color: theme.colors.textSecondary, fontSize: theme.fontSize.md },

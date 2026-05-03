@@ -130,7 +130,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
   center: { justifyContent: 'center', alignItems: 'center' },
   header: { alignItems: 'center', paddingTop: insets.top + theme.spacing.md, paddingBottom: theme.spacing.xl },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.fourthTrimester, marginTop: theme.spacing.sm },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.fourthTrimester, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
   infoCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.lg, padding: theme.spacing.xl, borderWidth: 1, borderColor: theme.colors.accent + '33' },
   infoText: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, lineHeight: 24 },
@@ -151,7 +151,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   sectionText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 22 },
 
   hero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
-  ringText: { fontFamily: theme.fonts.title, fontSize: 22, color: theme.colors.text },
-  heroTitle: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xl, color: theme.colors.text },
+  ringText: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: 22, color: theme.colors.text },
+  heroTitle: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: theme.fontSize.xl, color: theme.colors.text },
   heroSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
 });

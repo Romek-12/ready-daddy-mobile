@@ -150,7 +150,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   backBtn: { marginBottom: theme.spacing.xl },
   iconWrap: { alignItems: 'center', marginBottom: theme.spacing.xl },
   iconCard: { alignSelf: 'center', padding: theme.spacing.lg, marginBottom: theme.spacing.xl },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.text, textAlign: 'center' },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, textAlign: 'center' },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, textAlign: 'center', marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   inputGroup: { marginBottom: theme.spacing.lg },
 });

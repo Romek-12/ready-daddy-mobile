@@ -346,7 +346,7 @@ export default function CostCalculator() {
 const createStyles = (theme: Theme) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.planning, marginTop: theme.spacing.sm },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.planning, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
   grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },

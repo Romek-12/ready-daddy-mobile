@@ -82,7 +82,7 @@ function MetricTile({ icon, color, value, label, theme }: { icon: string; color:
   const unit = parts[2].trim();
   const s = React.useMemo(() => StyleSheet.create({
     tile: { flex: 1, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.cardBorder, alignItems: 'flex-start', gap: 2 },
-    num: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xxl, lineHeight: theme.fontSize.xxl + 4, color },
+    num: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: theme.fontSize.xxl, lineHeight: theme.fontSize.xxl + 4, color },
     unit: { fontFamily: theme.fonts.semibold, fontSize: theme.fontSize.xs, color, letterSpacing: 1, textTransform: 'uppercase' as const },
     lbl: { marginTop: 2 },
   }), [theme, color]);
@@ -247,6 +247,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   heroNumber: {
     fontFamily: theme.fonts.title,
+    fontVariationSettings: '"wght" 700',
     fontSize: theme.fontSize.displayLg,
     lineHeight: theme.fontSize.displayLg,
     marginTop: 4,

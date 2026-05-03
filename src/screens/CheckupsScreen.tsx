@@ -288,7 +288,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   scroll: { flex: 1 },
   c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.checkups, marginBottom: 4 },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.checkups, marginBottom: 4 },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
 
   progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.lg, minHeight: 90 },

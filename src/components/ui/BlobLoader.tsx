@@ -133,7 +133,7 @@ export default function BlobLoader({ size, week, label, sub, variant = 'fullscre
         <View style={styles.center} pointerEvents="none">
           {week !== undefined ? (
             <>
-              <Text style={[styles.weekNum, { fontFamily: theme.fonts.title, color: theme.colors.black, fontSize: resolvedSize * 0.28 }]}>
+              <Text style={[styles.weekNum, { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.black, fontSize: resolvedSize * 0.28 }]}>
                 {week}
               </Text>
               <Text style={[styles.weekLabel, { fontFamily: theme.fonts.mono, color: theme.colors.black, fontSize: resolvedSize * 0.10 }]}>

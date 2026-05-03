@@ -127,6 +127,7 @@ const createStyles = (theme: Theme, topInset: number, bottomInset: number) =>
       fontWeight: theme.fontWeight.bold,
       color: theme.colors.text,
       fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 700',
     },
     addButton: {
       width: 44,

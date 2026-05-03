@@ -301,7 +301,7 @@ export default function PostBirthScreen() {
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
   header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.postBirth, marginTop: theme.spacing.sm },
+  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.postBirth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
   progressCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, padding: theme.spacing.lg },

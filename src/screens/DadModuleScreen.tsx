@@ -281,7 +281,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
     header: { alignItems: 'flex-start', paddingTop: insets.top + 16, paddingBottom: 24, paddingHorizontal: 16, gap: 8 },
     headerKicker: { marginBottom: 4 },
     titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
-    title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, color: theme.colors.text, letterSpacing: 1 },
+    title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
     subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
     sectionsHeader: { paddingHorizontal: 16, marginBottom: 8 },
 

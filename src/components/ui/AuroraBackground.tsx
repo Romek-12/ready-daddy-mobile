@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
+import { BlurView, BlurTargetView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -20,6 +21,8 @@ interface AuroraBackgroundProps {
 
 export default function AuroraBackground({ children, style }: AuroraBackgroundProps) {
   const { theme } = useTheme();
+  const targetRef = useRef<View | null>(null);
+
   const cyanX = useSharedValue(0);
   const cyanY = useSharedValue(0);
   const violetX = useSharedValue(0);
@@ -58,20 +61,34 @@ export default function AuroraBackground({ children, style }: AuroraBackgroundPr
 
   return (
     <View style={[styles.root, { backgroundColor: theme.colors.background }, style]}>
-      <AnimatedGradient
-        colors={[theme.colors.primaryLight, 'transparent']}
-        style={[styles.blobCyan, cyanStyle]}
-        start={{ x: 0.5, y: 0.5 }}
-        end={{ x: 1, y: 1 }}
+      {/* Warstwa blobów — BlurTargetView definiuje co ma być rozmywane */}
+      <BlurTargetView ref={targetRef} style={StyleSheet.absoluteFill} pointerEvents="none">
+        <AnimatedGradient
+          colors={[theme.colors.primaryGlow, 'transparent']}
+          style={[styles.blobCyan, cyanStyle]}
+          start={{ x: 0.5, y: 0.5 }}
+          end={{ x: 1, y: 1 }}
+          pointerEvents="none"
+        />
+        <AnimatedGradient
+          colors={[theme.colors.violetGlow, 'transparent']}
+          style={[styles.blobViolet, violetStyle]}
+          start={{ x: 0.5, y: 0.5 }}
+          end={{ x: 0, y: 0 }}
+          pointerEvents="none"
+        />
+      </BlurTargetView>
+
+      {/* BlurView rozmywa zawartość BlurTargetView — prawdziwy blur na Android 12+ */}
+      <BlurView
+        blurTarget={targetRef}
+        blurMethod="dimezisBlurViewSdk31Plus"
+        intensity={80}
+        tint="dark"
+        style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
-      <AnimatedGradient
-        colors={[theme.colors.violetSoft, 'transparent']}
-        style={[styles.blobViolet, violetStyle]}
-        start={{ x: 0.5, y: 0.5 }}
-        end={{ x: 0, y: 0 }}
-        pointerEvents="none"
-      />
+
       <View style={styles.content}>{children}</View>
     </View>
   );
