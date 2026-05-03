@@ -1,7 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
+import BlobLoader from './BlobLoader';
 import type { Theme } from '../../theme';
 
 interface GradientButtonProps {
@@ -33,7 +34,7 @@ export default function GradientButton({ title, onPress, loading, disabled, acce
         style={s.gradient}
       >
         {loading ? (
-          <ActivityIndicator color={theme.colors.black} />
+          <BlobLoader variant="button" color={theme.colors.black} />
         ) : (
           <Text style={s.text}>{title}</Text>
         )}

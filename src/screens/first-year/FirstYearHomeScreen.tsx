@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import GlassCard from '../../components/ui/GlassCard';
+import GradientProgressBar from '../../components/ui/GradientProgressBar';
 import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { Theme } from '../../theme';
 import type { AppNavigation } from '../../types/navigation';
@@ -58,9 +60,7 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
       {currentMonth >= 0 && (
         <GlassCard elevated accent="cyan" style={s.progressCard}>
           <Text style={s.progressLabel}>{`Miesiąc ${currentMonth} z 12`}</Text>
-          <View style={s.progressTrack}>
-            <View style={[s.progressFill, { width: `${progressPercent}%` }]} />
-          </View>
+          <GradientProgressBar value={Math.round(progressPercent)} height={6} glow />
         </GlassCard>
       )}
 
@@ -70,18 +70,42 @@ export default function FirstYearHomeScreen({ navigation }: Props) {
           {Array.from({ length: 12 }).map((_, i) => {
             const month = i + 1;
             const isActive = month === currentMonth;
-            const isDone = month < currentMonth;
+            const isDone = currentMonth >= 0 && month < currentMonth;
             const isFuture = currentMonth >= 0 && month > currentMonth;
             return (
               <TouchableOpacity key={month} onPress={() => navigation.navigate('Month', { month })} style={s.tileWrap}>
                 <GlassCard style={[
                   s.tile,
-                  ...(isActive ? [{ borderColor: theme.colors.primary, shadowColor: theme.colors.primary, shadowOpacity: 0.6, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 }] : []),
-                  ...(isDone ? [{ opacity: 0.75 }] : []),
-                  ...(isFuture ? [{ opacity: 0.45 }] : []),
+                  isActive ? {
+                    borderColor: theme.colors.primary,
+                    shadowColor: theme.colors.primary,
+                    shadowOpacity: 0.6,
+                    shadowRadius: 10,
+                    shadowOffset: { width: 0, height: 0 },
+                    elevation: 5,
+                  } : undefined,
+                  isFuture ? { opacity: 0.45 } : undefined,
                 ]}>
-                  <Text style={[s.tileNum, isActive && { color: theme.colors.primary }]}>{month}</Text>
-                  <Text style={s.tileLbl}>mies.</Text>
+                  {/* violet tint overlay for done months */}
+                  {isDone && (
+                    <LinearGradient
+                      colors={[theme.colors.violetSoft, 'transparent']}
+                      style={s.doneTint}
+                      pointerEvents="none"
+                    />
+                  )}
+                  <Text style={[s.tileNum, isActive && { color: theme.colors.primary }, isDone && { color: theme.colors.violet }]}>
+                    {month}
+                  </Text>
+                  <View style={s.tileBar}>
+                    <View style={[
+                      s.tileBarFill,
+                      {
+                        width: isDone ? '100%' : isActive ? '50%' : '0%',
+                        backgroundColor: isDone ? theme.colors.violet : theme.colors.primary,
+                      },
+                    ]} />
+                  </View>
                 </GlassCard>
               </TouchableOpacity>
             );
@@ -137,17 +161,6 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.text,
       marginBottom: theme.spacing.sm,
     },
-    progressTrack: {
-      height: 6,
-      backgroundColor: theme.colors.surfaceLight,
-      borderRadius: theme.borderRadius.full,
-      overflow: 'hidden',
-    },
-    progressFill: {
-      height: 6,
-      backgroundColor: theme.colors.primary,
-      borderRadius: theme.borderRadius.full,
-    },
     listContainer: {
       paddingHorizontal: theme.spacing.lg,
     },
@@ -173,7 +186,9 @@ const createStyles = (theme: Theme) =>
     },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     tileWrap: { width: '23%' },
-    tile: { aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
+    tile: { aspectRatio: 1, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+    doneTint: { ...StyleSheet.absoluteFillObject, opacity: 0.45 },
     tileNum: { fontFamily: theme.fonts.title, fontSize: 26, color: theme.colors.text },
-    tileLbl: { fontFamily: theme.fonts.medium, fontSize: 10, color: theme.colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 },
+    tileBar: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 0 },
+    tileBarFill: { height: 3, borderRadius: 0 },
   });

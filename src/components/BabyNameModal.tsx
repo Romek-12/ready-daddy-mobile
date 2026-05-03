@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Modal, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Modal, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import BlobLoader from './ui/BlobLoader';
 import type { Theme } from '../theme';
 
 interface Props {
@@ -51,7 +52,7 @@ export default function BabyNameModal({ visible, isName1, value, onChangeText, o
               accessibilityLabel="Zapisz imię"
             >
               {saving ? (
-                <ActivityIndicator color="#fff" />
+                <BlobLoader variant="button" color="#fff" />
               ) : (
                 <Text style={s.saveText}>Zapisz</Text>
               )}

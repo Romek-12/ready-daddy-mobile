@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -17,6 +16,7 @@ import { z } from 'zod';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import BlobLoader from '../components/ui/BlobLoader';
 import { supabase } from '../lib/supabase';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import type { RootStackParamList } from '../types/navigation';
@@ -130,7 +130,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color={theme.colors.black} />
+            <BlobLoader variant="button" color={theme.colors.black} />
           ) : (
             <Text style={s.buttonText}>Dalej</Text>
           )}

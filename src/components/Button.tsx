@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import BlobLoader from './ui/BlobLoader';
 import type { Theme } from '../theme';
 
 interface ButtonProps {
@@ -26,7 +27,7 @@ export default function Button({ title, onPress, loading, disabled, variant = 'p
       accessibilityLabel={accessibilityLabel || title}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? theme.colors.black : theme.colors.primary} />
+        <BlobLoader variant="button" color={isPrimary ? theme.colors.black : theme.colors.primary} />
       ) : (
         <Text style={isPrimary ? s.primaryText : s.outlineText}>{title}</Text>
       )}

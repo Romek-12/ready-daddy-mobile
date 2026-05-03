@@ -6,6 +6,7 @@ import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import GlassCard from '../components/ui/GlassCard';
+import GradientProgressBar from '../components/ui/GradientProgressBar';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
@@ -133,13 +134,15 @@ export default function PostBirthScreen() {
       </View>
 
       {/* Progress */}
-      <View style={st.progressCard}>
-        <Text style={st.progressLabel}>Postęp spraw</Text>
-        <View style={st.progressRight}>
-          <Text style={st.progressCount}>{totalChecked}/{totalItems}</Text>
-          <Text style={st.progressCheckLabel}>ukończonych</Text>
+      <GlassCard elevated style={st.progressCard}>
+        <Text style={st.progressKicker}>POSTĘP SPRAW</Text>
+        <View style={st.progressRow}>
+          <Text style={st.progressCount}>{totalChecked}</Text>
+          <Text style={st.progressSep}>/{totalItems}</Text>
+          <Text style={st.progressCheckLabel}> ukończonych</Text>
         </View>
-      </View>
+        <GradientProgressBar value={totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0} height={6} glow />
+      </GlassCard>
 
       {/* Main tasks */}
       {TASKS.map((task, idx) => {
@@ -301,11 +304,12 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, color: theme.colors.postBirth, marginTop: theme.spacing.sm },
   sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
-  progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.postBirth, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
-  progressLabel: { fontSize: theme.fontSize.lg, color: theme.colors.white, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
-  progressRight: { alignItems: 'flex-end' },
-  progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },
-  progressCheckLabel: { fontSize: theme.fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 4, fontWeight: theme.fontWeight.medium },
+  progressCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, padding: theme.spacing.lg },
+  progressKicker: { fontSize: 10, color: theme.colors.textMuted, letterSpacing: 1.5, fontFamily: theme.fonts.mono, marginBottom: theme.spacing.sm },
+  progressRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: theme.spacing.md },
+  progressCount: { fontSize: theme.fontSize.xxl, fontWeight: theme.fontWeight.bold, color: theme.colors.postBirth, fontFamily: theme.fonts.bold },
+  progressSep: { fontSize: theme.fontSize.lg, color: theme.colors.textMuted, marginLeft: 2 },
+  progressCheckLabel: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary },
 
   timelineWrap: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
   taskSection: { flex: 1, marginLeft: theme.spacing.sm },

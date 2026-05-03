@@ -1,32 +1,126 @@
 import React from 'react';
-import { View, ViewStyle, StyleSheet } from 'react-native';
+import { View, ViewStyle, StyleSheet, Platform, Pressable } from 'react-native';
+import { BlurView } from 'expo-blur';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { useTheme } from '../../context/ThemeContext';
+import { useGlassFeatureFlag } from '../../hooks/useGlassFeatureFlag';
 
 interface GlassCardProps {
   children: React.ReactNode;
-  style?: ViewStyle | ViewStyle[];
+  style?: ViewStyle | (ViewStyle | undefined)[];
   elevated?: boolean;
   accent?: 'cyan' | 'violet';
+  onPress?: () => void;
 }
 
-export default function GlassCard({ children, style, elevated = false, accent }: GlassCardProps) {
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+export default function GlassCard({ children, style, elevated = false, accent, onPress }: GlassCardProps) {
   const { theme } = useTheme();
+  const glassEnabled = useGlassFeatureFlag();
   const accentColor =
     accent === 'cyan' ? theme.colors.primary : accent === 'violet' ? theme.colors.violet : undefined;
+
+  const borderRadius = theme.borderRadius.xl;
+  const borderCol = glassEnabled
+    ? elevated ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.12)'
+    : elevated ? theme.colors.cardBorderHi : theme.colors.cardBorder;
+
+  const accentStyle: ViewStyle | null = accentColor
+    ? { borderLeftWidth: 3, borderLeftColor: accentColor }
+    : null;
+
+  const scaleAnim = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }],
+  }));
+
+  const handlePressIn = () => {
+    if (onPress) scaleAnim.value = withSpring(0.97, { damping: 15, stiffness: 300 });
+  };
+  const handlePressOut = () => {
+    if (onPress) scaleAnim.value = withSpring(1.0, { damping: 15, stiffness: 300 });
+  };
+
+  const highlight = glassEnabled ? (
+    <View
+      pointerEvents="none"
+      style={[styles.highlight, { borderTopLeftRadius: borderRadius, borderTopRightRadius: borderRadius }]}
+    />
+  ) : null;
+
+  // iOS: real BlurView when glass is on
+  if (glassEnabled && Platform.OS === 'ios') {
+    if (onPress) {
+      return (
+        <Animated.View style={animStyle}>
+          <BlurView
+            intensity={elevated ? 60 : 40}
+            tint="dark"
+            style={[styles.base, { borderColor: borderCol, borderRadius }, accentStyle, style]}
+          >
+            <Pressable
+              onPress={onPress}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              style={StyleSheet.absoluteFillObject}
+            />
+            {highlight}
+            {children}
+          </BlurView>
+        </Animated.View>
+      );
+    }
+    return (
+      <BlurView
+        intensity={elevated ? 60 : 40}
+        tint="dark"
+        style={[styles.base, { borderColor: borderCol, borderRadius }, accentStyle, style]}
+      >
+        {highlight}
+        {children}
+      </BlurView>
+    );
+  }
+
+  const bg = glassEnabled
+    ? elevated ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.05)'
+    : elevated ? theme.colors.surfaceHi : theme.colors.surface;
+
+  if (onPress) {
+    return (
+      <AnimatedPressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={[
+          styles.base,
+          { backgroundColor: bg, borderColor: borderCol, borderRadius },
+          accentStyle,
+          style,
+          animStyle,
+        ]}
+      >
+        {highlight}
+        {children}
+      </AnimatedPressable>
+    );
+  }
+
   return (
     <View
       style={[
         styles.base,
-        {
-          backgroundColor: elevated ? theme.colors.surfaceHi : theme.colors.surface,
-          borderColor: elevated ? theme.colors.cardBorderHi : theme.colors.cardBorder,
-          borderRadius: theme.borderRadius.xl,
-        },
-        accentColor && { borderLeftWidth: 3, borderLeftColor: accentColor },
+        { backgroundColor: bg, borderColor: borderCol, borderRadius },
+        accentStyle,
         style,
       ]}
     >
-      <View pointerEvents="none" style={[styles.highlight, { borderTopLeftRadius: theme.borderRadius.xl, borderTopRightRadius: theme.borderRadius.xl }]} />
+      {highlight}
       {children}
     </View>
   );
@@ -43,6 +137,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: 'rgba(255,255,255,0.30)',
   },
 });

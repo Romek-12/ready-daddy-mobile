@@ -5,8 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
+import BlobLoader from './ui/BlobLoader';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
@@ -52,7 +52,7 @@ export default function SocialAuthButtons() {
         activeOpacity={0.8}
       >
         {loading === 'google' ? (
-          <ActivityIndicator size="small" color="#3C4043" />
+          <BlobLoader variant="button" color="#3C4043" />
         ) : (
           <Text style={styles.googleLetter}>G</Text>
         )}
@@ -66,7 +66,7 @@ export default function SocialAuthButtons() {
         activeOpacity={0.8}
       >
         {loading === 'facebook' ? (
-          <ActivityIndicator size="small" color="#fff" />
+          <BlobLoader variant="button" color="#fff" />
         ) : (
           <Text style={styles.facebookLetter}>f</Text>
         )}

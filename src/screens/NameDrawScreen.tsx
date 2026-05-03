@@ -17,11 +17,13 @@ import { useNameDrawStorage } from '../hooks/useNameDrawStorage';
 import { pickRandomFromPool, computeSaveSlot } from '../utils/nameDraw';
 import { api } from '../services/api';
 import { logError } from '../utils/logError';
+import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '../components/Icon';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import NameDrawModal from '../components/NameDrawModal';
 import GlassCard from '../components/ui/GlassCard';
 import GlowPill from '../components/ui/GlowPill';
+import GradientText from '../components/ui/GradientText';
 import type { Theme } from '../theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
@@ -137,7 +139,9 @@ export default function NameDrawScreen({ navigation }: Props) {
         <GlassCard elevated style={s.featured}>
           <View style={s.featuredBlob} pointerEvents="none" />
           <GlowPill label="Wylosowane" variant="violet" />
-          <Text style={s.featuredName}>{storage.lastResult ?? '—'}</Text>
+          <GradientText style={s.featuredName}>
+            {storage.lastResult ?? '—'}
+          </GradientText>
           <TouchableOpacity onPress={() => setIsFav(v => !v)} style={s.heartBtn} accessibilityRole="button" accessibilityLabel="Ulubione">
             <Icon name="heart" size={22} color={isFav ? theme.colors.primary : theme.colors.textMuted} />
           </TouchableOpacity>
@@ -153,13 +157,21 @@ export default function NameDrawScreen({ navigation }: Props) {
         </View>
 
         <TouchableOpacity
-          style={[s.drawBtn, !canDraw && s.drawBtnDisabled]}
+          style={[s.drawBtnWrap, !canDraw && s.drawBtnDisabled]}
           onPress={handleDraw}
           disabled={!canDraw}
+          activeOpacity={0.88}
           accessibilityRole="button"
           accessibilityLabel="Losuj imię"
         >
-          <Text style={s.drawBtnText}>Losuj 🎲</Text>
+          <LinearGradient
+            colors={[theme.colors.primary, theme.colors.violet]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={s.drawBtn}
+          >
+            <Text style={s.drawBtnText}>Losuj 🎲</Text>
+          </LinearGradient>
         </TouchableOpacity>
 
         {storage.lastResult && (
@@ -240,18 +252,26 @@ const createStyles = (theme: Theme, topInset: number) =>
       fontSize: theme.fontSize.md,
       color: theme.colors.text,
     },
+    drawBtnWrap: {
+      borderRadius: theme.borderRadius.full,
+      marginBottom: theme.spacing.lg,
+      shadowColor: theme.colors.primary,
+      shadowOpacity: 0.5,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 6,
+    },
     drawBtn: {
-      backgroundColor: theme.colors.primary,
-      paddingVertical: theme.spacing.md,
+      paddingVertical: 16,
       borderRadius: theme.borderRadius.full,
       alignItems: 'center',
-      marginBottom: theme.spacing.lg,
     },
     drawBtnDisabled: { opacity: 0.4 },
     drawBtnText: {
       fontSize: theme.fontSize.lg,
       fontWeight: theme.fontWeight.bold,
-      color: theme.colors.background,
+      color: theme.colors.black,
+      letterSpacing: 0.5,
     },
     lastRow: {
       flexDirection: 'row',
@@ -274,6 +294,6 @@ const createStyles = (theme: Theme, topInset: number) =>
     },
     featured: { padding: theme.spacing.lg, marginBottom: theme.spacing.md, overflow: 'hidden' },
     featuredBlob: { position: 'absolute', width: 220, height: 220, borderRadius: 110, top: -80, right: -60, backgroundColor: theme.colors.violetSoft, opacity: 0.6 },
-    featuredName: { fontFamily: theme.fonts.title, fontSize: theme.fontSize.xxl, color: theme.colors.text, marginTop: 8 },
+    featuredName: { fontFamily: theme.fonts.title, fontSize: 48, marginTop: 12, marginBottom: 4 },
     heartBtn: { position: 'absolute', top: theme.spacing.md, right: theme.spacing.md },
   });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import BlobLoader from '../components/ui/BlobLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
@@ -33,7 +34,7 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
   if (isLoading) {
     return (
       <View style={[s.c, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={theme.colors.dadModule} />
+        <BlobLoader variant="fullscreen" label="Ładowanie poradnika..." />
       </View>
     );
   }

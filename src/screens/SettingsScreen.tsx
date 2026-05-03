@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, ActivityIndicator, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, Switch } from 'react-native';
+import BlobLoader from '../components/ui/BlobLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, ThemeMode } from '../context/ThemeContext';
@@ -297,7 +298,7 @@ export default function SettingsScreen({ navigation }: Props) {
           </View>
         </GlassCard>
 
-        <View style={s.section}>
+        <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>Motyw aplikacji</Text>
           <Text style={s.sectionDesc}>Wybierz w jakim trybie ma działać aplikacja, lub zdaj się na ustawienia systemowe.</Text>
           
@@ -324,9 +325,9 @@ export default function SettingsScreen({ navigation }: Props) {
               thumbColor={glassEnabled ? theme.colors.primary : theme.colors.textMuted}
             />
           </View>
-        </View>
+        </GlassCard>
 
-        <View style={s.section}>
+        <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>Konto i Dane</Text>
           <TouchableOpacity style={s.listButton} onPress={() => { setSelectedDate(user?.conceptionDate || new Date().toISOString()); setDatePickerVisible(true); }} accessibilityRole="button" accessibilityLabel="Zmień termin poczęcia">
             <View style={s.listButtonLeft}>
@@ -340,9 +341,9 @@ export default function SettingsScreen({ navigation }: Props) {
             </View>
             <Icon name="arrow-forward" size={16} color={theme.colors.textMuted} />
           </TouchableOpacity>
-        </View>
+        </GlassCard>
 
-        <View style={s.section}>
+        <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>Połączone konta</Text>
           <Text style={s.sectionDesc}>
             Po połączeniu konta możesz logować się przez Google lub Facebook bez hasła.
@@ -376,7 +377,7 @@ export default function SettingsScreen({ navigation }: Props) {
                 style={[s.linkBtn, linkingProvider !== null && s.linkBtnDisabled]}
               >
                 {linkingProvider === 'google' ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <BlobLoader variant="button" color="#fff" />
                 ) : (
                   <Text style={s.linkBtnText}>Połącz</Text>
                 )}
@@ -412,7 +413,7 @@ export default function SettingsScreen({ navigation }: Props) {
                 style={[s.linkBtn, linkingProvider !== null && s.linkBtnDisabled]}
               >
                 {linkingProvider === 'facebook' ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <BlobLoader variant="button" color="#fff" />
                 ) : (
                   <Text style={s.linkBtnText}>Połącz</Text>
                 )}
@@ -425,10 +426,10 @@ export default function SettingsScreen({ navigation }: Props) {
               Nie możesz odłączyć jedynego sposobu logowania.
             </Text>
           ) : null}
-        </View>
+        </GlassCard>
 
         {/* O dziecku Section */}
-        <View style={s.section}>
+        <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>O dziecku</Text>
 
           {/* Baby Name 1 */}
@@ -512,10 +513,10 @@ export default function SettingsScreen({ navigation }: Props) {
               <Icon name="edit" size={16} color={theme.colors.textMuted} />
             </TouchableOpacity>
           )}
-        </View>
+        </GlassCard>
 
         {/* Porównanie rozmiaru dziecka */}
-        <View style={s.section}>
+        <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>Porównanie rozmiaru dziecka</Text>
           <Text style={s.sectionDesc}>Wybierz w jaki sposób chcesz porównywać wielkość dziecka na kartach tygodnia.</Text>
           <View style={s.optionsGrid}>
@@ -523,9 +524,9 @@ export default function SettingsScreen({ navigation }: Props) {
             {renderSizeModeOption('animal', 'Zwierzę', '🐾')}
             {renderSizeModeOption('sweet', 'Słodycz', '🍬')}
           </View>
-        </View>
+        </GlassCard>
 
-        <View style={s.section}>
+        <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>Powiadomienia</Text>
           <TouchableOpacity
             style={s.listButton}
@@ -543,7 +544,7 @@ export default function SettingsScreen({ navigation }: Props) {
             </View>
             <Icon name="expand-more" size={20} color={theme.colors.textMuted} />
           </TouchableOpacity>
-        </View>
+        </GlassCard>
 
         <View style={s.spacer} />
 
@@ -609,7 +610,7 @@ export default function SettingsScreen({ navigation }: Props) {
               accessibilityRole="button"
               accessibilityLabel="Zapisz zmianę daty"
             >
-              {saving ? <ActivityIndicator color="#fff" /> : <Text style={s.saveButtonText}>Zapisz zmianę</Text>}
+              {saving ? <BlobLoader variant="button" color="#fff" /> : <Text style={s.saveButtonText}>Zapisz zmianę</Text>}
             </TouchableOpacity>
           </View>
         </View>
@@ -628,10 +629,6 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   section: {
     marginBottom: theme.spacing.lg,
     padding: theme.spacing.lg,
-    backgroundColor: theme.colors.surface,
-    borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
-    borderRadius: theme.borderRadius.xl,
   },
   sectionTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text, marginBottom: theme.spacing.xs },
   sectionDesc: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginBottom: theme.spacing.lg, lineHeight: 20 },
@@ -645,7 +642,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   optionLabelSelected: { color: theme.colors.primary, fontWeight: '700' },
   checkIcon: { width: 24, height: 24, backgroundColor: theme.colors.background, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
 
-  listButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.colors.surface, padding: theme.spacing.md, borderRadius: theme.borderRadius.lg },
+  listButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 56, paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md, borderRadius: theme.borderRadius.lg },
   listButtonLeft: { flexDirection: 'row', alignItems: 'center' },
   listButtonIcon: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginRight: theme.spacing.md },
   listButtonText: { fontSize: theme.fontSize.md, color: theme.colors.text, fontWeight: '500' },

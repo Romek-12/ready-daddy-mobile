@@ -5,10 +5,10 @@ import {
   StyleSheet,
   Switch,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BlobLoader from '../components/ui/BlobLoader';
 import { addDays, format, differenceInDays } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { useTheme } from '../context/ThemeContext';
@@ -107,7 +107,7 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
   if (loading) {
     return (
       <View style={[s.container, s.center]}>
-        <ActivityIndicator color={theme.colors.primary} />
+        <BlobLoader variant="inline" />
       </View>
     );
   }
@@ -137,7 +137,7 @@ export default function NotificationSettingsScreen({ navigation }: Props) {
             </View>
           </View>
           {toggling ? (
-            <ActivityIndicator size="small" color={theme.colors.primary} />
+            <BlobLoader variant="button" />
           ) : (
             <Switch
               value={settings?.enabled ?? false}

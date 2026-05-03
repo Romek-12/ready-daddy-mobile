@@ -5,8 +5,8 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
+import BlobLoader from '../../components/ui/BlobLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -81,7 +81,7 @@ export default function JournalScreen({ navigation }: Props) {
 
       {loading ? (
         <View style={s.center}>
-          <ActivityIndicator color={theme.colors.primary} />
+          <BlobLoader variant="inline" />
         </View>
       ) : filtered.length === 0 ? (
         <View style={s.center}>

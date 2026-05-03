@@ -27,6 +27,7 @@ const queryClient = new QueryClient();
 export default function App() {
   const [fontsLoaded] = useFonts({
     'ClimateCrisis': require('./assets/fonts/ClimateCrisis-subset.ttf'),
+    'MaterialSymbolsRounded': require('./assets/fonts/MaterialSymbolsRounded-w200.ttf'),
     SpaceGrotesk_300Light,
     SpaceGrotesk_400Regular,
     SpaceGrotesk_500Medium,

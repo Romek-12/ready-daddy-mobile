@@ -1,111 +1,198 @@
-import React, { ComponentProps } from 'react';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import React from 'react';
+import { createIconSet } from '@expo/vector-icons';
 
-type MIName = ComponentProps<typeof MaterialIcons>['name'];
-type MCIName = ComponentProps<typeof MaterialCommunityIcons>['name'];
-
-// Maps semantic icon names to Material Icons
-// Using Material Symbols Rounded equivalents from @expo/vector-icons
-type IconSet = 'mi' | 'mci';
-
-interface IconDef {
-  set: IconSet;
-  name: string;
-}
-
-const ICON_MAP: Record<string, IconDef> = {
+// Material Symbols Rounded, weight=200, GRAD=200, FILL=0 (outlined), opsz=24
+// Statically instanced from the variable font via fontTools
+const glyphMap: Record<string, number> = {
   // Navigation / Tabs
-  'home': { set: 'mi', name: 'home' },
-  'bolt': { set: 'mi', name: 'bolt' },
-  'calendar': { set: 'mi', name: 'event' },
-  'money': { set: 'mi', name: 'savings' },
-  'menu-book': { set: 'mi', name: 'menu-book' },
+  'home': 0xE9B2,
+  'bolt': 0xEA0B,
+  'event': 0xE878,
+  'savings': 0xE2EB,
+  'menu_book': 0xEA19,
 
   // Module icons
-  'fetus': { set: 'mci', name: 'dna' },
-  'partner': { set: 'mi', name: 'psychology' },
-  'action-cards': { set: 'mi', name: 'bolt' },
-  'checkups': { set: 'mi', name: 'event-note' },
-  'planning': { set: 'mi', name: 'savings' },
-  'hospital': { set: 'mi', name: 'local-hospital' },
-  'dad': { set: 'mi', name: 'face-6' },
-  'baby': { set: 'mi', name: 'child-care' },
-  'baby-bottle': { set: 'mci', name: 'baby-bottle' },
-  'dice': { set: 'mci', name: 'dice-multiple' },
-  'notifications': { set: 'mi', name: 'notifications' },
+  'psychology': 0xEA4A,
+  'local_hospital': 0xE548,
+  'face_6': 0xF8DE,
+  'child_care': 0xEB41,
+  'notifications': 0xE7F5,
+  'genetics': 0xE0F3,
+  'bedroom_baby': 0xEFE0,
+  'water_bottle': 0xF69D,
 
-  // Content icons - WeekDetail
-  'ruler': { set: 'mi', name: 'straighten' },
-  'brain': { set: 'mi', name: 'psychology' },
-  'lightbulb': { set: 'mi', name: 'lightbulb' },
-  'check-circle': { set: 'mi', name: 'check-circle' },
-  'arrow-forward': { set: 'mi', name: 'arrow-forward' },
+  // Content icons
+  'straighten': 0xE41C,
+  'lightbulb': 0xE90F,
+  'check_circle': 0xF0BE,
+  'arrow_forward': 0xE5C8,
+  'arrow_back': 0xE5C4,
 
   // Planning
-  'shopping-cart': { set: 'mi', name: 'shopping-cart' },
-  'calculate': { set: 'mi', name: 'calculate' },
-  'diamond': { set: 'mi', name: 'diamond' },
-  'date-range': { set: 'mi', name: 'date-range' },
+  'shopping_cart': 0xE8CC,
+  'calculate': 0xEA5F,
+  'diamond': 0xEAD5,
+  'date_range': 0xE916,
 
   // Birth prep
-  'checklist': { set: 'mi', name: 'assignment' },
-  'timer': { set: 'mi', name: 'timer' },
-  'warning': { set: 'mi', name: 'warning' },
-  'luggage': { set: 'mi', name: 'luggage' },
-  'partner-role': { set: 'mi', name: 'face-6' },
+  'assignment': 0xE85D,
+  'timer': 0xE425,
+  'warning': 0xF083,
+  'luggage': 0xF235,
 
   // Checkups
-  'search': { set: 'mi', name: 'search' },
-  'help': { set: 'mi', name: 'help-outline' },
+  'search': 0xE8B6,
+  'help_outline': 0xE8FD,
+  'event_note': 0xE616,
 
   // Dad module
-  'science': { set: 'mi', name: 'science' },
-  'trending-down': { set: 'mi', name: 'trending-down' },
-  'trending-up': { set: 'mi', name: 'trending-up' },
-  'bedtime': { set: 'mi', name: 'bedtime' },
-  'emergency': { set: 'mi', name: 'emergency' },
+  'science': 0xEA4B,
+  'trending_down': 0xE8E3,
+  'trending_up': 0xE8E5,
+  'bedtime': 0xF159,
+  'emergency': 0xE1EB,
 
   // Fourth trimester
-  'couple': { set: 'mi', name: 'favorite' },
+  'favorite': 0xE87E,
 
   // Action card icons
-  'sick': { set: 'mi', name: 'sick' },
-  'chat': { set: 'mi', name: 'chat-bubble-outline' },
-  'sad': { set: 'mi', name: 'sentiment-dissatisfied' },
-  'anxious': { set: 'mci', name: 'emoticon-confused-outline' },
-  'sleep': { set: 'mci', name: 'sleep' },
-  'do-not-touch': { set: 'mci', name: 'hand-back-left-off' },
+  'sick': 0xF220,
+  'chat_bubble_outline': 0xE0CB,
+  'sentiment_dissatisfied': 0xE811,
+  'sentiment_satisfied': 0xE813,
+  'do_not_touch': 0xF1B0,
+  'sleep': 0xE213,
 
   // Size comparison modes
-  'size-fruit': { set: 'mi', name: 'apple' },
-  'size-animal': { set: 'mi', name: 'pets' },
-  'size-sweet': { set: 'mi', name: 'cookie' },
+  'nutrition': 0xE110,
+  'pets': 0xE91D,
+  'cookie': 0xEAAC,
 
   // Misc
-  'calendar-add': { set: 'mi', name: 'edit-calendar' },
-  'schedule': { set: 'mi', name: 'schedule' },
-  'wave': { set: 'mi', name: 'waving-hand' },
-  'gear': { set: 'mi', name: 'settings' },
-  'expand-less': { set: 'mi', name: 'expand-less' },
-  'expand-more': { set: 'mi', name: 'expand-more' },
-  'checkbox-blank': { set: 'mi', name: 'check-box-outline-blank' },
-  'radio-blank': { set: 'mi', name: 'radio-button-unchecked' },
-  'dot': { set: 'mi', name: 'fiber-manual-record' },
-  'tip': { set: 'mi', name: 'tips-and-updates' },
-  'progress': { set: 'mi', name: 'show-chart' },
-  'info': { set: 'mi', name: 'info-outline' },
-  'mom': { set: 'mi', name: 'face-3' },
-  'shirt': { set: 'mci', name: 'tshirt-crew' },
-  'hygiene': { set: 'mci', name: 'hand-wash' },
-  'car': { set: 'mi', name: 'directions-car' },
-  'post-birth': { set: 'mi', name: 'description' },
-  'journal': { set: 'mi', name: 'book' },
-  'add': { set: 'mi', name: 'add' },
-  'close': { set: 'mi', name: 'close' },
-  'delete': { set: 'mi', name: 'delete' },
-  'photo': { set: 'mi', name: 'photo-camera' },
-  'back': { set: 'mi', name: 'arrow-back' },
-  'happy': { set: 'mi', name: 'sentiment-satisfied' },
+  'edit_calendar': 0xE742,
+  'schedule': 0xEFD6,
+  'waving_hand': 0xE766,
+  'settings': 0xE8B8,
+  'expand_less': 0xE5CE,
+  'expand_more': 0xE5CF,
+  'check_box_outline_blank': 0xE835,
+  'radio_button_unchecked': 0xE836,
+  'fiber_manual_record': 0xE061,
+  'tips_and_updates': 0xE79A,
+  'show_chart': 0xE6E1,
+  'info': 0xE88E,
+  'face_3': 0xF8DB,
+  'directions_car': 0xEFF7,
+  'description': 0xE873,
+  'book': 0xE86E,
+  'add': 0xE145,
+  'close': 0xE5CD,
+  'delete': 0xE92E,
+  'photo_camera': 0xE412,
+  'lock': 0xE899,
+};
+
+const MaterialSymbols = createIconSet(
+  glyphMap,
+  'MaterialSymbolsRounded',
+  require('../../assets/fonts/MaterialSymbolsRounded-w200.ttf')
+);
+
+// Semantic icon name → Material Symbols glyph name
+const ICON_MAP: Record<string, string> = {
+  // Navigation / Tabs
+  'home': 'home',
+  'bolt': 'bolt',
+  'calendar': 'event',
+  'money': 'savings',
+  'menu-book': 'menu_book',
+
+  // Module icons
+  'fetus': 'genetics',
+  'partner': 'psychology',
+  'action-cards': 'bolt',
+  'checkups': 'event_note',
+  'planning': 'savings',
+  'hospital': 'local_hospital',
+  'dad': 'face_6',
+  'baby': 'child_care',
+  'baby-bottle': 'water_bottle',
+  'dice': 'bedroom_baby',
+  'notifications': 'notifications',
+
+  // Content icons - WeekDetail
+  'ruler': 'straighten',
+  'brain': 'psychology',
+  'lightbulb': 'lightbulb',
+  'check-circle': 'check_circle',
+  'arrow-forward': 'arrow_forward',
+
+  // Planning
+  'shopping-cart': 'shopping_cart',
+  'calculate': 'calculate',
+  'diamond': 'diamond',
+  'date-range': 'date_range',
+
+  // Birth prep
+  'checklist': 'assignment',
+  'timer': 'timer',
+  'warning': 'warning',
+  'luggage': 'luggage',
+  'partner-role': 'face_6',
+
+  // Checkups
+  'search': 'search',
+  'help': 'help_outline',
+
+  // Dad module
+  'science': 'science',
+  'trending-down': 'trending_down',
+  'trending-up': 'trending_up',
+  'bedtime': 'bedtime',
+  'emergency': 'emergency',
+
+  // Fourth trimester
+  'couple': 'favorite',
+
+  // Action card icons
+  'sick': 'sick',
+  'chat': 'chat_bubble_outline',
+  'sad': 'sentiment_dissatisfied',
+  'anxious': 'sentiment_dissatisfied',
+  'sleep': 'sleep',
+  'do-not-touch': 'do_not_touch',
+
+  // Size comparison modes
+  'size-fruit': 'nutrition',
+  'size-animal': 'pets',
+  'size-sweet': 'cookie',
+
+  // Misc
+  'calendar-add': 'edit_calendar',
+  'schedule': 'schedule',
+  'wave': 'waving_hand',
+  'gear': 'settings',
+  'expand-less': 'expand_less',
+  'expand-more': 'expand_more',
+  'checkbox-blank': 'check_box_outline_blank',
+  'radio-blank': 'radio_button_unchecked',
+  'dot': 'fiber_manual_record',
+  'tip': 'tips_and_updates',
+  'progress': 'show_chart',
+  'info': 'info',
+  'mom': 'face_3',
+  'shirt': 'description',
+  'hygiene': 'waving_hand',
+  'car': 'directions_car',
+  'post-birth': 'description',
+  'journal': 'book',
+  'add': 'add',
+  'close': 'close',
+  'delete': 'delete',
+  'photo': 'photo_camera',
+  'back': 'arrow_back',
+  'happy': 'sentiment_satisfied',
+  'lock': 'lock',
 };
 
 interface IconProps {
@@ -116,15 +203,8 @@ interface IconProps {
 }
 
 export default function Icon({ name, size = 24, color = '#FFFFFF' }: IconProps) {
-  const def = ICON_MAP[name];
-  if (!def) {
-    // Fallback: try as direct MaterialIcons name
-    return <MaterialIcons name={name as MIName} size={size} color={color} />;
-  }
-  if (def.set === 'mci') {
-    return <MaterialCommunityIcons name={def.name as MCIName} size={size} color={color} />;
-  }
-  return <MaterialIcons name={def.name as MIName} size={size} color={color} />;
+  const glyphName = ICON_MAP[name] ?? name;
+  return <MaterialSymbols name={glyphName as keyof typeof glyphMap} size={size} color={color} />;
 }
 
 export { ICON_MAP };

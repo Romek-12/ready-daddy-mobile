@@ -28,16 +28,16 @@ export default function BadgeCard({ definition, earned }: Props) {
   return (
     <GlassCard
       elevated={isEarned}
-      style={[
-        s.card,
-        isEarned ? s.cardEarned : s.cardLocked,
-      ]}
+      style={[s.card, isEarned ? s.cardEarned : s.cardLocked]}
     >
+      {/* Grayscale overlay for locked — desaturates content visually */}
+      {!isEarned && <View style={s.grayscaleOverlay} pointerEvents="none" />}
+
       {isEarned ? (
         <Text style={s.icon}>{definition.icon}</Text>
       ) : (
         <View style={s.lockWrap}>
-          <Icon name="lock" size={28} color={theme.colors.textMuted} />
+          <Icon name="lock" size={24} color={theme.colors.textMuted} />
         </View>
       )}
       <Text style={[s.title, !isEarned && s.titleLocked]} numberOfLines={2}>
@@ -61,16 +61,23 @@ const createStyles = (theme: Theme) =>
       padding: theme.spacing.md,
       alignItems: 'center',
       minHeight: 130,
+      overflow: 'hidden',
     },
     cardEarned: {
       shadowColor: theme.colors.primary,
-      shadowOpacity: 0.5,
-      shadowRadius: 12,
+      shadowOpacity: 0.55,
+      shadowRadius: 16,
       shadowOffset: { width: 0, height: 0 },
-      elevation: 5,
+      elevation: 6,
     },
     cardLocked: {
-      opacity: 0.55,
+      opacity: 0.4,
+    },
+    // Semi-transparent dark overlay that mutes colors to near-grayscale
+    grayscaleOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(20,20,20,0.55)',
+      zIndex: 1,
     },
     icon: {
       fontSize: 40,

@@ -6,6 +6,7 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
+  Easing,
 } from 'react-native-reanimated';
 import { useTheme } from '../context/ThemeContext';
 import { FETUS_IMAGES } from '../data/fetusImages';
@@ -33,17 +34,32 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
   const s = React.useMemo(() => createStyles(theme), [theme]);
 
   const scale = useSharedValue(1);
+  const glowOpacity = useSharedValue(0.4);
   useEffect(() => {
     scale.value = withRepeat(
       withSequence(
-        withTiming(1.06, { duration: 1800 }),
-        withTiming(1.0, { duration: 1800 })
+        withTiming(1.06, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
+        withTiming(1.0, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
-      true
+      false,
     );
-  }, [scale]);
-  const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+    // glow counter-phase: bright when scale is small, dim when scale is large
+    glowOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.15, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0.55, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
+  }, [scale, glowOpacity]);
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
 
   const fetusImage = FETUS_IMAGES[Math.min(Math.max(week, 1), 40)];
 
@@ -57,6 +73,10 @@ export default function FetusVisualizerCompact({ week, sizeMm = 0, weightG = 0, 
     <View style={s.row}>
       {/* Fetus image thumbnail */}
       <View style={s.svgBox}>
+        <Animated.View
+          pointerEvents="none"
+          style={[s.glowHalo, { shadowColor: theme.colors.primary }, glowStyle]}
+        />
         <Animated.View style={pulseStyle}>
           <Image source={fetusImage} style={{ width: 58, height: 68 }} resizeMode="contain" />
         </Animated.View>
@@ -117,7 +137,17 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: theme.borderRadius.lg,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
+    overflow: 'visible',
+  },
+  glowHalo: {
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'transparent',
+    shadowOpacity: 1,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 0 },
   },
   info: {
     flex: 1,
