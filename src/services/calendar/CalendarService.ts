@@ -103,3 +103,53 @@ export async function addCalendarEvent(params: AddEventParams): Promise<string |
     return null;
   }
 }
+
+interface CreateExamEventParams {
+  title: string;
+  start: Date;
+  end: Date;
+  doctor?: string;
+  location?: string;
+  notes?: string;
+}
+
+const EXAM_ALARMS = [
+  { relativeOffset: -2880 }, // 2 days before
+  { relativeOffset: -1440 }, // 1 day before
+  { relativeOffset: -120 },  // 2 hours before
+];
+
+export async function createExamEvent(params: CreateExamEventParams): Promise<string | null> {
+  const { status } = await Calendar.requestCalendarPermissionsAsync();
+  if (status !== 'granted') return null;
+
+  try {
+    const calendarId = await getOrCreateCalendarId();
+
+    const notesParts: string[] = [];
+    if (params.doctor) notesParts.push(`Lekarz: ${params.doctor}`);
+    if (params.notes) notesParts.push(params.notes);
+    const notesString = notesParts.join('\n') || undefined;
+
+    return await Calendar.createEventAsync(calendarId, {
+      title: params.title,
+      startDate: params.start,
+      endDate: params.end,
+      location: params.location,
+      notes: notesString,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      alarms: EXAM_ALARMS,
+    });
+  } catch (err: unknown) {
+    logError('CalendarService.createExamEvent', err instanceof Error ? err : new Error(String(err)));
+    return null;
+  }
+}
+
+export async function deleteExamEvent(eventId: string): Promise<void> {
+  try {
+    await Calendar.deleteEventAsync(eventId);
+  } catch (err: unknown) {
+    logError('CalendarService.deleteExamEvent', err instanceof Error ? err : new Error(String(err)));
+  }
+}
