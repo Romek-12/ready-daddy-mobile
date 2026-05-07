@@ -14,6 +14,13 @@ interface AddEventParams {
   notes?: string;
 }
 
+function buildNotesString(doctor?: string, notes?: string): string | undefined {
+  const parts: string[] = [];
+  if (doctor) parts.push(`Lekarz: ${doctor}`);
+  if (notes) parts.push(notes);
+  return parts.join('\n') || undefined;
+}
+
 async function getOrCreateCalendarId(): Promise<string> {
   const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
 
@@ -82,10 +89,7 @@ export async function addCalendarEvent(params: AddEventParams): Promise<string |
 
     const endDate = new Date(startDate.getTime() + params.durationMinutes * 60 * 1000);
 
-    const notesParts: string[] = [];
-    if (params.doctor) notesParts.push(`Lekarz: ${params.doctor}`);
-    if (params.notes) notesParts.push(params.notes);
-    const notesString = notesParts.join('\n') || undefined;
+    const notesString = buildNotesString(params.doctor, params.notes);
 
     const eventId = await Calendar.createEventAsync(calendarId, {
       title: params.title,
@@ -126,10 +130,7 @@ export async function createExamEvent(params: CreateExamEventParams): Promise<st
   try {
     const calendarId = await getOrCreateCalendarId();
 
-    const notesParts: string[] = [];
-    if (params.doctor) notesParts.push(`Lekarz: ${params.doctor}`);
-    if (params.notes) notesParts.push(params.notes);
-    const notesString = notesParts.join('\n') || undefined;
+    const notesString = buildNotesString(params.doctor, params.notes);
 
     return await Calendar.createEventAsync(calendarId, {
       title: params.title,
