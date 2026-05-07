@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -50,6 +50,18 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
   const [notes, setNotes] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      setDate(tomorrowAt9());
+      setDurationMinutes(60);
+      setDoctor('');
+      setLocation('');
+      setNotes('');
+      setShowDatePicker(false);
+      setShowTimePicker(false);
+    }
+  }, [visible]);
 
   const handleSubmit = () => {
     const start = date;
@@ -153,8 +165,8 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
               value={date}
               mode="date"
               onChange={(event, selected) => {
-                setShowDatePicker(Platform.OS === 'ios');
-                if (selected) {
+                if (Platform.OS === 'android') setShowDatePicker(false);
+                if (event.type === 'set' && selected) {
                   const next = new Date(date);
                   next.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate());
                   setDate(next);
@@ -167,8 +179,8 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
               value={date}
               mode="time"
               onChange={(event, selected) => {
-                setShowTimePicker(Platform.OS === 'ios');
-                if (selected) {
+                if (Platform.OS === 'android') setShowTimePicker(false);
+                if (event.type === 'set' && selected) {
                   const next = new Date(date);
                   next.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
                   setDate(next);

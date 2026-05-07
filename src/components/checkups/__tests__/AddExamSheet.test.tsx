@@ -41,6 +41,19 @@ describe('AddExamSheet', () => {
     expect(payload.notes).toBeUndefined();
   });
 
+  it('resets state when reopened', async () => {
+    const onSubmit = jest.fn();
+    const { getByPlaceholderText, getByText, rerender } = render(
+      wrap(<AddExamSheet visible examName="USG" week={12} onCancel={jest.fn()} onSubmit={onSubmit} />),
+    );
+    fireEvent.changeText(getByPlaceholderText('Lekarz (opcjonalne)'), 'Dr Stale');
+    rerender(wrap(<AddExamSheet visible={false} examName="USG" week={12} onCancel={jest.fn()} onSubmit={onSubmit} />));
+    rerender(wrap(<AddExamSheet visible examName="USG" week={12} onCancel={jest.fn()} onSubmit={onSubmit} />));
+    fireEvent.press(getByText('Zapisz'));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(onSubmit.mock.calls[0][0].doctor).toBeUndefined();
+  });
+
   it('passes optional fields when filled', async () => {
     const onSubmit = jest.fn();
     const { getByText, getByPlaceholderText } = render(
