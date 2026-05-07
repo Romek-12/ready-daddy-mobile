@@ -55,8 +55,7 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
   const insets = useSafeAreaInsets();
   const s = useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
 
-  const initialDate = () => (defaultDate ? dateAt9(defaultDate) : tomorrowAt9());
-  const [date, setDate] = useState<Date>(initialDate);
+  const [date, setDate] = useState<Date>(() => (defaultDate ? dateAt9(defaultDate) : tomorrowAt9()));
   const [typedName, setTypedName] = useState<string>(examName);
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [doctor, setDoctor] = useState('');
@@ -67,7 +66,7 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
 
   useEffect(() => {
     if (visible) {
-      setDate(initialDate());
+      setDate(defaultDate ? dateAt9(defaultDate) : tomorrowAt9());
       setDurationMinutes(60);
       setDoctor('');
       setLocation('');
@@ -76,7 +75,6 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
       setShowDatePicker(false);
       setShowTimePicker(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, examName, defaultDate]);
 
   const trimmedName = typedName.trim();
