@@ -25,6 +25,14 @@ describe('getPregnancyWeekAndDay', () => {
     expect(result).toEqual({ week: 42, day: 0 });
   });
 
+  it('parses conceptionDate string without timezone drift', () => {
+    // Even when the device is in UTC+0, "2026-01-01" should always be 2026-01-01 (not 2025-12-31)
+    // Verified by computing 14 days later → exactly 2+0 (offset only)
+    const result = getPregnancyWeekAndDay('2026-01-01', new Date(2026, 0, 15));
+    // 14 days after conception + 14 day offset = 28 days = 4 weeks + 0 days
+    expect(result).toEqual({ week: 4, day: 0 });
+  });
+
   it('handles same day as conception', () => {
     // conception 2026-01-01, target 2026-01-01 → 0 days + 14 offset = 14 days = 2+0
     const result = getPregnancyWeekAndDay('2026-01-01', new Date(2026, 0, 1));

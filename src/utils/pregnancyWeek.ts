@@ -16,9 +16,9 @@ export function getPregnancyWeekAndDay(
   conceptionDate: string,
   target: Date,
 ): WeekAndDay | null {
-  const conception = new Date(conceptionDate);
-  // Normalize both to start-of-day to avoid DST/time-of-day drift
-  const conceptionDayUtc = Date.UTC(conception.getFullYear(), conception.getMonth(), conception.getDate());
+  // Parse ISO date string directly to avoid UTC-offset drift on negative-offset devices
+  const [cy, cm, cd] = conceptionDate.split('-').map(Number);
+  const conceptionDayUtc = Date.UTC(cy, cm - 1, cd);
   const targetDayUtc = Date.UTC(target.getFullYear(), target.getMonth(), target.getDate());
   const diffDays = Math.floor((targetDayUtc - conceptionDayUtc) / MS_PER_DAY);
   const totalDays = diffDays + CONCEPTION_OFFSET_WEEKS * 7;
