@@ -15,7 +15,7 @@ describe('usePersistedChecklist', () => {
     await waitFor(() => expect(result.current.checked.a).toBe(true));
     expect(result.current.checked.a).toBe(true);
     expect(result.current.checked.b).toBe(false);
-    expect(result.current.getMeta('a')).toEqual({});
+    expect(result.current.getMeta('a')).toBeUndefined();
   });
 
   it('toggleCheck flips state and clears meta on uncheck', async () => {
@@ -25,7 +25,7 @@ describe('usePersistedChecklist', () => {
     expect(result.current.getMeta('x')).toEqual({ calendarEventId: 'evt-1', journalEntryId: 'j-1' });
     await act(async () => { result.current.toggleCheck('x'); });
     expect(result.current.checked.x).toBe(false);
-    expect(result.current.getMeta('x')).toEqual({});
+    expect(result.current.getMeta('x')).toBeUndefined();
   });
 
   it('persists meta across reload', async () => {

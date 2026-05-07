@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logError } from '../utils/logError';
 
@@ -56,11 +56,11 @@ export function usePersistedChecklist(storageKey: string) {
       .catch((e) => logError('usePersistedChecklist:persist', e));
   }, [storageKey]);
 
-  const checked = useCallback(() => {
+  const checked = useMemo(() => {
     const out: Record<string, boolean> = {};
     for (const [k, v] of Object.entries(state)) out[k] = v.checked;
     return out;
-  }, [state])();
+  }, [state]);
 
   const toggleCheck = useCallback((key: string) => {
     setState(prev => {
@@ -86,14 +86,12 @@ export function usePersistedChecklist(storageKey: string) {
   );
 
   const getMeta = useCallback((key: string): ChecklistItemMeta | undefined => {
-    const entry = stateRef.current[key];
-    if (!entry) return undefined;
-    return entry.meta ?? {};
+    return stateRef.current[key]?.meta;
   }, []);
 
   const resetChecklist = useCallback(() => {
     setState({});
-    AsyncStorage.removeItem(`checklist_${storageKey}`).catch((e) => logError('usePersistedChecklist:persist', e));
+    AsyncStorage.removeItem(`checklist_${storageKey}`).catch((e) => logError('usePersistedChecklist:reset', e));
   }, [storageKey]);
 
   return { checked, toggleCheck, setCheckedWithMeta, getMeta, resetChecklist };
