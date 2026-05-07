@@ -94,30 +94,24 @@ export default function CheckupsScreen() {
     const { key, examName, weekRange } = pendingExam;
     setPendingExam(null);
 
-    let calendarEventId: string | undefined;
-    let journalEntryId: string | undefined;
+    const eventId = await createExamEvent({
+      title: `Badanie: ${examName}`,
+      start: payload.start,
+      end: payload.end,
+      doctor: payload.doctor,
+      location: payload.location,
+      notes: payload.notes,
+    });
+    const calendarEventId = eventId ?? undefined;
 
-    try {
-      const eventId = await createExamEvent({
-        title: `Badanie: ${examName}`,
-        start: payload.start,
-        end: payload.end,
-        doctor: payload.doctor,
-        location: payload.location,
-        notes: payload.notes,
-      });
-      calendarEventId = eventId ?? undefined;
-    } catch (err: unknown) {
-      logError('CheckupsScreen.createExamEvent', err);
-    }
-
-    if (calendarEventId === undefined) {
+    if (!calendarEventId) {
       Alert.alert(
         'Brak wydarzenia w kalendarzu',
         'Nie udało się dodać wydarzenia. Wpis trafi tylko do dziennika.',
       );
     }
 
+    let journalEntryId: string | undefined;
     try {
       const isoDate = payload.start.toISOString().slice(0, 10);
       const entry = await addJournalEntry({
@@ -157,11 +151,7 @@ export default function CheckupsScreen() {
         {
           text: 'Tak',
           onPress: async () => {
-            try {
-              await deleteExamEvent(meta.calendarEventId!);
-            } catch (err: unknown) {
-              logError('CheckupsScreen.deleteExamEvent', err);
-            }
+            await deleteExamEvent(meta.calendarEventId!);
             toggleCheck(key);
           },
         },
@@ -239,7 +229,7 @@ export default function CheckupsScreen() {
                   {!isLast ? <View style={s.timelineLine} /> : null}
                 </View>
                 <View style={s.timelineContent}>
-                  <TouchableOpacity onPress={() => toggle(vIdx)} activeOpacity={0.85} accessibilityRole="button" accessibilityState={{ expanded: isExpanded }}>
+                  <TouchableOpacity onPress={() => toggle(vIdx)} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
                     <GlassCard style={s.visitHeader}>
                       <View style={s.visitHeaderLeft}>
                         <View style={[s.weekBadge, { backgroundColor: visitColor }]}>
