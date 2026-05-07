@@ -14,6 +14,8 @@ export interface ExamSubmitPayload {
   doctor?: string;
   location?: string;
   notes?: string;
+  /** Present only when editableName=true and user typed a name. */
+  name?: string;
 }
 
 interface Props {
@@ -22,6 +24,10 @@ interface Props {
   week: number;
   onCancel: () => void;
   onSubmit: (payload: ExamSubmitPayload) => void;
+  /** When provided, initial date is this date at 09:00 instead of tomorrow at 09:00. */
+  defaultDate?: Date;
+  /** When true, examName is shown as TextInput (user types it). Submit disabled if empty. */
+  editableName?: boolean;
 }
 
 const DURATION_OPTIONS = [
@@ -38,12 +44,20 @@ function tomorrowAt9(): Date {
   return d;
 }
 
-export default function AddExamSheet({ visible, examName, week, onCancel, onSubmit }: Props) {
+function dateAt9(source: Date): Date {
+  const d = new Date(source);
+  d.setHours(9, 0, 0, 0);
+  return d;
+}
+
+export default function AddExamSheet({ visible, examName, week, onCancel, onSubmit, defaultDate, editableName = false }: Props) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const s = useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
 
-  const [date, setDate] = useState<Date>(tomorrowAt9);
+  const initialDate = () => (defaultDate ? dateAt9(defaultDate) : tomorrowAt9());
+  const [date, setDate] = useState<Date>(initialDate);
+  const [typedName, setTypedName] = useState<string>(examName);
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [doctor, setDoctor] = useState('');
   const [location, setLocation] = useState('');
@@ -53,17 +67,23 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
 
   useEffect(() => {
     if (visible) {
-      setDate(tomorrowAt9());
+      setDate(initialDate());
       setDurationMinutes(60);
       setDoctor('');
       setLocation('');
       setNotes('');
+      setTypedName(examName);
       setShowDatePicker(false);
       setShowTimePicker(false);
     }
-  }, [visible]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, examName, defaultDate]);
+
+  const trimmedName = typedName.trim();
+  const submitDisabled = editableName && trimmedName.length === 0;
 
   const handleSubmit = () => {
+    if (submitDisabled) return;
     const start = date;
     const end = new Date(start.getTime() + durationMinutes * 60 * 1000);
     onSubmit({
@@ -72,6 +92,7 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
       doctor: doctor.trim() || undefined,
       location: location.trim() || undefined,
       notes: notes.trim() || undefined,
+      name: editableName ? trimmedName : undefined,
     });
   };
 
@@ -87,14 +108,29 @@ export default function AddExamSheet({ visible, examName, week, onCancel, onSubm
               <Text style={s.headerBtn}>Anuluj</Text>
             </TouchableOpacity>
             <Text style={s.headerTitle}>Dodaj badanie</Text>
-            <TouchableOpacity onPress={handleSubmit} accessibilityRole="button">
-              <Text style={[s.headerBtn, s.headerBtnPrimary]}>Zapisz</Text>
+            <TouchableOpacity
+              onPress={handleSubmit}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: submitDisabled }}
+              disabled={submitDisabled}
+            >
+              <Text style={[s.headerBtn, s.headerBtnPrimary, submitDisabled && s.headerBtnDisabled]}>Zapisz</Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView contentContainerStyle={s.scrollContent}>
             <GlassCard style={s.section}>
-              <Text style={s.examName}>{examName}</Text>
+              {editableName ? (
+                <TextInput
+                  style={s.nameInput}
+                  placeholder="Nazwa badania"
+                  placeholderTextColor={theme.colors.textMuted}
+                  value={typedName}
+                  onChangeText={setTypedName}
+                />
+              ) : (
+                <Text style={s.examName}>{examName}</Text>
+              )}
               <Text style={s.weekLabel}>Tydzień: {week}</Text>
             </GlassCard>
 
@@ -209,6 +245,15 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   scrollContent: { padding: theme.spacing.lg, gap: theme.spacing.md },
   section: { padding: theme.spacing.md, gap: theme.spacing.sm },
   examName: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
+  nameInput: {
+    fontSize: theme.fontSize.lg,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.cardBorder,
+    paddingVertical: theme.spacing.xs,
+  },
+  headerBtnDisabled: { opacity: 0.4 },
   weekLabel: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary },
   row: {
     flexDirection: 'row',
