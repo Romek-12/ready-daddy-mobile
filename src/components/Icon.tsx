@@ -174,6 +174,8 @@ const ICON_MAP: Record<string, string> = {
   'gear': 'settings',
   'expand-less': 'expand_less',
   'expand-more': 'expand_more',
+  'chevron-left': 'arrow_back',
+  'chevron-right': 'arrow_forward',
   'checkbox-blank': 'check_box_outline_blank',
   'radio-blank': 'radio_button_unchecked',
   'dot': 'fiber_manual_record',
