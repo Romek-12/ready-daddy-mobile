@@ -105,16 +105,13 @@ export default function JournalCalendarView({ initialMonthDate, initialSelectedD
         notes: payload.notes,
         doctor: payload.doctor,
         location: payload.location,
-        reminder: payload.start.toISOString(),
       });
       await reload();
+      setSelectedDate(new Date(payload.start.getFullYear(), payload.start.getMonth(), payload.start.getDate()));
+      setMonthDate(startOfMonth(payload.start));
     } catch (err: unknown) {
       logError('JournalCalendarView.addJournalEntry', err);
     }
-
-    // Move selectedDate to the date the user picked in the sheet (may differ from prev selectedDate)
-    setSelectedDate(new Date(payload.start.getFullYear(), payload.start.getMonth(), payload.start.getDate()));
-    setMonthDate(startOfMonth(payload.start));
   }, [pendingDate, conceptionDate, reload]);
 
   const selectedIso = selectedDate ? toIsoDate(selectedDate) : null;
