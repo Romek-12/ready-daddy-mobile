@@ -14,7 +14,7 @@ describe('CalendarMonthGrid', () => {
     const { getAllByTestId } = render(
       wrap(<CalendarMonthGrid monthDate={new Date(2026, 4, 1)} selectedDate={null} entriesByDay={{}} onSelectDay={noop} />),
     );
-    expect(getAllByTestId(/day-cell-/)).toHaveLength(42);
+    expect(getAllByTestId(/^day-cell-\d{4}-\d{2}-\d{2}$/)).toHaveLength(42);
   });
 
   it('first cell is the Monday on or before the 1st (May 2026 → April 27)', () => {
