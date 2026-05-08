@@ -48,20 +48,20 @@ beforeEach(() => {
 
 describe('JournalScreen view toggle', () => {
   it('defaults to list view', async () => {
-    const { getByText, queryByLabelText } = render(wrap(<JournalScreen navigation={navigation} route={route} />));
-    expect(getByText('Wszystkie')).toBeTruthy();
+    const { findByText, queryByLabelText } = render(wrap(<JournalScreen navigation={navigation} route={route} />));
+    expect(await findByText('Wszystkie')).toBeTruthy();
     expect(queryByLabelText('Następny miesiąc')).toBeNull();
   });
 
   it('switches to calendar view when "Kalendarz" toggle pressed', async () => {
-    const { getByText, getByLabelText } = render(wrap(<JournalScreen navigation={navigation} route={route} />));
-    fireEvent.press(getByText('Kalendarz'));
+    const { findByText, getByLabelText } = render(wrap(<JournalScreen navigation={navigation} route={route} />));
+    fireEvent.press(await findByText('Kalendarz'));
     await waitFor(() => expect(getByLabelText('Następny miesiąc')).toBeTruthy());
   });
 
   it('persists toggle across remount via AsyncStorage', async () => {
-    const { getByText, unmount } = render(wrap(<JournalScreen navigation={navigation} route={route} />));
-    fireEvent.press(getByText('Kalendarz'));
+    const { findByText, unmount } = render(wrap(<JournalScreen navigation={navigation} route={route} />));
+    fireEvent.press(await findByText('Kalendarz'));
     await waitFor(() => expect(AsyncStorage.getItem('journal_view_mode')).resolves.toBe('calendar'));
     unmount();
 

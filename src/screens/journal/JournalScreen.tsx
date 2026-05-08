@@ -42,14 +42,17 @@ export default function JournalScreen({ navigation }: Props) {
   const s = useMemo(() => createStyles(theme, insets.top, insets.bottom), [theme, insets.top, insets.bottom]);
   const { entries, loading, reload } = useJournal();
   const [activeFilter, setActiveFilter] = useState<EntryType | 'all'>('all');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useState<ViewMode | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem(VIEW_MODE_STORAGE_KEY)
       .then(raw => {
-        if (raw === 'list' || raw === 'calendar') setViewMode(raw);
+        setViewMode(raw === 'calendar' ? 'calendar' : 'list');
       })
-      .catch((e) => logError('JournalScreen:loadViewMode', e));
+      .catch((e) => {
+        logError('JournalScreen:loadViewMode', e);
+        setViewMode('list');
+      });
   }, []);
 
   const switchView = (mode: ViewMode) => {
@@ -67,6 +70,10 @@ export default function JournalScreen({ navigation }: Props) {
     if (activeFilter === 'all') return entries;
     return entries.filter(e => e.type === activeFilter);
   }, [entries, activeFilter]);
+
+  if (viewMode === null) {
+    return <AuroraBackground><View style={s.container} /></AuroraBackground>;
+  }
 
   return (
     <AuroraBackground>
