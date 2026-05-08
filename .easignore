@@ -1,0 +1,25 @@
+# Ignore git worktrees, local build outputs, etc — but DO upload android/ source
+.worktrees/
+node_modules/
+.expo/
+dist/
+web-build/
+.metro-health-check*
+*.tsbuildinfo
+
+# Android build outputs (not source)
+android/build/
+android/.gradle/
+android/app/build/
+android/app/.cxx/
+android/.kotlin/
+
+# iOS build outputs
+ios/build/
+ios/Pods/
+ios/.xcode.env.local
+
+# Local secrets
+.env
+.env.local
+.env.*.local
