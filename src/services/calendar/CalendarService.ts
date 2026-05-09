@@ -21,22 +21,34 @@ function buildNotesString(doctor?: string, notes?: string): string | undefined {
   return parts.join('\n') || undefined;
 }
 
+function isGoogleCalendar(c: Calendar.Calendar): boolean {
+  const sourceName = c.source?.name?.toLowerCase() ?? '';
+  const sourceType = c.source?.type?.toLowerCase() ?? '';
+  const owner = c.ownerAccount?.toLowerCase() ?? '';
+  return (
+    sourceName.includes('google') ||
+    sourceType.includes('google') ||
+    sourceType === 'com.google' ||
+    owner.includes('@gmail.com') ||
+    owner.includes('@googlemail.com')
+  );
+}
+
 async function getOrCreateCalendarId(): Promise<string> {
   const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
 
-  // On Android: prefer existing "Ready Daddy" calendar, then any writable calendar
+  // On Android: ALWAYS prefer a writable Google calendar (syncs to Google account
+  // and shows up on other devices). Only fall back to any writable calendar if no
+  // Google account is present on the device.
   if (Platform.OS === 'android') {
-    const existing = calendars.find(c => c.title === CALENDAR_NAME && c.allowsModifications);
-    if (existing) return existing.id;
-
-    // Pick Google calendar by account type, fallback to any writable
     const writable = calendars.filter(c => c.allowsModifications);
-    const google = writable.find(c =>
-      c.source?.name?.toLowerCase().includes('google') ||
-      c.source?.type?.toLowerCase().includes('google') ||
-      c.ownerAccount?.includes('@gmail.com'),
-    );
-    if (google) return google.id;
+
+    // Prefer the user's primary Google calendar (isPrimary === true), then any Google calendar
+    const googlePrimary = writable.find(c => isGoogleCalendar(c) && c.isPrimary);
+    if (googlePrimary) return googlePrimary.id;
+
+    const googleAny = writable.find(c => isGoogleCalendar(c));
+    if (googleAny) return googleAny.id;
 
     if (writable.length > 0) return writable[0].id;
 
