@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,8 +42,12 @@ export default function LoginScreen({ navigation }: Props) {
 
   return (
     <AuroraBackground>
-    <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={s.inner}>
+    <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <ScrollView
+        contentContainerStyle={s.inner}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <Kicker style={s.kicker}>Ready Daddy · 1.0</Kicker>
         <View style={s.orbWrap}>
           <LinearGradient
@@ -110,7 +114,7 @@ export default function LoginScreen({ navigation }: Props) {
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={s.link} accessibilityRole="button" accessibilityLabel="Przejdź do rejestracji">
           <Text style={s.linkText}>Nie masz konta? <Text style={s.linkBold}>Zarejestruj się</Text></Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
     </AuroraBackground>
   );
@@ -118,7 +122,7 @@ export default function LoginScreen({ navigation }: Props) {
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent' },
-  inner: { flex: 1, justifyContent: 'center', padding: theme.spacing.xl },
+  inner: { flexGrow: 1, justifyContent: 'center', padding: theme.spacing.xl, paddingBottom: theme.spacing.xxl },
   kicker: { marginBottom: theme.spacing.lg },
   orbWrap: { alignItems: 'center', marginBottom: theme.spacing.xl, height: 180, justifyContent: 'center' },
   orb: { width: 180, height: 180, borderRadius: 90, position: 'absolute' },

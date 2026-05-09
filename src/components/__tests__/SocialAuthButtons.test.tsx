@@ -14,6 +14,7 @@ jest.mock('../../context/ThemeContext', () => ({
       colors: { cardBorder: '#e0e0e0', textSecondary: '#888', surface: '#fff', text: '#000' },
       spacing: { sm: 8, md: 16, xs: 4 },
       fontSize: { sm: 12, md: 16 },
+      borderRadius: { sm: 8, md: 12, lg: 16, xl: 28, xxl: 32, full: 9999 },
     },
   })),
 }));
