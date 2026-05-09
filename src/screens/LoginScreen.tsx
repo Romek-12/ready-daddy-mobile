@@ -59,7 +59,7 @@ export default function LoginScreen({ navigation }: Props) {
           <Text style={s.orbLabel}>WITAJ Z POWROTEM</Text>
         </View>
         <View style={s.titleRow}>
-          <Text style={s.title}>Wróciłeś.</Text>
+          <Text style={s.title}>Cześć.</Text>
           <GradientText style={s.title}>Dobry ruch.</GradientText>
         </View>
         <Text style={s.subtitle}>Zaloguj się, żeby śledzić ciążę razem z partnerką.</Text>
@@ -133,7 +133,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     letterSpacing: 3,
     textTransform: 'uppercase',
   },
-  titleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  titleRow: { flexDirection: 'column', alignItems: 'flex-start' },
   title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
   link: { marginTop: theme.spacing.xl, alignItems: 'center' },
