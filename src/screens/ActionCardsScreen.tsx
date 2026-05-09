@@ -168,9 +168,9 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
             onSwiped={onSwiped}
             cardIndex={0}
             backgroundColor={'transparent'}
-            stackSize={2}
+            stackSize={1}
             infinite={false}
-            showSecondCard={true}
+            showSecondCard={false}
             animateCardOpacity={true}
             swipeBackCard={true}
             containerStyle={s.swiperWrapper}
@@ -214,7 +214,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   swiperWrapper: { backgroundColor: 'transparent' },
   cardContainer: { top: 0, left: 0, bottom: 0, right: 0, height: '100%', width: width * 0.9, marginLeft: width * 0.05, marginTop: 5 },
 
-  card: { flex: 1, padding: 16 },
+  card: { flex: 1, padding: 16, backgroundColor: 'rgba(10,10,10,0.92)' },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
   cardWeek: { fontSize: 10, fontFamily: theme.fonts.semibold, color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
   cardEmoji: { fontSize: 32 },
