@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import BlobLoader from '../components/ui/BlobLoader';
+import RingLoader from '../components/ui/RingLoader';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useJournal } from '../hooks/useJournal';
@@ -120,7 +120,7 @@ export default function AddVisitScreen({ navigation }: { navigation: AppNavigati
         <Text style={s.headerTitle}>Nowa wizyta</Text>
         <TouchableOpacity style={s.saveBtn} onPress={handleSave} disabled={saving} activeOpacity={0.8}>
           {saving ? (
-            <BlobLoader variant="button" color={theme.colors.background} />
+            <RingLoader size={20} showMonogram={false} fromColor={theme.colors.background} toColor={theme.colors.background} />
           ) : (
             <Text style={s.saveBtnLabel}>Zapisz</Text>
           )}

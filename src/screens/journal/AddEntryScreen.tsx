@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import BlobLoader from '../../components/ui/BlobLoader';
+import RingLoader from '../../components/ui/RingLoader';
 import { useTheme } from '../../context/ThemeContext';
 import { useJournal } from '../../hooks/useJournal';
 import { useAuth } from '../../context/AuthContext';
@@ -157,7 +157,7 @@ export default function AddEntryScreen({ navigation, route }: Props) {
         <Text style={s.headerTitle}>{isEdit ? 'Edytuj wpis' : 'Nowy wpis'}</Text>
         <TouchableOpacity style={s.saveBtn} onPress={handleSave} disabled={saving} activeOpacity={0.8}>
           {saving ? (
-            <BlobLoader variant="button" color={theme.colors.background} />
+            <RingLoader size={20} showMonogram={false} fromColor={theme.colors.background} toColor={theme.colors.background} />
           ) : (
             <Text style={s.saveBtnLabel}>Zapisz</Text>
           )}
@@ -274,7 +274,7 @@ export default function AddEntryScreen({ navigation, route }: Props) {
           ))}
           <TouchableOpacity style={s.addPhotoBtn} onPress={handleAddPhoto} disabled={addingPhoto} activeOpacity={0.8}>
             {addingPhoto ? (
-              <BlobLoader variant="button" />
+              <RingLoader size={20} showMonogram={false} />
             ) : (
               <Icon name="photo" size={24} color={theme.colors.textMuted} />
             )}

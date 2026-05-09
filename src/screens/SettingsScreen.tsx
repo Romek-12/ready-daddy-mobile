@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, Switch } from 'react-native';
-import BlobLoader from '../components/ui/BlobLoader';
+import RingLoader from '../components/ui/RingLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, ThemeMode } from '../context/ThemeContext';
@@ -377,7 +377,7 @@ export default function SettingsScreen({ navigation }: Props) {
                 style={[s.linkBtn, linkingProvider !== null && s.linkBtnDisabled]}
               >
                 {linkingProvider === 'google' ? (
-                  <BlobLoader variant="button" color="#fff" />
+                  <RingLoader size={20} showMonogram={false} fromColor="#fff" toColor="#fff" />
                 ) : (
                   <Text style={s.linkBtnText}>Połącz</Text>
                 )}
@@ -413,7 +413,7 @@ export default function SettingsScreen({ navigation }: Props) {
                 style={[s.linkBtn, linkingProvider !== null && s.linkBtnDisabled]}
               >
                 {linkingProvider === 'facebook' ? (
-                  <BlobLoader variant="button" color="#fff" />
+                  <RingLoader size={20} showMonogram={false} fromColor="#fff" toColor="#fff" />
                 ) : (
                   <Text style={s.linkBtnText}>Połącz</Text>
                 )}
@@ -610,7 +610,7 @@ export default function SettingsScreen({ navigation }: Props) {
               accessibilityRole="button"
               accessibilityLabel="Zapisz zmianę daty"
             >
-              {saving ? <BlobLoader variant="button" color="#fff" /> : <Text style={s.saveButtonText}>Zapisz zmianę</Text>}
+              {saving ? <RingLoader size={20} showMonogram={false} fromColor="#fff" toColor="#fff" /> : <Text style={s.saveButtonText}>Zapisz zmianę</Text>}
             </TouchableOpacity>
           </View>
         </View>

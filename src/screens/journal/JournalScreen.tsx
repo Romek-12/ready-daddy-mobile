@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BlobLoader from '../../components/ui/BlobLoader';
+import RingLoader from '../../components/ui/RingLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -132,7 +132,7 @@ export default function JournalScreen({ navigation }: Props) {
 
           {loading ? (
             <View style={s.center}>
-              <BlobLoader variant="inline" />
+              <RingLoader size={48} showMonogram={false} />
             </View>
           ) : filtered.length === 0 ? (
             <View style={s.center}>

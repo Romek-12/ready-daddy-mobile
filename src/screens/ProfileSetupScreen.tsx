@@ -16,7 +16,7 @@ import { z } from 'zod';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import BlobLoader from '../components/ui/BlobLoader';
+import RingLoader from '../components/ui/RingLoader';
 import { supabase } from '../lib/supabase';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import type { RootStackParamList } from '../types/navigation';
@@ -130,7 +130,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
           disabled={loading}
         >
           {loading ? (
-            <BlobLoader variant="button" color={theme.colors.black} />
+            <RingLoader size={20} showMonogram={false} fromColor={theme.colors.black} toColor={theme.colors.black} />
           ) : (
             <Text style={s.buttonText}>Dalej</Text>
           )}
