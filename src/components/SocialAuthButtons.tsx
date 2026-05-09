@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import BlobLoader from './ui/BlobLoader';
+import RingLoader from './ui/RingLoader';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
@@ -52,7 +52,7 @@ export default function SocialAuthButtons() {
         activeOpacity={0.8}
       >
         {loading === 'google' ? (
-          <BlobLoader variant="button" color="#3C4043" />
+          <RingLoader size={20} showMonogram={false} fromColor="#3C4043" toColor="#3C4043" />
         ) : (
           <Text style={styles.googleLetter}>G</Text>
         )}
@@ -66,7 +66,7 @@ export default function SocialAuthButtons() {
         activeOpacity={0.8}
       >
         {loading === 'facebook' ? (
-          <BlobLoader variant="button" color="#fff" />
+          <RingLoader size={20} showMonogram={false} fromColor="#fff" toColor="#fff" />
         ) : (
           <Text style={styles.facebookLetter}>f</Text>
         )}

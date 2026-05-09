@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Modal, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import BlobLoader from './ui/BlobLoader';
+import RingLoader from './ui/RingLoader';
 import type { Theme } from '../theme';
 
 interface Props {
@@ -52,7 +52,7 @@ export default function BabyNameModal({ visible, isName1, value, onChangeText, o
               accessibilityLabel="Zapisz imię"
             >
               {saving ? (
-                <BlobLoader variant="button" color="#fff" />
+                <RingLoader size={20} showMonogram={false} fromColor="#fff" toColor="#fff" />
               ) : (
                 <Text style={s.saveText}>Zapisz</Text>
               )}
