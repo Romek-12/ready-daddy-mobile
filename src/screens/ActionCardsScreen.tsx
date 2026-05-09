@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
 import RingLoader from '../components/ui/RingLoader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
@@ -8,7 +9,6 @@ import { useActionCardsDeck } from '../hooks/useAppData';
 import Icon from '../components/Icon';
 import type { AppNavigation } from '../types/navigation';
 import type { Theme } from '../theme';
-import GlassCard from '../components/ui/GlassCard';
 import AuroraBackground from '../components/ui/AuroraBackground';
 
 
@@ -56,8 +56,10 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
   const renderCard = (card: ReactionCard, index: number) => {
     if (!card) return null;
     const accent: 'cyan' | 'violet' = index % 2 === 0 ? 'cyan' : 'violet';
-    return (
-      <GlassCard accent={accent} elevated style={s.card}>
+    const accentColor = accent === 'cyan' ? theme.colors.primary : theme.colors.violet;
+    const cardContent = (
+      <>
+        <View style={[s.cardAccentBar, { backgroundColor: accentColor }]} />
         <View style={s.cardHeader}>
           <Text style={s.cardWeek}>{card.weekRange}</Text>
           <Text style={s.cardEmoji}>{card.emoji}</Text>
@@ -88,7 +90,17 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
             </View>
           )}
         </ScrollView>
-      </GlassCard>
+      </>
+    );
+    return (
+      <BlurView
+        intensity={Platform.OS === 'android' ? 100 : 80}
+        tint="dark"
+        experimentalBlurMethod="dimezisBlurView"
+        style={s.card}
+      >
+        {cardContent}
+      </BlurView>
     );
   };
 
@@ -168,9 +180,9 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
             onSwiped={onSwiped}
             cardIndex={0}
             backgroundColor={'transparent'}
-            stackSize={1}
+            stackSize={2}
             infinite={false}
-            showSecondCard={false}
+            showSecondCard={true}
             animateCardOpacity={true}
             swipeBackCard={true}
             containerStyle={s.swiperWrapper}
@@ -214,7 +226,21 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   swiperWrapper: { backgroundColor: 'transparent' },
   cardContainer: { top: 0, left: 0, bottom: 0, right: 0, height: '100%', width: width * 0.9, marginLeft: width * 0.05, marginTop: 5 },
 
-  card: { flex: 1, padding: 16, backgroundColor: 'rgba(10,10,10,0.92)' },
+  card: {
+    flex: 1,
+    padding: 16,
+    borderRadius: theme.borderRadius.xl,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+  },
+  cardAccentBar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 3,
+  },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
   cardWeek: { fontSize: 10, fontFamily: theme.fonts.semibold, color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
   cardEmoji: { fontSize: 32 },
