@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from '../context/ThemeContext';
@@ -49,15 +48,6 @@ export default function LoginScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <Kicker style={s.kicker}>Ready Daddy · 1.0</Kicker>
-        <View style={s.orbWrap}>
-          <LinearGradient
-            colors={[theme.colors.primaryGlow, theme.colors.violetGlow, 'transparent']}
-            start={{ x: 0.3, y: 0.3 }}
-            end={{ x: 1, y: 1 }}
-            style={s.orb}
-          />
-          <Text style={s.orbLabel}>WITAJ Z POWROTEM</Text>
-        </View>
         <View style={s.titleRow}>
           <Text style={s.title}>Cześć.</Text>
           <GradientText style={s.title}>Dobry ruch.</GradientText>
@@ -124,15 +114,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent' },
   inner: { flexGrow: 1, justifyContent: 'center', padding: theme.spacing.xl, paddingBottom: theme.spacing.xxl },
   kicker: { marginBottom: theme.spacing.lg },
-  orbWrap: { alignItems: 'center', marginBottom: theme.spacing.xl, height: 180, justifyContent: 'center' },
-  orb: { width: 180, height: 180, borderRadius: 90, position: 'absolute' },
-  orbLabel: {
-    fontFamily: theme.fonts.mono,
-    fontSize: theme.fontSize.kicker,
-    color: theme.colors.white,
-    letterSpacing: 3,
-    textTransform: 'uppercase',
-  },
   titleRow: { flexDirection: 'column', alignItems: 'flex-start' },
   title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.sm, marginBottom: theme.spacing.xxl },
