@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import BlobLoader from '../components/ui/BlobLoader';
+import RingLoader from '../components/ui/RingLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
@@ -34,7 +34,7 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
   if (isLoading) {
     return (
       <View style={[s.c, { justifyContent: 'center', alignItems: 'center' }]}>
-        <BlobLoader variant="fullscreen" label="Ładowanie poradnika..." />
+        <RingLoader size={120} />
       </View>
     );
   }
@@ -235,38 +235,38 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
           const isActive = activeSection === section.id;
           const accent: 'cyan' | 'violet' = i % 2 === 0 ? 'cyan' : 'violet';
           return (
-            <TouchableOpacity
-              key={section.id}
-              activeOpacity={0.85}
-              onPress={() => setActiveSection(isActive ? null : section.id)}
-              style={s.sectionRowWrap}
-            >
-              <GlassCard
-                accent={accent}
-                elevated={isActive}
-                style={s.sectionRow}
+            <View key={section.id}>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => setActiveSection(isActive ? null : section.id)}
+                style={s.sectionRowWrap}
               >
-                <View style={s.sectionRowIcon}>
-                  <Icon name={section.icon} size={36} color={resolveIconColor(section.iconColorKey, theme)} />
-                </View>
-                <View style={s.sectionRowText}>
-                  <Text style={s.sectionRowTitle}>{section.title}</Text>
-                  {section.subtitle ? (
-                    <Text style={s.sectionRowSubtitle} numberOfLines={2}>{section.subtitle}</Text>
-                  ) : null}
-                </View>
-                <Icon
-                  name={isActive ? 'expand-less' : 'arrow-forward'}
-                  size={20}
-                  color={theme.colors.textMuted}
-                />
-              </GlassCard>
-            </TouchableOpacity>
+                <GlassCard
+                  accent={accent}
+                  elevated={isActive}
+                  style={s.sectionRow}
+                >
+                  <View style={s.sectionRowIcon}>
+                    <Icon name={section.icon} size={36} color={resolveIconColor(section.iconColorKey, theme)} />
+                  </View>
+                  <View style={s.sectionRowText}>
+                    <Text style={s.sectionRowTitle}>{section.title}</Text>
+                    {section.subtitle ? (
+                      <Text style={s.sectionRowSubtitle} numberOfLines={2}>{section.subtitle}</Text>
+                    ) : null}
+                  </View>
+                  <Icon
+                    name={isActive ? 'expand-less' : 'arrow-forward'}
+                    size={20}
+                    color={theme.colors.textMuted}
+                  />
+                </GlassCard>
+              </TouchableOpacity>
+              {isActive && renderSectionContent(section.id)}
+            </View>
           );
         })}
       </View>
-
-      {activeSection && renderSectionContent(activeSection)}
 
       <View style={{ height: 32 }} />
     </ScrollView>
@@ -314,7 +314,7 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) =>
       marginTop: 2,
     },
 
-    sectionContent: { paddingHorizontal: 16, marginBottom: 24 },
+    sectionContent: { marginTop: 8, marginBottom: 8 },
     subheading: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text, marginBottom: 12 },
 
     emotionCard: { flexDirection: 'row', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: 12, marginBottom: 12 },

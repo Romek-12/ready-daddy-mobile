@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView } from 'react-native';
-import BlobLoader from '../components/ui/BlobLoader';
+import RingLoader from '../components/ui/RingLoader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
 import { useTheme } from '../context/ThemeContext';
@@ -111,7 +111,7 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
   if (isLoading) {
     return (
       <SafeAreaView style={[s.c, s.center]} edges={['top']}>
-        <BlobLoader variant="fullscreen" label="Ładowanie kart..." />
+        <RingLoader size={120} />
       </SafeAreaView>
     );
   }

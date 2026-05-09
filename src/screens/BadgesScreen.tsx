@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import BlobLoader from '../components/ui/BlobLoader';
+import RingLoader from '../components/ui/RingLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
@@ -59,7 +59,7 @@ export default function BadgesScreen({ navigation }: Props) {
 
       {isLoading ? (
         <View style={s.center}>
-          <BlobLoader variant="fullscreen" label="Ładowanie odznak..." />
+          <RingLoader size={120} />
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
