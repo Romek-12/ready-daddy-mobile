@@ -65,48 +65,50 @@ export default function CalendarMonthGrid({ monthDate, selectedDate, entriesByDa
           <Text key={label} style={s.headerLabel}>{label}</Text>
         ))}
       </View>
-      <View style={s.grid}>
-        {cells.map(date => {
-          const iso = toIsoDate(date);
-          const inCurrentMonth = date.getMonth() === currentMonth;
-          const isToday = isSameDay(date, today);
-          const isSelected = selectedDate ? isSameDay(date, selectedDate) : false;
-          const hasEntries = (entriesByDay[iso]?.length ?? 0) > 0;
-          const wd = conceptionDate ? getPregnancyWeekAndDay(conceptionDate, date) : null;
+      {[0, 1, 2, 3, 4, 5].map(rowIdx => (
+        <View key={rowIdx} style={s.gridRow}>
+          {cells.slice(rowIdx * 7, rowIdx * 7 + 7).map(date => {
+            const iso = toIsoDate(date);
+            const inCurrentMonth = date.getMonth() === currentMonth;
+            const isToday = isSameDay(date, today);
+            const isSelected = selectedDate ? isSameDay(date, selectedDate) : false;
+            const hasEntries = (entriesByDay[iso]?.length ?? 0) > 0;
+            const wd = conceptionDate ? getPregnancyWeekAndDay(conceptionDate, date) : null;
 
-          return (
-            <TouchableOpacity
-              key={iso}
-              testID={`day-cell-${iso}`}
-              style={s.cell}
-              onPress={() => onSelectDay(date)}
-              accessibilityRole="button"
-              accessibilityLabel={`Dzień ${date.getDate()}${wd ? `, ${formatWeekDay(wd)}` : ''}`}
-              accessibilityState={{ selected: isSelected }}
-            >
-              <View style={[
-                s.dayNumberWrap,
-                isSelected && s.dayNumberWrapSelected,
-                !isSelected && isToday && s.dayNumberWrapToday,
-              ]}>
-                <Text style={[
-                  s.dayNumber,
-                  !inCurrentMonth && s.dayNumberMuted,
-                  isSelected && s.dayNumberSelected,
+            return (
+              <TouchableOpacity
+                key={iso}
+                testID={`day-cell-${iso}`}
+                style={s.cell}
+                onPress={() => onSelectDay(date)}
+                accessibilityRole="button"
+                accessibilityLabel={`Dzień ${date.getDate()}${wd ? `, ${formatWeekDay(wd)}` : ''}`}
+                accessibilityState={{ selected: isSelected }}
+              >
+                <View style={[
+                  s.dayNumberWrap,
+                  isSelected && s.dayNumberWrapSelected,
+                  !isSelected && isToday && s.dayNumberWrapToday,
                 ]}>
-                  {date.getDate()}
-                </Text>
-              </View>
-              {wd ? (
-                <Text testID={`day-cell-${iso}-weekday`} style={s.weekDay}>{formatWeekDay(wd)}</Text>
-              ) : (
-                <Text style={s.weekDayPlaceholder} />
-              )}
-              {hasEntries ? <View testID={`day-cell-${iso}-dot`} style={s.dot} /> : null}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+                  <Text style={[
+                    s.dayNumber,
+                    !inCurrentMonth && s.dayNumberMuted,
+                    isSelected && s.dayNumberSelected,
+                  ]}>
+                    {date.getDate()}
+                  </Text>
+                </View>
+                {wd ? (
+                  <Text testID={`day-cell-${iso}-weekday`} style={s.weekDay}>{formatWeekDay(wd)}</Text>
+                ) : (
+                  <Text style={s.weekDayPlaceholder} />
+                )}
+                {hasEntries ? <View testID={`day-cell-${iso}-dot`} style={s.dot} /> : null}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ))}
     </View>
   );
 }
@@ -121,9 +123,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     color: theme.colors.textMuted,
     fontFamily: theme.fonts.medium,
   },
-  grid: { flexDirection: 'row', flexWrap: 'wrap' },
+  gridRow: { flexDirection: 'row' },
   cell: {
-    width: `${100 / 7}%`,
+    flex: 1,
     height: 56,
     alignItems: 'center',
     justifyContent: 'flex-start',
