@@ -14,6 +14,7 @@ import { getSizeComparison } from '../utils/sizeComparison';
 import Icon from './Icon';
 import Kicker from './ui/Kicker';
 import GradientProgressBar from './ui/GradientProgressBar';
+import GlassCard from './ui/GlassCard';
 import type { Theme } from '../theme';
 
 
@@ -81,18 +82,74 @@ function MetricTile({ icon, color, value, label, theme }: { icon: string; color:
   const num = parts[1].trim();
   const unit = parts[2].trim();
   const s = React.useMemo(() => StyleSheet.create({
-    tile: { flex: 1, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, padding: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.cardBorder, alignItems: 'flex-start', gap: 2 },
-    num: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: theme.fontSize.xxl, lineHeight: theme.fontSize.xxl + 4, color },
-    unit: { fontFamily: theme.fonts.semibold, fontSize: theme.fontSize.xs, color, letterSpacing: 1, textTransform: 'uppercase' as const },
-    lbl: { marginTop: 2 },
+    tile: {
+      flex: 1,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.sm,
+      overflow: 'hidden',
+      minHeight: 120,
+    },
+    pillRow: {
+      width: '100%',
+      alignItems: 'flex-start',
+    },
+    pill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.cardBorder,
+    },
+    pillUnit: {
+      fontFamily: theme.fonts.monoMedium,
+      fontSize: theme.fontSize.kicker,
+      color,
+      letterSpacing: 1.2,
+      textTransform: 'uppercase' as const,
+    },
+    numRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'center',
+    },
+    num: {
+      fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 800',
+      fontSize: 56,
+      lineHeight: 56,
+      letterSpacing: -1.5,
+      color: theme.colors.text,
+      textShadowColor: 'rgba(255,255,255,0.35)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 8,
+    },
+    numUnit: {
+      fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 700',
+      fontSize: theme.fontSize.lg,
+      color: theme.colors.text,
+      marginLeft: 2,
+      opacity: 0.85,
+    },
+    lbl: {
+      textAlign: 'center',
+    },
   }), [theme, color]);
   return (
-    <View style={s.tile}>
-      <Icon name={icon} size={16} color={color} />
-      <Text style={s.num}>{num}</Text>
-      {unit ? <Text style={s.unit}>{unit}</Text> : null}
+    <GlassCard elevated style={s.tile}>
+      <View style={s.numRow}>
+        <Text style={s.num}>{num}</Text>
+        {unit ? <Text style={s.numUnit}>{unit.toLowerCase()}</Text> : null}
+      </View>
       <Kicker style={s.lbl}>{label}</Kicker>
-    </View>
+    </GlassCard>
   );
 }
 
@@ -235,11 +292,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   svgBox: {
     width: 140,
     height: 160,
-    backgroundColor: theme.colors.surfaceLight,
-    borderRadius: theme.borderRadius.xl,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
   },
   heroRight: {
     flex: 1,
