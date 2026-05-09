@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
-import BlobLoader from './BlobLoader';
+import RingLoader from './RingLoader';
 import type { Theme } from '../../theme';
 
 interface GradientButtonProps {
@@ -34,7 +34,7 @@ export default function GradientButton({ title, onPress, loading, disabled, acce
         style={s.gradient}
       >
         {loading ? (
-          <BlobLoader variant="button" color={theme.colors.black} />
+          <RingLoader size={20} showMonogram={false} fromColor={theme.colors.black} toColor={theme.colors.black} />
         ) : (
           <Text style={s.text}>{title}</Text>
         )}
