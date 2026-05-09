@@ -64,11 +64,8 @@ const createStyles = (theme: Theme) =>
       overflow: 'hidden',
     },
     cardEarned: {
-      shadowColor: theme.colors.primary,
-      shadowOpacity: 0.55,
-      shadowRadius: 16,
-      shadowOffset: { width: 0, height: 0 },
-      elevation: 6,
+      borderColor: theme.colors.primary,
+      borderWidth: 1,
     },
     cardLocked: {
       opacity: 0.4,

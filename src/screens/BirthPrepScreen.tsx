@@ -9,7 +9,6 @@ import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
-import NeonCheckbox from '../components/ui/NeonCheckbox';
 import GlassCard from '../components/ui/GlassCard';
 import ProgressRing from '../components/ui/ProgressRing';
 import AuroraBackground from '../components/ui/AuroraBackground';
@@ -276,7 +275,11 @@ export default function BirthPrepScreen() {
                       const isDone = checked[key] || false;
                       return (
                         <TouchableOpacity key={iIdx} style={[s.item, isDone && s.itemDone]} onPress={() => toggleCheck(key)} activeOpacity={0.7} accessibilityRole="checkbox" accessibilityLabel={item.name} accessibilityState={{ checked: isDone }}>
-                          <NeonCheckbox checked={isDone} onPress={() => toggleCheck(key)} />
+                          <Icon
+                            name={isDone ? 'check-circle' : 'checkbox-blank'}
+                            size={22}
+                            color={isDone ? theme.colors.primary : theme.colors.textMuted}
+                          />
                           <View style={s.itemInfo}>
                             <Text style={[s.itemName, isDone && s.itemNameDone]}>
                               {item.optional && <Text style={s.optional}>(opcja) </Text>}
