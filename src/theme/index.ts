@@ -67,9 +67,9 @@ const darkColors = {
   accent: '#FFB547',
   accentLight: 'rgba(255,181,71,0.20)',
 
-  text: '#FFFFFF',
-  textSecondary: 'rgba(255,255,255,0.82)',
-  textMuted: 'rgba(255,255,255,0.55)',
+  text: '#F0FAF7',
+  textSecondary: 'rgba(240,250,247,0.75)',
+  textMuted: 'rgba(240,250,247,0.50)',
 
   danger: '#FF5A4A',
   dangerLight: 'rgba(255,90,74,0.18)',

@@ -85,8 +85,8 @@ export default function AuroraBackground({ children, style }: AuroraBackgroundPr
       <BlurView
         blurTarget={targetRef}
         blurMethod="dimezisBlurViewSdk31Plus"
-        intensity={70}
-        tint="default"
+        intensity={60}
+        tint="dark"
         style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
@@ -101,21 +101,21 @@ const styles = StyleSheet.create({
   // Style guide §1: 340px cyan top-left, 420px violet bottom-right, opacity 0.55
   blobCyan: {
     position: 'absolute',
-    width: 420,
-    height: 420,
-    borderRadius: 210,
-    top: -100,
-    left: -120,
-    opacity: 0.85,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    top: -60,
+    left: -100,
+    opacity: 0.45,
   },
   blobViolet: {
     position: 'absolute',
-    width: 500,
-    height: 500,
-    borderRadius: 250,
-    bottom: -120,
-    right: -140,
-    opacity: 0.85,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    bottom: -80,
+    right: -100,
+    opacity: 0.45,
   },
   content: { flex: 1, zIndex: 1 },
 });
