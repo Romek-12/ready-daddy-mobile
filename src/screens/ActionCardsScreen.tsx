@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import RingLoader from '../components/ui/RingLoader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-deck-swiper';
@@ -93,14 +93,22 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
       </>
     );
     return (
-      <BlurView
-        intensity={Platform.OS === 'android' ? 100 : 80}
-        tint="dark"
-        experimentalBlurMethod="dimezisBlurView"
-        style={s.card}
-      >
+      <View style={s.card}>
+        <LinearGradient
+          colors={['rgba(20,28,32,0.96)', 'rgba(8,12,16,0.96)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+        <View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, { backgroundColor: `${accentColor}10` }]}
+        />
+        {/* top edge highlight */}
+        <View pointerEvents="none" style={s.cardHighlight} />
         {cardContent}
-      </BlurView>
+      </View>
     );
   };
 
@@ -232,7 +240,7 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
     borderRadius: theme.borderRadius.xl,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.18)',
+    borderColor: 'rgba(255,255,255,0.16)',
   },
   cardAccentBar: {
     position: 'absolute',
@@ -240,6 +248,14 @@ const createStyles = (theme: Theme, width: number) => StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 3,
+  },
+  cardHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.25)',
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
   cardWeek: { fontSize: 10, fontFamily: theme.fonts.semibold, color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 1.2 },
