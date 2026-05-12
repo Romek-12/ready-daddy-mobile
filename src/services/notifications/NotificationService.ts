@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import { requestNotificationPermissions, configureNotificationHandler } from './NotificationPermissions';
 import { scheduleAllNotifications } from './NotificationScheduler';
 import type { NotificationSettings } from '../../types/notifications.types';
@@ -10,9 +11,12 @@ export async function initializeNotifications(): Promise<void> {
   configureNotificationHandler();
   try {
     const settings = await getNotificationSettings();
-    if (settings?.enabled && settings?.dueDate) {
-      await scheduleAllNotifications(new Date(settings.dueDate));
-    }
+    if (!settings?.enabled || !settings?.dueDate) return;
+
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') return;
+
+    await scheduleAllNotifications(new Date(settings.dueDate));
   } catch (err: unknown) {
     logError('NotificationService.initialize', err);
   }

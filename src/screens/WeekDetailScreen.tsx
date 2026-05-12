@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
-import { useWeekDetail } from '../hooks/useAppData';
+import { useWeekDetail, useCurrentWeek } from '../hooks/useAppData';
+import { useAuth } from '../context/AuthContext';
 import Icon from '../components/Icon';
 import SkeletonBox from '../components/SkeletonBox';
 import FetusVisualizer from '../components/FetusVisualizer';
@@ -15,13 +17,26 @@ type Props = { route?: { params?: { week?: number } } };
 
 const MIN_WEEK = 2;
 const MAX_WEEK = 40;
+const FALLBACK_WEEK = 12;
 
 export default function WeekDetailScreen({ route }: Props) {
   const { theme } = useTheme();
-  const s = React.useMemo(() => createStyles(theme), [theme]);
-  const initialWeek = route?.params?.week || 12;
+  const insets = useSafeAreaInsets();
+  const s = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
+  const { user } = useAuth();
+  const { data: currentWeekData } = useCurrentWeek(user?.conceptionDate ?? undefined);
+  const resolvedCurrentWeek = currentWeekData?.currentWeek;
+  const initialWeek = route?.params?.week ?? resolvedCurrentWeek ?? FALLBACK_WEEK;
   const [selectedWeek, setSelectedWeek] = useState<number>(initialWeek);
   const [sliderValue, setSliderValue] = useState<number>(initialWeek);
+
+  // When navigated without explicit week param, sync to current week once data loads
+  useEffect(() => {
+    if (!route?.params?.week && resolvedCurrentWeek) {
+      setSelectedWeek(resolvedCurrentWeek);
+      setSliderValue(resolvedCurrentWeek);
+    }
+  }, [resolvedCurrentWeek, route?.params?.week]);
 
   const { data, isLoading, error } = useWeekDetail(selectedWeek);
 
@@ -31,36 +46,13 @@ export default function WeekDetailScreen({ route }: Props) {
     ? theme.colors.trimester2
     : theme.colors.trimester3;
 
-  if (isLoading) return (
-    <ScrollView style={s.c} bounces={false}>
-      <View style={s.sliderSection}>
-        <SkeletonBox width={200} height={36} style={{ marginBottom: 12 }} />
-        <SkeletonBox width="100%" height={32} borderRadius={16} />
-      </View>
-      <SkeletonBox width="100%" height={240} style={{ marginHorizontal: 0, marginBottom: 16 }} />
-      {[...Array(3)].map((_, i) => (
-        <View key={i} style={s.card}>
-          <SkeletonBox width={140} height={24} style={{ marginBottom: 16 }} />
-          <SkeletonBox width="100%" height={16} style={{ marginBottom: 8 }} />
-          <SkeletonBox width="80%" height={16} />
-        </View>
-      ))}
-    </ScrollView>
-  );
-
-  if (error) return (
-    <View style={[s.c, s.center]}>
-      <Text style={s.errorText}>{error instanceof Error ? error.message : 'Nie udało się załadować danych'}</Text>
-    </View>
-  );
-
   const w = data?.week;
-  const tColor = trimesterColor(w?.trimester);
+  const tColor = trimesterColor(w?.trimester ?? (sliderValue <= 13 ? 1 : sliderValue <= 27 ? 2 : 3));
 
   return (
     <AuroraBackground>
-    <ScrollView style={s.c} stickyHeaderIndices={[0]}>
-      {/* Sticky slider header */}
+    <View style={{ flex: 1 }}>
+      {/* Slider header (sticky) */}
       <View style={s.sliderSection}>
         <View style={s.sliderHeader}>
           <TouchableOpacity
@@ -72,11 +64,11 @@ export default function WeekDetailScreen({ route }: Props) {
 
           <View style={s.weekLabelWrap}>
             <Text style={[s.weekLabel, { color: tColor }]}>Tydzień {sliderValue}</Text>
-            {w?.trimester && (
+            {w?.trimester ? (
               <Text style={[s.trimLabel, { color: tColor }]}>
                 {w.trimester === 1 ? 'I' : w.trimester === 2 ? 'II' : 'III'} trymestr
               </Text>
-            )}
+            ) : null}
           </View>
 
           <TouchableOpacity
@@ -104,20 +96,34 @@ export default function WeekDetailScreen({ route }: Props) {
           <Text style={s.sliderLabelText}>Tydzień 40</Text>
         </View>
       </View>
-
+    <ScrollView style={s.c}>
       {/* Fetus visualizer hero */}
       <GlassCard elevated style={s.heroCard}>
         <FetusVisualizer
           week={selectedWeek}
           sizeMm={w?.fetus_size_mm ?? 0}
           weightG={w?.fetus_weight_g ?? 0}
-          trimester={w?.trimester ?? 1}
+          trimester={w?.trimester ?? (selectedWeek <= 13 ? 1 : selectedWeek <= 27 ? 2 : 3)}
           weekData={w ?? undefined}
         />
       </GlassCard>
 
       {/* Content cards */}
-      {w ? (
+      {error ? (
+        <View style={[s.card, s.center]}>
+          <Text style={s.errorText}>{error instanceof Error ? error.message : 'Nie udało się załadować danych'}</Text>
+        </View>
+      ) : isLoading ? (
+        <>
+          {[...Array(3)].map((_, i) => (
+            <View key={i} style={s.card}>
+              <SkeletonBox width={140} height={24} style={{ marginBottom: 16 }} />
+              <SkeletonBox width="100%" height={16} style={{ marginBottom: 8 }} />
+              <SkeletonBox width="80%" height={16} />
+            </View>
+          ))}
+        </>
+      ) : w ? (
         <>
           <View style={s.card}>
             <View style={s.cardHeader}><Icon name="fetus" size={20} color={theme.colors.fetus} /><Text style={s.cardTitle}> Rozwój płodu</Text></View>
@@ -152,6 +158,7 @@ export default function WeekDetailScreen({ route }: Props) {
         </View>
       )}
 
+
       {(data?.actionCards?.length ?? 0) > 0 && (
         <View style={s.section}>
           <View style={s.sectionHeader}><Icon name="bolt" size={20} color={theme.colors.accent} /><Text style={s.sectionTitle}> Karty na ten tydzień</Text></View>
@@ -184,11 +191,12 @@ export default function WeekDetailScreen({ route }: Props) {
       )}
       <View style={{ height: 40 }} />
     </ScrollView>
+    </View>
     </AuroraBackground>
   );
 }
 
-const createStyles = (theme: Theme) => StyleSheet.create({
+const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
   center: { justifyContent: 'center', alignItems: 'center' },
   empty: { color: theme.colors.textSecondary, fontSize: theme.fontSize.md },
@@ -196,7 +204,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
 
   sliderSection: {
     backgroundColor: theme.colors.surface,
-    paddingTop: 50,
+    paddingTop: topInset + 16,
     paddingHorizontal: theme.spacing.lg,
     paddingBottom: theme.spacing.sm,
     borderBottomWidth: 1,

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, Swi
 import RingLoader from '../components/ui/RingLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
-import { useTheme, ThemeMode } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import { useSizeMode, SizeComparisonMode } from '../hooks/useSizeMode';
 import Icon from '../components/Icon';
 import DateScrollPicker from '../components/DateScrollPicker';
@@ -23,7 +23,7 @@ type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 
 export default function SettingsScreen({ navigation }: Props) {
   const { user, updateUser, logout, linkGoogleAccount, linkFacebookAccount } = useAuth();
-  const { theme, mode, setThemeMode } = useTheme();
+  const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const [sizeMode, setSizeMode] = useSizeMode();
   const [glassEnabled, toggleGlass] = useGlassToggle();
@@ -213,30 +213,6 @@ export default function SettingsScreen({ navigation }: Props) {
     );
   };
 
-  const renderThemeOption = (targetMode: ThemeMode, label: string, icon: string) => {
-    const isSelected = mode === targetMode;
-    return (
-      <TouchableOpacity
-        style={[s.optionCard, isSelected && s.optionCardSelected]}
-        onPress={() => setThemeMode(targetMode)}
-        activeOpacity={0.7}
-        accessibilityRole="radio"
-        accessibilityLabel={`Motyw ${label}`}
-        accessibilityState={{ checked: isSelected }}
-      >
-        <View style={[s.optionIcon, isSelected && s.optionIconSelected]}>
-          <Icon name={icon} size={22} color={isSelected ? theme.colors.white : theme.colors.textMuted} />
-        </View>
-        <Text style={[s.optionLabel, isSelected && s.optionLabelSelected]}>{label}</Text>
-        {isSelected && (
-          <View style={s.checkIcon}>
-            <Icon name="check" size={18} color={theme.colors.primary} />
-          </View>
-        )}
-      </TouchableOpacity>
-    );
-  };
-
   const renderSizeModeOption = (targetMode: SizeComparisonMode, label: string, emoji: string) => {
     const isSelected = sizeMode === targetMode;
     return (
@@ -299,14 +275,7 @@ export default function SettingsScreen({ navigation }: Props) {
         </GlassCard>
 
         <GlassCard elevated style={s.section}>
-          <Text style={s.sectionTitle}>Motyw aplikacji</Text>
-          <Text style={s.sectionDesc}>Wybierz w jakim trybie ma działać aplikacja, lub zdaj się na ustawienia systemowe.</Text>
-          
-          <View style={s.optionsGrid}>
-            {renderThemeOption('light', 'Jasny', 'lightbulb')}
-            {renderThemeOption('dark', 'Ciemny', 'moon')}
-            {renderThemeOption('system', 'Systemowy', 'phone')}
-          </View>
+          <Text style={s.sectionTitle}>Wygląd</Text>
 
           <View style={s.listButton}>
             <View style={s.listButtonLeft}>
@@ -515,15 +484,25 @@ export default function SettingsScreen({ navigation }: Props) {
           )}
         </GlassCard>
 
-        {/* Porównanie rozmiaru dziecka */}
-        <GlassCard elevated style={s.section}>
-          <Text style={s.sectionTitle}>Porównanie rozmiaru dziecka</Text>
-          <Text style={s.sectionDesc}>Wybierz w jaki sposób chcesz porównywać wielkość dziecka na kartach tygodnia.</Text>
-          <View style={s.optionsGrid}>
-            {renderSizeModeOption('fruit', 'Owoc / warzywo', '🍎')}
-            {renderSizeModeOption('animal', 'Zwierzę', '🐾')}
-            {renderSizeModeOption('sweet', 'Słodycz', '🍬')}
-          </View>
+<GlassCard elevated style={s.section}>
+          <Text style={s.sectionTitle}>Personalizacja</Text>
+          <TouchableOpacity
+            style={s.listButton}
+            onPress={() => navigation.navigate('ModuleOrder')}
+            accessibilityRole="button"
+            accessibilityLabel="Dostosuj kolejność kafelków"
+          >
+            <View style={s.listButtonLeft}>
+              <View style={[s.listButtonIcon, { backgroundColor: theme.colors.violet + '20' }]}>
+                <Icon name="drag-handle" size={20} color={theme.colors.violet} />
+              </View>
+              <View>
+                <Text style={s.listButtonText}>Dostosuj kolejność</Text>
+                <Text style={s.listButtonSub}>Zmień układ kafelków w menu głównym</Text>
+              </View>
+            </View>
+            <Icon name="arrow-forward" size={16} color={theme.colors.textMuted} />
+          </TouchableOpacity>
         </GlassCard>
 
         <GlassCard elevated style={s.section}>

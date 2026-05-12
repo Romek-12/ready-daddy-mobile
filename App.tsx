@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import {
   SpaceGrotesk_300Light,
@@ -12,14 +13,16 @@ import {
   JetBrainsMono_500Medium,
 } from '@expo-google-fonts/jetbrains-mono';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './src/context/AuthContext';
 import { ThemeProvider } from './src/context/ThemeContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import { initializeNotifications } from './src/services/notifications/NotificationService';
 import { loadGlassUI } from './src/hooks/useGlassFeatureFlag';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import RingLoader from './src/components/ui/RingLoader';
 
-// Keep splash visible until we're ready
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
@@ -38,27 +41,40 @@ export default function App() {
   });
 
   useEffect(() => {
+    // Hide native splash immediately so our JS loader takes over
+    SplashScreen.hideAsync();
     initializeNotifications();
     loadGlassUI();
   }, []);
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
   if (!fontsLoaded) {
-    return null;
+    return (
+      <View style={styles.loadingContainer}>
+        <StatusBar style="light" />
+        <RingLoader size={120} showMonogram={false} />
+      </View>
+    );
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <AppNavigator />
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <StatusBar style="light" />
+            <AppNavigator />
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0A0E1A',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
