@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,7 +15,6 @@ import { getSizeComparison } from '../utils/sizeComparison';
 import Icon from './Icon';
 import Kicker from './ui/Kicker';
 import GradientProgressBar from './ui/GradientProgressBar';
-import GlassCard from './ui/GlassCard';
 import type { Theme } from '../theme';
 
 
@@ -77,81 +77,68 @@ const SIZE_MODES: { mode: SizeComparisonMode; label: string; icon: string }[] = 
   { mode: 'sweet',  label: 'Słodycz', icon: 'size-sweet' },
 ];
 
-function MetricTile({ icon, color, value, label, theme }: { icon: string; color: string; value: string; label: string; theme: import('../theme').Theme }) {
+function MetricTile({ value, label, glowColor }: { value: string; label: string; glowColor: string; theme: Theme }) {
   const parts = value.match(/^([\d.,<]+\s*)(.*)$/) ?? [value, value, ''];
   const num = parts[1].trim();
   const unit = parts[2].trim();
-  const s = React.useMemo(() => StyleSheet.create({
-    tile: {
-      flex: 1,
-      paddingVertical: theme.spacing.md,
-      paddingHorizontal: theme.spacing.md,
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: theme.spacing.sm,
-      overflow: 'hidden',
-      minHeight: 120,
-    },
-    pillRow: {
-      width: '100%',
-      alignItems: 'flex-start',
-    },
-    pill: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: theme.borderRadius.full,
-      backgroundColor: theme.colors.surface,
-      borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
-    },
-    pillUnit: {
-      fontFamily: theme.fonts.monoMedium,
-      fontSize: theme.fontSize.kicker,
-      color,
-      letterSpacing: 1.2,
-      textTransform: 'uppercase' as const,
-    },
-    numRow: {
-      flexDirection: 'row',
-      alignItems: 'baseline',
-      justifyContent: 'center',
-    },
-    num: {
-      fontFamily: theme.fonts.title,
-      fontVariationSettings: '"wght" 800',
-      fontSize: 56,
-      lineHeight: 56,
-      letterSpacing: -1.5,
-      color: theme.colors.text,
-      textShadowColor: 'rgba(255,255,255,0.35)',
-      textShadowOffset: { width: 0, height: 1 },
-      textShadowRadius: 8,
-    },
-    numUnit: {
-      fontFamily: theme.fonts.title,
-      fontVariationSettings: '"wght" 700',
-      fontSize: theme.fontSize.lg,
-      color: theme.colors.text,
-      marginLeft: 2,
-      opacity: 0.85,
-    },
-    lbl: {
-      textAlign: 'center',
-    },
-  }), [theme, color]);
+
   return (
-    <GlassCard elevated style={s.tile}>
-      <View style={s.numRow}>
-        <Text style={s.num}>{num}</Text>
-        {unit ? <Text style={s.numUnit}>{unit.toLowerCase()}</Text> : null}
+    <View style={[metricStyles.tile, { borderColor: glowColor + '35' }]}>
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: glowColor + '0C', borderRadius: 20 }]} />
+      <View style={metricStyles.numRow}>
+        <Text
+          style={[metricStyles.num, { color: glowColor, textShadowColor: glowColor + 'AA', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 14 }]}
+          adjustsFontSizeToFit
+          numberOfLines={1}
+          minimumFontScale={0.5}
+        >{num}</Text>
+        {unit ? <Text style={[metricStyles.unit, { color: glowColor + 'BB' }]}>{unit.toLowerCase()}</Text> : null}
       </View>
-      <Kicker style={s.lbl}>{label}</Kicker>
-    </GlassCard>
+      <Text style={metricStyles.label}>{label}</Text>
+    </View>
   );
 }
+
+const metricStyles = StyleSheet.create({
+  tile: {
+    flex: 1,
+    minHeight: 100,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    gap: 4,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.04)',
+  },
+  numRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  num: {
+    fontFamily: 'ClimateCrisis',
+    fontVariationSettings: '"wght" 800',
+    fontSize: 36,
+    lineHeight: 40,
+    letterSpacing: -1,
+    flexShrink: 1,
+  },
+  unit: {
+    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontSize: 16,
+    marginLeft: 3,
+    letterSpacing: 0,
+  },
+  label: {
+    fontFamily: 'JetBrainsMono_500Medium',
+    fontSize: 10,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: 'rgba(240,250,247,0.45)',
+  },
+});
 
 export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimester = 1, weekData }: Props) {
   const { theme } = useTheme();
@@ -159,17 +146,31 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
   const [sizeMode, setSizeMode] = useSizeMode();
 
   const scale = useSharedValue(1);
+  const glowScale = useSharedValue(1);
+
+  // Start animations once — don't depend on week/trimester so they don't restart on week change
   useEffect(() => {
     scale.value = withRepeat(
       withSequence(
-        withTiming(1.06, { duration: 1800 }),
-        withTiming(1.0, { duration: 1800 })
+        withTiming(1.06, { duration: 2200 }),
+        withTiming(1.0, { duration: 2200 })
       ),
       -1,
       true
     );
-  }, [scale]);
+    glowScale.value = withRepeat(
+      withSequence(
+        withTiming(1.15, { duration: 2200 }),
+        withTiming(0.95, { duration: 2200 })
+      ),
+      -1,
+      true
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const pulseStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const glowStyle = useAnimatedStyle(() => ({ transform: [{ scale: glowScale.value }], opacity: 0.55 }));
 
   const fetusImage = FETUS_IMAGES[Math.min(Math.max(week, 1), 40)];
   const fruit = WEEK_TO_FRUIT[week] ?? { emoji: '👶', name: '' };
@@ -177,7 +178,13 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
 
   const displayName = weekData ? getSizeComparison(weekData, sizeMode) : (sizeMode === 'fruit' ? fruit.name : '');
 
-  const trimesterColor = theme.colors.primary;
+  const trimesterColor = trimester === 1
+    ? theme.colors.trimester1
+    : trimester === 2
+    ? theme.colors.primary
+    : theme.colors.trimester3;
+
+  const trimColors: [string, string] = [theme.colors.primary, theme.colors.violet];
 
   return (
     <View style={s.container}>
@@ -187,7 +194,7 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
           const isActive = trimester === i + 1;
           return (
             <View key={label} style={[s.trimPill, isActive ? s.trimPillActive : s.trimPillInactive]}>
-              <Text style={[s.trimLabel, { color: isActive ? theme.colors.background : theme.colors.textSecondary }]}>
+              <Text style={[s.trimLabel, { color: isActive ? theme.colors.background : theme.colors.textMuted }]}>
                 {label} trym.
               </Text>
             </View>
@@ -195,29 +202,46 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
         })}
       </View>
 
-      {/* Hero: fetus + giant week number */}
+      {/* Hero row: week number LEFT, fetus image RIGHT */}
       <View style={s.heroRow}>
-        <View style={s.svgBox}>
-          <Animated.View style={pulseStyle}>
-            <Image source={fetusImage} style={{ width: 140, height: 160 }} resizeMode="contain" />
-          </Animated.View>
-        </View>
-        <View style={s.heroRight}>
+        {/* Left: week info */}
+        <View style={s.heroLeft}>
           <Kicker color={trimesterColor}>Tydzień</Kicker>
-          <Text style={[s.heroNumber, { color: theme.colors.text }]}>{week}</Text>
-          {displayName ? <Text style={s.heroFruit}>Jestem jak {displayName}</Text> : null}
+          <Text
+            style={[s.heroNumber, { color: theme.colors.text, textShadowColor: trimesterColor + '66', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 20 }]}
+            adjustsFontSizeToFit
+            numberOfLines={1}
+            minimumFontScale={0.5}
+          >
+            {week}
+          </Text>
+          {displayName ? (
+            <Text style={s.heroFruit}>Jestem jak{'\n'}{displayName}</Text>
+          ) : null}
+        </View>
+
+        {/* Right: fetus with soft shadow glow behind */}
+        <View style={s.fetusBox}>
+          {/* Layered soft glow — concentric circles fading outward */}
+          <Animated.View style={[s.glowOuter, glowStyle, { backgroundColor: trimesterColor + '14' }]} pointerEvents="none" />
+          <Animated.View style={[s.glowMid, glowStyle, { backgroundColor: trimesterColor + '1F' }]} pointerEvents="none" />
+          <Animated.View style={[s.glowInner, glowStyle, { backgroundColor: trimesterColor + '33' }]} pointerEvents="none" />
+          <Animated.View style={[s.glowCore, glowStyle, { backgroundColor: trimesterColor + '55' }]} pointerEvents="none" />
+          <Animated.View style={pulseStyle}>
+            <Image source={fetusImage} style={s.fetusImage} resizeMode="contain" />
+          </Animated.View>
         </View>
       </View>
 
-      {/* Big metric tiles */}
+      {/* Metric tiles */}
       <View style={s.metricRow}>
-        <MetricTile icon="size-fruit" color={theme.colors.primary} value={formatSize(sizeMm)} label="Długość" theme={theme} />
-        <MetricTile icon="size-sweet" color={theme.colors.accent} value={formatWeight(weightG)} label="Waga" theme={theme} />
+        <MetricTile value={formatSize(sizeMm)} label="Długość" glowColor={theme.colors.primary} theme={theme} />
+        <MetricTile value={formatWeight(weightG)} label="Waga" glowColor={theme.colors.violet} theme={theme} />
       </View>
 
       {/* Compare to */}
       <View style={s.compareSection}>
-        <Kicker style={s.compareKicker}>Porównaj do</Kicker>
+        <Kicker>Porównaj do</Kicker>
         <View style={s.modeRow}>
           {SIZE_MODES.map(({ mode, label, icon }) => {
             const isActive = sizeMode === mode;
@@ -232,10 +256,10 @@ export default function FetusVisualizer({ week, sizeMm = 0, weightG = 0, trimest
               >
                 <Icon
                   name={icon}
-                  size={22}
+                  size={24}
                   color={isActive ? theme.colors.black : theme.colors.textSecondary}
                 />
-                <Text style={[s.modeLabel, isActive && { color: theme.colors.black }]}>{label}</Text>
+                <Text style={[s.modeLabel, isActive && { color: theme.colors.black, fontFamily: theme.fonts.semibold }]}>{label}</Text>
               </TouchableOpacity>
             );
           })}
@@ -282,35 +306,67 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   trimLabel: {
     fontSize: theme.fontSize.sm,
     fontFamily: theme.fonts.semibold,
-    fontWeight: theme.fontWeight.semibold,
   },
   heroRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.md,
+    minHeight: 160,
   },
-  svgBox: {
-    width: 140,
-    height: 160,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  heroRight: {
+  heroLeft: {
     flex: 1,
     alignItems: 'flex-start',
+    justifyContent: 'center',
+    gap: 4,
   },
   heroNumber: {
     fontFamily: theme.fonts.title,
-    fontVariationSettings: '"wght" 700',
-    fontSize: theme.fontSize.displayLg,
-    lineHeight: theme.fontSize.displayLg,
-    marginTop: 4,
+    fontVariationSettings: '"wght" 800',
+    fontSize: 56,
+    lineHeight: 58,
+    letterSpacing: -2,
+    marginTop: 2,
   },
   heroFruit: {
-    fontFamily: theme.fonts.semibold,
-    fontSize: theme.fontSize.md,
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.sm,
+    fontFamily: theme.fonts.medium,
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textMuted,
+    marginTop: 4,
+    lineHeight: 18,
+  },
+  fetusBox: {
+    width: 220,
+    height: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  glowOuter: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+  },
+  glowMid: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+  },
+  glowInner: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+  },
+  glowCore: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  fetusImage: {
+    width: 140,
+    height: 160,
   },
   metricRow: {
     flexDirection: 'row',
@@ -319,7 +375,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   compareSection: {
     gap: theme.spacing.sm,
   },
-  compareKicker: {},
   modeRow: {
     flexDirection: 'row',
     gap: theme.spacing.sm,

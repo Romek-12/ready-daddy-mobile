@@ -11,7 +11,11 @@ import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
 import AddExamSheet, { ExamSubmitPayload } from '../components/checkups/AddExamSheet';
+import ProgressRing from '../components/ui/ProgressRing';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 interface CheckItem {
   id: number;
@@ -199,18 +203,22 @@ export default function CheckupsScreen() {
   return (
     <AuroraBackground>
       <View style={s.container}>
-        <ScrollView style={s.scroll}>
-          <View style={s.header}>
-            <Icon name="calendar" size={48} color={theme.colors.checkups} />
-            <Text style={s.title}>Wizyty Lekarskie</Text>
-            <Text style={s.sub}>Baza najważniejszych badań i kontroli w ciąży</Text>
+        <View style={s.header}>
+          <Kicker>Ciąża i zdrowie</Kicker>
+          <View style={s.titleStack}>
+            <Text style={s.title}>Wizyty</Text>
+            <GradientText style={s.title} colors={[theme.colors.checkups, theme.colors.primary]}>lekarskie.</GradientText>
           </View>
-
-          <GlassCard accent="cyan" elevated style={s.progressCard}>
-            <Text style={s.progressLabel}>Postęp badań</Text>
-            <View style={s.progressRight}>
-              <Text style={s.progressCount}>{totalChecked}/{totalItems}</Text>
-              <Text style={s.progressCheckLabel}>odfajkowane zadania</Text>
+          <Text style={s.subtitle}>Baza najważniejszych badań i kontroli w ciąży</Text>
+        </View>
+        <ScrollView style={s.scroll}>
+          <GlassCard elevated style={s.progressCard}>
+            <ProgressRing value={totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0} size={80} stroke={7}>
+              <Text style={s.progressPercent}>{totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0}%</Text>
+            </ProgressRing>
+            <View style={s.progressInfo}>
+              <Text style={s.progressLabel}>Postęp badań</Text>
+              <Text style={s.progressCount}>{totalChecked}/{totalItems} odbytych</Text>
             </View>
           </GlassCard>
 
@@ -218,33 +226,26 @@ export default function CheckupsScreen() {
             const isExpanded = expanded === vIdx;
             const visitItemCount = countCheckable(visit);
             const visitChecked = countCheckedInVisit(visit, vIdx, checked);
-            const isLast = vIdx === visits.length - 1;
             const isDone = visitItemCount > 0 && visitChecked === visitItemCount;
             const visitColor = resolveColor(visit.colorKey, theme);
 
             return (
               <View key={vIdx} style={s.timelineRow}>
-                <View style={s.timelineCol}>
-                  <View style={[s.timelineDot, { backgroundColor: isDone ? theme.colors.primary : visitColor, shadowColor: isDone ? theme.colors.primary : visitColor }]} />
-                  {!isLast ? <View style={s.timelineLine} /> : null}
-                </View>
                 <View style={s.timelineContent}>
-                  <TouchableOpacity onPress={() => toggle(vIdx)} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
-                    <GlassCard style={s.visitHeader}>
-                      <View style={s.visitHeaderLeft}>
-                        <View style={[s.weekBadge, { backgroundColor: visitColor }]}>
-                          <Text style={s.weekBadgeText}>{visit.weekRange}</Text>
-                        </View>
-                        <Text style={s.visitTitle}>{visit.title}</Text>
-                        <Text style={s.visitSubtitle} numberOfLines={2}>{visit.subtitle}</Text>
+                  <TouchableOpacity style={s.visitHeader} onPress={() => toggle(vIdx)} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel={`${visit.title}, ${visitChecked} z ${visitItemCount} wykonanych`} accessibilityState={{ expanded: isExpanded }}>
+                    <View style={s.visitHeaderLeft}>
+                      <View style={[s.weekBadge, { backgroundColor: visitColor }]}>
+                        <Text style={s.weekBadgeText}>{visit.weekRange}</Text>
                       </View>
-                      <View style={s.visitHeaderRight}>
-                        <Text style={[s.visitProgress, { color: isDone ? theme.colors.primary : theme.colors.textMuted }]}>
-                          {visitChecked}/{visitItemCount}
-                        </Text>
-                        <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
-                      </View>
-                    </GlassCard>
+                      <Text style={s.visitTitle}>{visit.title}</Text>
+                      <Text style={s.visitSubtitle} numberOfLines={2}>{visit.subtitle}</Text>
+                    </View>
+                    <View style={s.visitHeaderRight}>
+                      <Text style={[s.visitProgress, { color: isDone ? theme.colors.primary : theme.colors.textMuted }]}>
+                        {visitChecked}/{visitItemCount}
+                      </Text>
+                      <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
+                    </View>
                   </TouchableOpacity>
 
                   {isExpanded && (
@@ -340,6 +341,7 @@ export default function CheckupsScreen() {
             <Icon name="info" size={16} color={theme.colors.textMuted} />
             <Text style={s.disclaimerText}>Powyższa lista jest orientacyjna. O dokładnych badaniach, ich ilości i częstotliwości decyduje wyłącznie lekarz prowadzący ciążę, który na bieżąco analizuje stan zdrowia kobiety i dziecka.</Text>
           </View>
+          <MedicalDisclaimer />
           <View style={{ height: 40 }} />
         </ScrollView>
       </View>
@@ -361,20 +363,22 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent' },
   scroll: { flex: 1 },
   c: { flex: 1, backgroundColor: 'transparent' },
-  header: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.checkups, marginBottom: 4 },
-  sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary },
-  progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.lg, minHeight: 90 },
-  progressLabel: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.semibold, color: theme.colors.text, flex: 1, marginRight: 12 },
-  progressRight: { alignItems: 'flex-end' },
-  progressCount: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.primary },
+  header: { alignItems: 'flex-start', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: 24, gap: 8 },
+  titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
+  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
+  progressCard: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  progressInfo: { flex: 1, marginLeft: theme.spacing.md },
+  progressPercent: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: 16, color: theme.colors.text },
+  progressLabel: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
+  progressCount: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textMuted, marginTop: 2 },
   progressCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },
   timelineRow: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
   timelineCol: { width: 24, alignItems: 'center' },
   timelineDot: { width: 12, height: 12, borderRadius: 6, marginTop: 14, shadowOpacity: 0.7, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   timelineLine: { flex: 1, width: 2, backgroundColor: theme.colors.cardBorder, marginTop: 6 },
   timelineContent: { flex: 1, marginLeft: theme.spacing.sm },
-  visitHeader: { padding: theme.spacing.md, flexDirection: 'row', alignItems: 'center' },
+  visitHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
   visitHeaderLeft: { flex: 1 },
   weekBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start', marginBottom: 6 },
   weekBadgeText: { fontSize: 11, fontWeight: theme.fontWeight.semibold, color: '#FFFFFF' },
@@ -382,7 +386,7 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   visitSubtitle: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
   visitHeaderRight: { alignItems: 'flex-end', marginLeft: theme.spacing.sm },
   visitProgress: { fontSize: theme.fontSize.sm, fontWeight: theme.fontWeight.bold, marginBottom: 4 },
-  visitContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, marginTop: 4, padding: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.cardBorder },
+  visitContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, marginTop: 2, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
   catSection: { marginBottom: 16 },
   catHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   catTitle: { fontSize: 13, fontFamily: theme.fonts.semibold, color: theme.colors.text, flex: 1 },

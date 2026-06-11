@@ -6,11 +6,14 @@ import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import GlassCard from '../components/ui/GlassCard';
-import GradientProgressBar from '../components/ui/GradientProgressBar';
+import ProgressRing from '../components/ui/ProgressRing';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 interface TaskItem {
   title: string;
@@ -126,22 +129,25 @@ export default function PostBirthScreen() {
 
   return (
     <AuroraBackground>
-    <ScrollView style={st.c}>
+    <View style={{ flex: 1 }}>
       <View style={st.header}>
-        <Icon name="post-birth" size={48} color={theme.colors.postBirth} />
-        <Text style={st.title}>Po porodzie</Text>
-        <Text style={st.sub}>Formalności i sprawy do załatwienia</Text>
+        <Kicker>Po porodzie</Kicker>
+        <View style={st.titleStack}>
+          <Text style={st.title}>Twój</Text>
+          <GradientText style={st.title} colors={[theme.colors.postBirth, theme.colors.primary]}>przewodnik.</GradientText>
+        </View>
+        <Text style={st.subtitle}>Formalności i sprawy do załatwienia po narodzinach</Text>
       </View>
-
+    <ScrollView style={st.c}>
       {/* Progress */}
       <GlassCard elevated style={st.progressCard}>
-        <Text style={st.progressKicker}>POSTĘP SPRAW</Text>
-        <View style={st.progressRow}>
-          <Text style={st.progressCount}>{totalChecked}</Text>
-          <Text style={st.progressSep}>/{totalItems}</Text>
-          <Text style={st.progressCheckLabel}> ukończonych</Text>
+        <ProgressRing value={totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0} size={80} stroke={7}>
+          <Text style={st.ringPercent}>{totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0}%</Text>
+        </ProgressRing>
+        <View style={st.progressInfo}>
+          <Text style={st.progressTitle}>Postęp spraw</Text>
+          <Text style={st.progressCount}>{totalChecked}/{totalItems} ukończonych</Text>
         </View>
-        <GradientProgressBar value={totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0} height={6} glow />
       </GlassCard>
 
       {/* Main tasks */}
@@ -149,26 +155,9 @@ export default function PostBirthScreen() {
         const isExpanded = expanded === idx;
         const key = getTaskKey(idx);
         const isDone = checked[key] || false;
-        const isLastTask = idx === TASKS.length - 1;
-        const nextDone = idx + 1 < TASKS.length ? (checked[getTaskKey(idx + 1)] || false) : false;
-        const state: 'done' | 'active' | 'future' = isDone ? 'done' : (idx === 0 || checked[getTaskKey(idx - 1)] ? 'active' : 'future');
 
         return (
           <View key={idx} style={st.timelineWrap}>
-            <View style={st.stepCol}>
-              {state === 'done' ? (
-                <View style={[st.circleBase, { backgroundColor: theme.colors.primary }]}>
-                  <Icon name="check" size={12} color={theme.colors.black} />
-                </View>
-              ) : state === 'active' ? (
-                <View style={[st.circleBase, st.circleActive]}>
-                  <View style={st.activeDot} />
-                </View>
-              ) : (
-                <View style={[st.circleBase, st.circleFuture]} />
-              )}
-              {!isLastTask ? <View style={[st.connector, nextDone && { backgroundColor: theme.colors.primary, opacity: 0.6 }]} /> : null}
-            </View>
             <View style={st.taskSection}>
             <GlassCard style={[st.taskHeader, isDone && st.taskHeaderDone]}>
             <TouchableOpacity style={st.taskHeaderInner} onPress={() => toggle(idx)}>
@@ -251,25 +240,10 @@ export default function PostBirthScreen() {
         {(() => {
           const activeIdx = OTHER_ITEMS.findIndex((_, i) => !otherChecked[i]);
           return OTHER_ITEMS.map((item, idx) => {
-            const isLast = idx === OTHER_ITEMS.length - 1;
             const state: 'done' | 'active' | 'future' =
               activeIdx === -1 || idx < activeIdx ? 'done' : idx === activeIdx ? 'active' : 'future';
             return (
               <TouchableOpacity key={idx} activeOpacity={0.7} onPress={() => toggleOther(idx)} style={st.step}>
-                <View style={st.stepCol}>
-                  {state === 'done' ? (
-                    <LinearGradient colors={[theme.colors.primary, theme.colors.violet]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.circleBase}>
-                      <Icon name="check" size={12} color={theme.colors.black} />
-                    </LinearGradient>
-                  ) : state === 'active' ? (
-                    <View style={[st.circleBase, st.circleActive]}>
-                      <View style={st.activeDot} />
-                    </View>
-                  ) : (
-                    <View style={[st.circleBase, st.circleFuture]} />
-                  )}
-                  {!isLast && <View style={st.connector} />}
-                </View>
                 <GlassCard style={st.stepCard}>
                   <Text style={[st.stepTitle, state === 'done' && st.stepDoneText]}>{item.name}</Text>
                   <Text style={st.stepDesc}>{item.deadline} · {item.where}</Text>
@@ -292,24 +266,26 @@ export default function PostBirthScreen() {
         <Text style={st.disclaimerText}>Przedstawione informacje mają charakter orientacyjny i mogą stanowić jedynie ogólny drogowskaz. Nie zastępują one indywidualnej konsultacji ani zaleceń lekarza prowadzącego czy położnej, którzy najlepiej ocenią Twoją sytuację zdrowotną i dostosują plan postępowania do Twoich potrzeb.</Text>
       </View>
 
+      <MedicalDisclaimer />
       <View style={{ height: 40 }} />
     </ScrollView>
+    </View>
     </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
-  header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.postBirth, marginTop: theme.spacing.sm },
-  sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
+  header: { alignItems: 'flex-start', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: 24, gap: 8 },
+  titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
+  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
 
-  progressCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, padding: theme.spacing.lg },
-  progressKicker: { fontSize: 10, color: theme.colors.textMuted, letterSpacing: 1.5, fontFamily: theme.fonts.mono, marginBottom: theme.spacing.sm },
-  progressRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: theme.spacing.md },
-  progressCount: { fontSize: theme.fontSize.xxl, fontWeight: theme.fontWeight.bold, color: theme.colors.postBirth, fontFamily: theme.fonts.bold },
-  progressSep: { fontSize: theme.fontSize.lg, color: theme.colors.textMuted, marginLeft: 2 },
-  progressCheckLabel: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary },
+  progressCard: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
+  progressInfo: { flex: 1, marginLeft: theme.spacing.md },
+  progressTitle: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
+  progressCount: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textMuted, marginTop: 2 },
+  ringPercent: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: 16, color: theme.colors.text },
 
   timelineWrap: { flexDirection: 'row', alignItems: 'stretch', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
   taskSection: { flex: 1, marginLeft: theme.spacing.sm },

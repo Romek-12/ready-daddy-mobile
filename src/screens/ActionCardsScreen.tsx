@@ -10,6 +10,8 @@ import Icon from '../components/Icon';
 import type { AppNavigation } from '../types/navigation';
 import type { Theme } from '../theme';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
 
 
 interface ReactionCard {
@@ -148,9 +150,12 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
     <AuroraBackground>
     <SafeAreaView style={[s.c, { backgroundColor: 'transparent' }]} edges={['top']}>
       <View style={s.header}>
-        <Icon name="bolt" size={48} color={theme.colors.accent} />
-        <Text style={s.headerTitle}>Karty Reakcji</Text>
-        <Text style={s.headerSub}>Konkretne działania na konkretne sytuacje</Text>
+        <Kicker>Narzędzia taty</Kicker>
+        <View style={s.titleStack}>
+          <Text style={s.title}>Karty</Text>
+          <GradientText style={s.title} colors={[theme.colors.accent, theme.colors.violet]}>Reakcji.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Konkretne działania na konkretne sytuacje</Text>
       </View>
 
       <View style={s.triNav}>
@@ -219,9 +224,10 @@ export default function ActionCardsScreen({ route, navigation }: { route: { para
 const createStyles = (theme: Theme, width: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
   center: { justifyContent: 'center', alignItems: 'center' },
-  header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
-  headerTitle: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 800', color: theme.colors.accent, marginTop: theme.spacing.sm },
-  headerSub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
+  header: { alignItems: 'flex-start', paddingHorizontal: theme.spacing.lg, paddingTop: 20, paddingBottom: 24, gap: 8 },
+  titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
+  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
   errorText: { fontSize: theme.fontSize.md, color: theme.colors.danger, textAlign: 'center', marginHorizontal: theme.spacing.xl },
 
   triNav: { flexDirection: 'row', justifyContent: 'center', gap: 8, paddingHorizontal: 16, paddingBottom: 10 },

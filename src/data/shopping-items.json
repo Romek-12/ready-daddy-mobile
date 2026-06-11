@@ -133,5 +133,14 @@
     "is_essential": 0,
     "estimated_cost_pln": 80,
     "notes": "Temperatura wody: 37°C"
+  },
+  {
+    "id": 166,
+    "trimester": 3,
+    "name": "Butelka do podmywania",
+    "category": "Przydatne",
+    "is_essential": 0,
+    "estimated_cost_pln": 20,
+    "notes": "Ułatwia higienę intymną mamy po porodzie"
   }
 ]

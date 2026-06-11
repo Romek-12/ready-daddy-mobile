@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal, Switch } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal } from 'react-native';
 import RingLoader from '../components/ui/RingLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +17,6 @@ import type { Theme } from '../theme';
 import { CONCEPTION_DAYS } from '../constants';
 import { supabase } from '../lib/supabase';
 import type { UserIdentity } from '@supabase/supabase-js';
-import { useGlassToggle } from '../hooks/useGlassFeatureFlag';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Settings'>;
 
@@ -26,7 +25,6 @@ export default function SettingsScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const [sizeMode, setSizeMode] = useSizeMode();
-  const [glassEnabled, toggleGlass] = useGlassToggle();
   const s = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -266,35 +264,14 @@ export default function SettingsScreen({ navigation }: Props) {
 
         <GlassCard elevated style={s.profileHero}>
           <View style={s.avatar}>
-            <Text style={s.avatarInitial}>{((user?.partnerName || 'Tata').trim()[0] || 'T').toUpperCase()}</Text>
+            <Text style={s.avatarInitial}>{((user?.partnerName || user?.email || 'T').trim()[0] || 'T').toUpperCase()}</Text>
           </View>
           <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
-            <Text style={s.profileName}>{user?.partnerName || 'Tata'}</Text>
+            <Text style={s.profileName}>{user?.partnerName || user?.email?.split('@')[0] || 'Moje konto'}</Text>
             <Text style={s.profileEmail}>{user?.email || ''}</Text>
           </View>
         </GlassCard>
 
-        <GlassCard elevated style={s.section}>
-          <Text style={s.sectionTitle}>Wygląd</Text>
-
-          <View style={s.listButton}>
-            <View style={s.listButtonLeft}>
-              <View style={[s.listButtonIcon, { backgroundColor: theme.colors.primaryLight }]}>
-                <Icon name="sparkles" size={20} color={theme.colors.primary} />
-              </View>
-              <View>
-                <Text style={s.listButtonText}>Efekty glass</Text>
-                <Text style={s.listButtonSub}>Przezroczyste karty i tła</Text>
-              </View>
-            </View>
-            <Switch
-              value={glassEnabled}
-              onValueChange={toggleGlass}
-              trackColor={{ false: theme.colors.cardBorder, true: theme.colors.primary + '66' }}
-              thumbColor={glassEnabled ? theme.colors.primary : theme.colors.textMuted}
-            />
-          </View>
-        </GlassCard>
 
         <GlassCard elevated style={s.section}>
           <Text style={s.sectionTitle}>Konto i Dane</Text>
@@ -321,7 +298,7 @@ export default function SettingsScreen({ navigation }: Props) {
           {/* Google */}
           <View style={s.linkedAccountRow}>
             <View style={s.listButtonLeft}>
-              <View style={[s.listButtonIcon, { backgroundColor: '#4285F420' }]}>
+              <View style={[s.listButtonIcon, { backgroundColor: '#4285F440' }]}>
                 <Text style={s.providerLetter}>G</Text>
               </View>
               <View>
@@ -357,7 +334,7 @@ export default function SettingsScreen({ navigation }: Props) {
           {/* Facebook */}
           <View style={[s.linkedAccountRow, { marginTop: theme.spacing.md }]}>
             <View style={s.listButtonLeft}>
-              <View style={[s.listButtonIcon, { backgroundColor: '#1877F220' }]}>
+              <View style={[s.listButtonIcon, { backgroundColor: '#1877F240' }]}>
                 <Text style={[s.providerLetter, { color: '#1877F2' }]}>f</Text>
               </View>
               <View>
@@ -680,8 +657,8 @@ const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   
   versionText: { textAlign: 'center', fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: theme.spacing.lg },
 
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: theme.colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: theme.spacing.xl, paddingBottom: 40 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: theme.colors.background, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: theme.spacing.xl, paddingBottom: 40, borderTopWidth: 1, borderColor: theme.colors.cardBorder },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: theme.spacing.xl },
   modalTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold, color: theme.colors.text },
   modalCloseBtn: { padding: theme.spacing.xs },

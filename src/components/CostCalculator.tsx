@@ -226,12 +226,6 @@ export default function CostCalculator() {
 
   return (
     <ScrollView style={s.c} keyboardShouldPersistTaps="handled">
-      <View style={s.header}>
-        <Icon name="calculate" size={48} color={theme.colors.planning} />
-        <Text style={s.title}>Kalkulator Kosztów</Text>
-        <Text style={s.sub}>Śledź wydatki związane z ciążą i wyprawką</Text>
-      </View>
-
       {/* Grand total card */}
       <GlassCard elevated style={s.grandTotal}>
         <Text style={s.grandLabel}>Dotychczasowy koszt:</Text>
@@ -246,8 +240,7 @@ export default function CostCalculator() {
 
         return (
           <View key={tIdx} style={s.triSection}>
-            <TouchableOpacity onPress={() => toggleTrimester(tIdx)}>
-          <GlassCard style={[s.triHeader, { borderLeftColor: tri.color }]}>
+            <TouchableOpacity style={[s.triHeader, { borderLeftColor: tri.color }]} onPress={() => toggleTrimester(tIdx)} accessibilityRole="button" accessibilityState={{ expanded: isExpanded }}>
               <View style={s.triHeaderLeft}>
                 <Text style={[s.triTitle, { color: tri.color }]}>{tri.title}</Text>
                 <Text style={s.triSubtitle}>{tri.subtitle}</Text>
@@ -256,7 +249,6 @@ export default function CostCalculator() {
                 <Text style={[s.triTotal, { color: tri.color }]}>{fmt(triTotal)}</Text>
                 <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
               </View>
-            </GlassCard>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -345,24 +337,21 @@ export default function CostCalculator() {
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
-  header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.planning, marginTop: theme.spacing.sm },
-  sub: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
-  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
+  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginTop: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   grandLabel: { fontSize: theme.fontSize.lg, color: theme.colors.text, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   grandRight: { alignItems: 'flex-end' },
   grandValue: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.planning },
 
   triSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
-  triHeader: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.xl, borderLeftWidth: 3 },
+  triHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder, borderLeftWidth: 4 },
   triHeaderLeft: { flex: 1 },
   triTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold },
   triSubtitle: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },
   triHeaderRight: { alignItems: 'flex-end' },
   triTotal: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, marginBottom: 2 },
 
-  triContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl, marginTop: 4, padding: theme.spacing.xl, elevation: 1 },
+  triContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, marginTop: 2, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
 
   catSection: { marginBottom: theme.spacing.lg },
   catHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md },

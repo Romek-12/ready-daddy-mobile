@@ -9,7 +9,7 @@ import GradientProgressBar from '../../components/ui/GradientProgressBar';
 import AuroraBackground from '../../components/ui/AuroraBackground';
 import type { Theme } from '../../theme';
 import type { AppNavigation } from '../../types/navigation';
-import { PREGNANCY_DAYS } from '../../constants';
+import { CONCEPTION_DAYS } from '../../constants';
 
 interface Props {
   navigation: AppNavigation;
@@ -23,7 +23,7 @@ interface Props {
 function getCurrentFirstYearMonth(conceptionDate: string | undefined): number {
   if (!conceptionDate) return -1;
   const conception = new Date(conceptionDate);
-  const birth = new Date(conception.getTime() + PREGNANCY_DAYS * 24 * 60 * 60 * 1000);
+  const birth = new Date(conception.getTime() + CONCEPTION_DAYS * 24 * 60 * 60 * 1000);
   const now = new Date();
   if (now < birth) return -1;
   const monthsDiff =

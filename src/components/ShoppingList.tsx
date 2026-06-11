@@ -281,18 +281,11 @@ export default function ShoppingList() {
 
   return (
     <ScrollView style={s.c} keyboardShouldPersistTaps="handled">
-      <View style={s.header}>
-        <Icon name="shopping-cart" size={48} color={theme.colors.accent} />
-        <Text style={s.title}>Lista zakupów</Text>
-        <Text style={s.sub}>Kompletna wyprawka dla mamy i dziecka z kalkulatorem</Text>
-      </View>
-
       {/* Grand total */}
       <GlassCard elevated style={s.grandTotal}>
         <Text style={s.grandLabel}>Dotychczasowy koszt:</Text>
         <View style={s.grandRight}>
           <Text style={s.grandValue}>{fmt(grandTotal)}</Text>
-          <Text style={s.grandCheckLabel}>{totalChecked}/{totalItems} odznaczone</Text>
         </View>
       </GlassCard>
 
@@ -304,8 +297,7 @@ export default function ShoppingList() {
 
         return (
           <View key={tIdx} style={s.triSection}>
-            <TouchableOpacity onPress={() => toggleTrimester(tIdx)}>
-          <GlassCard style={[s.triHeader, { borderLeftColor: tri.color }]}>
+            <TouchableOpacity style={[s.triHeader, { borderLeftColor: tri.color }]} onPress={() => toggleTrimester(tIdx)} accessibilityRole="button" accessibilityState={{ expanded: isExpanded }}>
               <View style={s.triHeaderLeft}>
                 <Text style={[s.triTitle, { color: tri.color }]}>{tri.title}</Text>
                 <Text style={s.triSubtitle} numberOfLines={2}>{tri.subtitle}</Text>
@@ -315,7 +307,6 @@ export default function ShoppingList() {
                 <Text style={s.triCount}>{triChecked}/{triItems}</Text>
                 <Icon name={isExpanded ? 'expand-less' : 'expand-more'} size={24} color={theme.colors.textMuted} />
               </View>
-            </GlassCard>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -410,18 +401,15 @@ export default function ShoppingList() {
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
-  header: { alignItems: 'center', paddingTop: 20, paddingBottom: 20 },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.accent, marginTop: theme.spacing.sm },
-  sub: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
 
-  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
+  grandTotal: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginTop: theme.spacing.lg, marginBottom: theme.spacing.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   grandLabel: { fontSize: theme.fontSize.lg, color: theme.colors.text, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   grandRight: { alignItems: 'flex-end' },
   grandValue: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.accent },
   grandCheckLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 4, fontWeight: theme.fontWeight.medium },
 
   triSection: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.sm },
-  triHeader: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.xl, borderLeftWidth: 3 },
+  triHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder, borderLeftWidth: 4 },
   triHeaderLeft: { flex: 1 },
   triTitle: { fontSize: theme.fontSize.lg, fontWeight: theme.fontWeight.bold },
   triSubtitle: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted, marginTop: 2 },
@@ -429,7 +417,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   triTotal: { fontSize: theme.fontSize.md, fontWeight: theme.fontWeight.bold, marginBottom: 2 },
   triCount: { fontSize: theme.fontSize.xs, color: theme.colors.textMuted },
 
-  triContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl, marginTop: 4, padding: theme.spacing.xl, elevation: 1 },
+  triContent: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, marginTop: 2, padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.cardBorder },
 
   tipBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.md, padding: theme.spacing.md, marginBottom: theme.spacing.lg },
   tipText: { flex: 1, fontSize: theme.fontSize.sm, color: theme.colors.text, lineHeight: 20 },

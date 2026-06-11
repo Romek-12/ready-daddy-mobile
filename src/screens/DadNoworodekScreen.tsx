@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import GlassCard from '../components/ui/GlassCard';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 export default function DadNoworodekScreen() {
   const { theme } = useTheme();
@@ -169,6 +170,7 @@ export default function DadNoworodekScreen() {
           Dziecko doskonale wyłapuje Twoje zdenerwowanie po tętnie i sztywności ciała taty. Twój spokój i łagodny "brzuszkowy" głęboki bas to Twoja najmocniejsza broń na uciszenie malucha we wspólnym domu.
         </Text>
       </View>
+      <MedicalDisclaimer />
       <View style={{ height: 40 }} />
     </ScrollView>
     </AuroraBackground>

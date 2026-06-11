@@ -78,7 +78,7 @@ export default function RingLoader({
     }
   }, [progress, resolvedSegments, duration, head]);
 
-  const monogramFontSize = Math.round(size * 0.31);
+  const monogramFontSize = Math.round(size * 0.28);
 
   return (
     <View style={[{ width: size, height: size }, style]} testID={testID}>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 1,
     textAlign: 'center',
     textAlignVertical: 'center',
     fontFamily: 'ClimateCrisis',

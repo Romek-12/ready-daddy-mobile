@@ -14,9 +14,10 @@ import { useBadges } from '../hooks/useBadges';
 import BadgeCard from '../components/gamification/BadgeCard';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
-import GlowPill from '../components/ui/GlowPill';
 import AuroraBackground from '../components/ui/AuroraBackground';
-import GradientProgressBar from '../components/ui/GradientProgressBar';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
+import ProgressRing from '../components/ui/ProgressRing';
 import { BADGE_DEFINITIONS } from '../data/badges-definitions';
 import type { Theme } from '../theme';
 import type { BadgeCategory } from '../types/badges.types';
@@ -42,19 +43,21 @@ export default function BadgesScreen({ navigation }: Props) {
   return (
     <AuroraBackground>
     <View style={s.container}>
-      {/* Header */}
-      <View style={s.header}>
+      {/* Back button */}
+      <View style={s.topBar}>
         <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
           <Icon name="back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Twoje Odznaki</Text>
-        <Text style={s.counter}>{earnedCount}/{totalCount}</Text>
       </View>
 
-      {/* Progress bar */}
-      <View style={s.progressContainer}>
-        <GradientProgressBar value={Math.round(progress * 100)} height={6} glow />
-        <Text style={s.progressLabel}>{Math.round(progress * 100)}% odblokowanych</Text>
+      {/* Hero header */}
+      <View style={s.heroHeader}>
+        <Kicker>Gamifikacja</Kicker>
+        <View style={s.titleRow}>
+          <Text style={s.titleWhite}>Twoje </Text>
+          <GradientText style={s.titleGradient}>odznaki.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Zbieraj odznaki i śledź swój postęp jako tata.</Text>
       </View>
 
       {isLoading ? (
@@ -64,9 +67,13 @@ export default function BadgesScreen({ navigation }: Props) {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
           <GlassCard elevated style={s.levelHero}>
-            <View style={s.levelBlob} pointerEvents="none" />
-            <GlowPill variant="violet" label={`Poziom ${Math.floor(earnedCount / 3) + 1}`} />
-            <Text style={s.levelText}>{earnedCount} z {totalCount} odznak odblokowanych</Text>
+            <ProgressRing value={Math.round(progress * 100)} size={80} stroke={7}>
+              <Text style={s.ringPercent}>{Math.round(progress * 100)}%</Text>
+            </ProgressRing>
+            <View style={s.levelInfo}>
+              <Text style={s.levelTitle}>Poziom wtajemniczenia</Text>
+              <Text style={s.levelSub}>{earnedCount}/{totalCount} odblokowanych</Text>
+            </View>
           </GlassCard>
           {CATEGORIES.map(cat => {
             const defs = BADGE_DEFINITIONS.filter(b => b.category === cat.key);
@@ -96,37 +103,42 @@ const createStyles = (theme: Theme, topInset: number) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: 'transparent' },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    header: {
+    topBar: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: theme.spacing.lg,
       paddingTop: topInset + 16,
-      paddingBottom: theme.spacing.md,
-      backgroundColor: 'transparent',
+      paddingBottom: theme.spacing.sm,
     },
-    headerTitle: {
-      fontSize: theme.fontSize.lg,
-      fontFamily: theme.fonts.bold,
-      color: theme.colors.text,
-    },
-    backBtn: { padding: theme.spacing.sm, width: 40 },
-    counter: {
-      fontSize: theme.fontSize.md,
-      fontFamily: theme.fonts.bold,
-      color: theme.colors.primary,
-      width: 40,
-      textAlign: 'right',
-    },
-    progressContainer: {
+    backBtn: { padding: theme.spacing.sm },
+    heroHeader: {
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.md,
-      backgroundColor: 'transparent',
+      paddingBottom: theme.spacing.md,
+      gap: 6,
     },
-    progressLabel: {
-      fontSize: theme.fontSize.xs,
-      color: theme.colors.textMuted,
-      marginTop: theme.spacing.xs,
+    titleRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'baseline',
+    },
+    titleWhite: {
+      fontSize: theme.fontSize.hero,
+      fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 700',
+      color: theme.colors.text,
+      letterSpacing: 1,
+    },
+    titleGradient: {
+      fontSize: theme.fontSize.hero,
+      fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 700',
+      letterSpacing: 1,
+    },
+    subtitle: {
+      fontSize: theme.fontSize.md,
+      color: theme.colors.textSecondary,
+      marginTop: 4,
     },
     scroll: {
       paddingHorizontal: theme.spacing.lg,
@@ -145,25 +157,30 @@ const createStyles = (theme: Theme, topInset: number) =>
       gap: theme.spacing.sm,
     },
     levelHero: {
-      padding: theme.spacing.lg,
-      marginBottom: theme.spacing.lg,
-      overflow: 'hidden',
-      position: 'relative',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.md,
     },
-    levelBlob: {
-      position: 'absolute',
-      width: 220,
-      height: 220,
-      borderRadius: 110,
-      top: -80,
-      right: -60,
-      backgroundColor: theme.colors.violetSoft,
-      opacity: 0.6,
+    levelInfo: {
+      flex: 1,
+      marginLeft: theme.spacing.md,
     },
-    levelText: {
-      marginTop: theme.spacing.sm,
-      fontSize: theme.fontSize.sm,
-      color: theme.colors.textSecondary,
+    ringPercent: {
+      fontFamily: theme.fonts.title,
+      fontVariationSettings: '"wght" 700',
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+    levelTitle: {
+      fontFamily: theme.fonts.bold,
+      fontSize: theme.fontSize.lg,
+      color: theme.colors.text,
+    },
+    levelSub: {
       fontFamily: theme.fonts.body,
+      fontSize: theme.fontSize.sm,
+      color: theme.colors.textMuted,
+      marginTop: 2,
     },
   });

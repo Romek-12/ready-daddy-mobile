@@ -12,6 +12,7 @@ export type HomeStackParamList = {
   HomeMain: undefined;
   Settings: undefined;
   NotificationSettings: undefined;
+  ModuleOrder: undefined;
   WeekDetail: { week?: number };
   BirthPrep: undefined;
   DadModule: undefined;
@@ -27,6 +28,7 @@ export type HomeStackParamList = {
   NameDraw: undefined;
   FirstYear: undefined;
   Month: { month: number };
+  PregnancySafety: undefined;
 };
 
 export type DadStackParamList = {

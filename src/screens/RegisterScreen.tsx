@@ -11,7 +11,7 @@ import DateScrollPicker from '../components/DateScrollPicker';
 import GlassInput from '../components/ui/GlassInput';
 import GradientButton from '../components/ui/GradientButton';
 import GlassCard from '../components/ui/GlassCard';
-import { PREGNANCY_DAYS } from '../constants';
+import { CONCEPTION_DAYS } from '../constants';
 import Icon from '../components/Icon';
 import SocialAuthButtons from '../components/SocialAuthButtons';
 import { registerSchema, type RegisterForm } from '../lib/validation';
@@ -57,7 +57,7 @@ export default function RegisterScreen({ navigation }: Props) {
     let conceptionDate = data.conceptionDate;
     if (dateType === 'due') {
       const due = new Date(conceptionDate);
-      due.setDate(due.getDate() - PREGNANCY_DAYS);
+      due.setDate(due.getDate() - CONCEPTION_DAYS);
       conceptionDate = `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}-${String(due.getDate()).padStart(2, '0')}`;
     }
 
@@ -146,17 +146,17 @@ export default function RegisterScreen({ navigation }: Props) {
           )}
         />
 
-        {/* Partner Name */}
+        {/* Your name */}
         <Controller
           control={control}
           name="partnerName"
           render={({ field: { onChange, value } }) => (
             <GlassInput
-              label="Imię partnerki (opcjonalne)"
+              label="Twoje imię"
               icon="partner"
               value={value}
               onChangeText={onChange}
-              placeholder="np. Anna"
+              placeholder="np. Marek"
             />
           )}
         />

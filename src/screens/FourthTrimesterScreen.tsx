@@ -9,6 +9,9 @@ import type { Theme } from '../theme';
 import GlassCard from '../components/ui/GlassCard';
 import ProgressRing from '../components/ui/ProgressRing';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 interface FourthTrimesterWeek {
   id: number;
@@ -50,13 +53,16 @@ export default function FourthTrimesterScreen() {
 
   return (
     <AuroraBackground>
-    <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
+    <View style={{ flex: 1 }}>
       <View style={s.header}>
-        <Icon name="baby" size={48} color={theme.colors.fourthTrimester} />
-        <Text style={s.title}>4. Trymestr</Text>
-        <Text style={s.sub}>Pierwsze tygodnie dziecka i matki po porodzie</Text>
+        <Kicker>IV Trymestr</Kicker>
+        <View style={s.titleStack}>
+          <Text style={s.title}>Nowe</Text>
+          <GradientText style={s.title} colors={[theme.colors.fourthTrimester, theme.colors.violet]}>życie.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Pierwsze tygodnie dziecka i matki po porodzie</Text>
       </View>
-
+    <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <GlassCard elevated style={s.hero}>
         <ProgressRing value={weekProgress} size={80} stroke={7}>
           <Text style={s.ringText}>{currentWeek}</Text>
@@ -119,8 +125,10 @@ export default function FourthTrimesterScreen() {
           );
         })}
       </View>
+      <MedicalDisclaimer />
       <View style={{ height: 40 }} />
     </ScrollView>
+    </View>
     </AuroraBackground>
   );
 }
@@ -129,9 +137,10 @@ const createStyles = (theme: Theme, insets: { top: number; bottom: number }) => 
   c: { flex: 1, backgroundColor: 'transparent' },
   scrollContent: { paddingBottom: insets.bottom + 80 + 16 },
   center: { justifyContent: 'center', alignItems: 'center' },
-  header: { alignItems: 'center', paddingTop: insets.top + theme.spacing.md, paddingBottom: theme.spacing.xl },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.fourthTrimester, marginTop: theme.spacing.sm },
-  sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
+  header: { alignItems: 'flex-start', paddingHorizontal: theme.spacing.lg, paddingTop: insets.top + 16, paddingBottom: 24, gap: 8 },
+  titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
+  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
   infoCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.lg, padding: theme.spacing.xl, borderWidth: 1, borderColor: theme.colors.accent + '33' },
   infoText: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, lineHeight: 24 },
   listContainer: { paddingHorizontal: theme.spacing.lg },

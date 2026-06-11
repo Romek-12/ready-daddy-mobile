@@ -1,7 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { addDays, addMonths, isFuture } from 'date-fns';
 import { NOTIFICATION_TEMPLATES, getGenericTemplate } from '../../data/notification-templates';
-import { MAX_PREGNANCY_WEEK, PREGNANCY_DAYS } from '../../constants';
+import { MAX_PREGNANCY_WEEK, CONCEPTION_DAYS } from '../../constants';
 import { logError } from '../../utils/logError';
 import { FIRST_YEAR_CONTENT } from '../../data/first-year-content';
 
@@ -83,7 +83,7 @@ export async function scheduleAllNotifications(dueDate: Date): Promise<void> {
  * Fires at 9:00 on the first day of each month milestone (months 1–12).
  */
 export async function scheduleFirstYearNotifications(conceptionDate: Date): Promise<void> {
-  const birthDate = addDays(conceptionDate, PREGNANCY_DAYS);
+  const birthDate = addDays(conceptionDate, CONCEPTION_DAYS);
 
   for (let month = 1; month <= 12; month++) {
     const monthDate = addMonths(birthDate, month);

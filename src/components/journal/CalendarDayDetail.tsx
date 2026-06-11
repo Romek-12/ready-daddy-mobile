@@ -43,7 +43,7 @@ export default function CalendarDayDetail({ date, entries, weekDay, onAddVisit, 
 
       <TouchableOpacity style={s.addBtn} onPress={onAddVisit} accessibilityRole="button" accessibilityLabel="Dodaj wizytę">
         <Icon name="add" size={18} color={theme.colors.background} />
-        <Text style={s.addBtnLabel}>+ Dodaj wizytę</Text>
+        <Text style={s.addBtnLabel}>Dodaj wizytę</Text>
       </TouchableOpacity>
     </View>
   );

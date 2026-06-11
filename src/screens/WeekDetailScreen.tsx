@@ -12,6 +12,7 @@ import type { Theme } from '../theme';
 import type { ActionCard, CheckupItem } from '../services/api';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GlassCard from '../components/ui/GlassCard';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 type Props = { route?: { params?: { week?: number } } };
 
@@ -189,6 +190,7 @@ export default function WeekDetailScreen({ route }: Props) {
           ))}
         </View>
       )}
+      <MedicalDisclaimer />
       <View style={{ height: 40 }} />
     </ScrollView>
     </View>

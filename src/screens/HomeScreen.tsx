@@ -6,17 +6,25 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useCurrentWeek } from '../hooks/useAppData';
 import { useSizeMode } from '../hooks/useSizeMode';
+import { useModuleOrder } from '../hooks/useModuleOrder';
 import Icon from '../components/Icon';
 import SkeletonBox from '../components/SkeletonBox';
 import FetusVisualizerCompact from '../components/FetusVisualizerCompact';
 import type { AppNavigation } from '../types/navigation';
-import BadgesWidget from '../components/gamification/BadgesWidget';
 import { checkWeekBadges } from '../services/gamification/BadgeChecker';
 import { useBadgeContext } from '../context/BadgeContext';
 import type { ActionCard } from '../services/api';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GlowPill from '../components/ui/GlowPill';
 import GlassCard from '../components/ui/GlassCard';
+
+type ModuleItem = {
+  key: string;
+  icon: string;
+  label: string;
+  color: string;
+  isTab?: boolean;
+};
 
 export default function HomeScreen({ navigation }: { navigation: AppNavigation }) {
   const { theme } = useTheme();
@@ -36,13 +44,12 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
     const week = data.currentWeek;
     if (checkedWeekRef.current === week) return;
     checkedWeekRef.current = week;
-
     checkWeekBadges(user.id, week).then(newBadges => {
       newBadges.forEach(id => queueBadgeUnlock(id));
     });
   }, [user, data?.currentWeek, queueBadgeUnlock]);
 
-  const MODULES = React.useMemo(() => [
+  const ALL_MODULES: ModuleItem[] = React.useMemo(() => [
     { key: 'WeekDetailTab', icon: 'fetus', label: 'Rozwój dziecka', color: theme.colors.fetus, isTab: true },
     { key: 'ActionCards', icon: 'bolt', label: 'Co robić teraz?', color: theme.colors.actionCards, isTab: true },
     { key: 'Checkups', icon: 'calendar', label: 'Lekarz i badania', color: theme.colors.checkups },
@@ -53,7 +60,28 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
     { key: 'PostBirth', icon: 'post-birth', label: 'Po porodzie', color: theme.colors.postBirth },
     { key: 'FirstYear', icon: 'baby', label: 'Pierwszy Rok', color: theme.colors.primary },
     { key: 'NameDraw', icon: 'dice', label: 'Wybór imienia', color: theme.colors.accent },
+    { key: 'PregnancySafety', icon: 'shield', label: 'Co jeść / unikać', color: theme.colors.danger },
+    { key: 'Badges', icon: 'diamond', label: 'Odznaki', color: theme.colors.violet },
   ], [theme]);
+
+  const DEFAULT_ORDER = React.useMemo(() => ALL_MODULES.map(m => m.key), [ALL_MODULES]);
+  const [moduleOrder, setModuleOrder] = useModuleOrder(DEFAULT_ORDER);
+
+  const MODULES: ModuleItem[] = React.useMemo(() => {
+    const map = Object.fromEntries(ALL_MODULES.map(m => [m.key, m]));
+    return moduleOrder.map(k => map[k]).filter(Boolean) as ModuleItem[];
+  }, [moduleOrder, ALL_MODULES]);
+
+  const navigateTo = React.useCallback((m: ModuleItem) => {
+    if (m.isTab) {
+      navigation.navigate(m.key, m.key === 'WeekDetailTab' ? { week: data?.currentWeek } : undefined);
+    } else {
+      navigation.navigate(m.key);
+    }
+  }, [navigation, data?.currentWeek]);
+
+  const w = data?.weekData;
+  const progress = data?.progress || 0;
 
   if (isLoading) return (
     <ScrollView style={s.c} bounces={false}>
@@ -67,11 +95,6 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
       <View style={{ padding: theme.spacing.lg, paddingTop: 0 }}>
         <SkeletonBox height={220} borderRadius={theme.borderRadius.xl} style={{ marginBottom: theme.spacing.lg }} />
         <SkeletonBox height={100} borderRadius={theme.borderRadius.lg} style={{ marginBottom: theme.spacing.lg }} />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          {[...Array(4)].map((_, i) => (
-            <SkeletonBox key={i} width={CARD_W} height={120} borderRadius={theme.borderRadius.lg} style={{ marginBottom: theme.spacing.md }} />
-          ))}
-        </View>
       </View>
     </ScrollView>
   );
@@ -79,126 +102,117 @@ export default function HomeScreen({ navigation }: { navigation: AppNavigation }
   if (error) return (
     <View style={[s.c, s.center]}>
       <Text style={s.errorText}>{error instanceof Error ? error.message : 'Nie udało się załadować danych'}</Text>
-      <TouchableOpacity style={s.retryBtn} onPress={() => refetch()} accessibilityRole="button" accessibilityLabel="Spróbuj ponownie">
+      <TouchableOpacity style={s.retryBtn} onPress={() => refetch()}>
         <Text style={s.retryText}>Spróbuj ponownie</Text>
       </TouchableOpacity>
     </View>
   );
 
-  const w = data?.weekData;
-  const progress = data?.progress || 0;
-
   return (
     <AuroraBackground>
-    <ScrollView
-      style={s.c}
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefetching}
-          onRefresh={() => refetch()}
-          tintColor={theme.colors.primary}
-          colors={[theme.colors.primary]}
-        />
-      }
-    >
-      <View style={s.header}>
-        <View>
-          <View style={s.greetRow}>
-            <Text style={s.greeting}>Cześć! </Text>
-            <Icon name="wave" size={20} color={theme.colors.accent} />
-          </View>
-          <Text style={s.appName}>Ready Daddy</Text>
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate('AddVisit')} style={s.settingsBtn} accessibilityRole="button" accessibilityLabel="Dodaj wizytę">
-          <Icon name="calendar-add" size={24} color={theme.colors.textSecondary} />
-        </TouchableOpacity>
-      </View>
-
-      {w && (
-        <TouchableOpacity onPress={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })} accessibilityRole="button" accessibilityLabel={`Tydzień ${data.currentWeek} – sprawdź szczegóły`} style={s.weekCardWrap}>
-        <GlassCard elevated style={s.weekCard}>
-          <View style={{ marginBottom: theme.spacing.sm }}>
-            <GlowPill label={`${data.trimester}. trymestr`} variant={data.trimester === 2 ? 'violet' : 'cyan'} />
-          </View>
-          <Text style={s.weekNumber}>{data.currentWeek}. tydzień</Text>
-          <FetusVisualizerCompact
-            week={data.currentWeek}
-            sizeMm={w.fetus_size_mm}
-            weightG={w.fetus_weight_g}
-            trimester={data.trimester}
-            sizeMode={sizeMode}
-            weekData={w}
-            progress={progress}
-            progressLabel={`${progress}% ciąży za nami`}
-            onDetails={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })}
+      <ScrollView
+        style={s.c}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={() => refetch()}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
           />
-        </GlassCard>
-        </TouchableOpacity>
-      )}
-
-      {w?.notification && (
-        <View style={s.notifCard}>
-          <View style={s.notifHeader}>
-            <Icon name="notifications" size={24} color={theme.colors.accent} />
-            <Text style={s.notifTitle}>Ważne w tym tygodniu</Text>
+        }
+      >
+        <View style={s.header}>
+          <View>
+            <View style={s.greetRow}>
+              <Text style={s.greeting}>Cześć! </Text>
+              <Icon name="wave" size={20} color={theme.colors.accent} />
+            </View>
+            <Text style={s.appName}>Ready Daddy</Text>
           </View>
-          <Text style={s.notifText}>{w.notification}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('AddVisit')} style={s.settingsBtn}>
+            <Icon name="calendar-add" size={24} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
         </View>
-      )}
 
-      {(data?.actionCards?.length ?? 0) > 0 && (
-        <View style={s.section}>
-          <View style={s.sectionHeader}>
-            <Icon name="bolt" size={20} color={theme.colors.accent} />
-            <Text style={s.sectionTitle}> Co dzieje się teraz?</Text>
+        {w && (
+          <TouchableOpacity onPress={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })} style={s.weekCardWrap}>
+            <GlassCard elevated style={s.weekCard}>
+              <View style={{ marginBottom: theme.spacing.sm }}>
+                <GlowPill label={`${data.trimester}. trymestr`} variant={data.trimester === 2 ? 'violet' : 'cyan'} />
+              </View>
+              <Text style={s.weekNumber}>{data.currentWeek}. tydzień</Text>
+              <FetusVisualizerCompact
+                week={data.currentWeek}
+                sizeMm={w.fetus_size_mm}
+                weightG={w.fetus_weight_g}
+                trimester={data.trimester}
+                sizeMode={sizeMode}
+                weekData={w}
+                progress={progress}
+                progressLabel={`${progress}% ciąży za nami`}
+                onDetails={() => navigation.navigate('WeekDetailTab', { week: data.currentWeek })}
+              />
+            </GlassCard>
+          </TouchableOpacity>
+        )}
+
+        {w?.notification && (
+          <View style={s.notifCard}>
+            <View style={s.notifHeader}>
+              <Icon name="notifications" size={24} color={theme.colors.accent} />
+              <Text style={s.notifTitle}>Ważne w tym tygodniu</Text>
+            </View>
+            <Text style={s.notifText}>{w.notification}</Text>
           </View>
-          {data?.actionCards.slice(0, 2).map((card: ActionCard) => {
-            const preview = card.herSide?.[0] ?? '';
-            return (
-              <TouchableOpacity key={card.id} onPress={() => navigation.navigate('ActionCards', { initialCardId: card.id })} accessibilityRole="button" accessibilityLabel={`Karta reakcji: ${card.title}`}>
-                <GlassCard style={s.quickCard}>
-                  <Text style={s.quickTitle}>{card.emoji} {card.title}</Text>
-                  <Text style={s.quickScenario}>{preview.length > 80 ? preview.substring(0, 80) + '…' : preview}</Text>
+        )}
+
+        {(data?.actionCards?.length ?? 0) > 0 && (
+          <View style={s.section}>
+            <View style={s.sectionHeader}>
+              <Icon name="bolt" size={20} color={theme.colors.accent} />
+              <Text style={s.sectionTitle}> Co dzieje się teraz?</Text>
+            </View>
+            {data?.actionCards.slice(0, 2).map((card: ActionCard) => {
+              const preview = card.herSide?.[0] ?? '';
+              return (
+                <TouchableOpacity key={card.id} onPress={() => navigation.navigate('ActionCards', { initialCardId: card.id })}>
+                  <GlassCard style={s.quickCard}>
+                    <Text style={s.quickTitle}>{card.emoji} {card.title}</Text>
+                    <Text style={s.quickScenario}>{preview.length > 80 ? preview.substring(0, 80) + '…' : preview}</Text>
+                  </GlassCard>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
+
+        <View style={s.section}>
+          <View style={s.grid}>
+            {MODULES.map((m) => (
+              <TouchableOpacity
+                key={m.key}
+                style={s.gridItem}
+                onPress={() => navigateTo(m)}
+                accessibilityRole="button"
+                accessibilityLabel={m.label}
+              >
+                <GlassCard style={s.moduleCard}>
+                  <View style={[s.moduleIcon, { backgroundColor: m.color + '20' }]}>
+                    <Icon name={m.icon} size={28} color={m.color} />
+                  </View>
+                  <Text style={s.moduleLabel}>{m.label}</Text>
                 </GlassCard>
               </TouchableOpacity>
-            );
-          })}
+            ))}
+          </View>
         </View>
-      )}
 
-      <BadgesWidget onPressAll={() => navigation.navigate('Badges')} />
-
-      <View style={s.section}>
-        <View style={s.moduleGrid}>
-          {MODULES.map(m => (
-            <TouchableOpacity key={m.key} style={s.moduleCardWrap} onPress={() => {
-              if (m.isTab) {
-                navigation.navigate(m.key, m.key === 'WeekDetailTab' ? { week: data?.currentWeek } : undefined);
-              } else {
-                navigation.navigate(m.key);
-              }
-            }} accessibilityRole="button" accessibilityLabel={m.label}>
-              <GlassCard style={s.moduleCard}>
-                <View style={[s.moduleIcon, { backgroundColor: m.color + '20' }]}>
-                  <Icon name={m.icon} size={28} color={m.color} />
-                </View>
-                <Text style={s.moduleLabel}>{m.label}</Text>
-              </GlassCard>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Settings')}
-        style={s.settingsFooter}
-        accessibilityRole="button"
-        accessibilityLabel="Ustawienia"
-      >
-        <Icon name="gear" size={16} color={theme.colors.textMuted} />
-        <Text style={s.settingsFooterLabel}>Ustawienia</Text>
-      </TouchableOpacity>
-      <View style={{ height: 20 }} />
-    </ScrollView>
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={s.settingsFooter}>
+          <Icon name="gear" size={16} color={theme.colors.textMuted} />
+          <Text style={s.settingsFooterLabel}>Ustawienia</Text>
+        </TouchableOpacity>
+        <View style={{ height: 20 }} />
+      </ScrollView>
     </AuroraBackground>
   );
 }
@@ -217,7 +231,7 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   weekCardWrap: { margin: theme.spacing.lg },
   weekCard: { padding: theme.spacing.xl, overflow: 'hidden' },
   weekNumber: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 800', color: theme.colors.text },
-  notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, elevation: 1, borderLeftWidth: 2, borderLeftColor: theme.colors.primary },
+  notifCard: { marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.lg, backgroundColor: theme.colors.accentLight, borderRadius: theme.borderRadius.xl, padding: theme.spacing.lg, borderLeftWidth: 2, borderLeftColor: theme.colors.primary },
   notifHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.sm, gap: 8 },
   notifTitle: { fontSize: theme.fontSize.md, fontFamily: theme.fonts.bold, color: theme.colors.text },
   notifText: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, lineHeight: 20 },
@@ -227,20 +241,11 @@ const createStyles = (theme: Theme, CARD_W: number, topInset: number) => StyleSh
   quickCard: { padding: theme.spacing.md, marginBottom: theme.spacing.sm },
   quickTitle: { fontSize: theme.fontSize.md, fontFamily: theme.fonts.bold, color: theme.colors.accent },
   quickScenario: { fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 4 },
-  moduleGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.lg },
-  moduleCardWrap: { width: CARD_W },
-  moduleCard: { padding: theme.spacing.lg, alignItems: 'center' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm },
+  gridItem: { width: CARD_W, flex: undefined },
+  moduleCard: { flex: 1, padding: theme.spacing.lg, alignItems: 'center', width: CARD_W },
   moduleIcon: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginBottom: theme.spacing.sm },
   moduleLabel: { fontSize: theme.fontSize.xs, color: theme.colors.textSecondary, textAlign: 'center', fontFamily: theme.fonts.medium },
-  settingsFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: theme.spacing.lg,
-  },
-  settingsFooterLabel: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
-  },
+  settingsFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: theme.spacing.lg },
+  settingsFooterLabel: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
 });

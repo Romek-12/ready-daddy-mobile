@@ -19,7 +19,7 @@ import { checkNotificationsBadge } from '../services/gamification/BadgeChecker';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
 import AuroraBackground from '../components/ui/AuroraBackground';
-import { PREGNANCY_DAYS, TAB_BAR_HEIGHT } from '../constants';
+import { CONCEPTION_DAYS, TAB_BAR_HEIGHT } from '../constants';
 import type { Theme } from '../theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { HomeStackParamList } from '../types/navigation';
@@ -27,7 +27,7 @@ import type { HomeStackParamList } from '../types/navigation';
 type Props = NativeStackScreenProps<HomeStackParamList, 'NotificationSettings'>;
 
 function getDueDateFromConception(conceptionDate: string): Date {
-  return addDays(new Date(conceptionDate), PREGNANCY_DAYS);
+  return addDays(new Date(conceptionDate), CONCEPTION_DAYS);
 }
 
 function getNextNotificationInfo(

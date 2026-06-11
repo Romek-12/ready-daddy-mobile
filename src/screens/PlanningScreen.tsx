@@ -32,16 +32,16 @@ export default function PlanningScreen() {
     <View style={s.c}>
       <View style={s.topBar}>
         <View style={s.tabs}>
-          <TouchableOpacity style={[s.tab, tab === 'shopping' && s.tabActive]} onPress={() => goTo('shopping')}>
+          <TouchableOpacity style={[s.tab, tab === 'shopping' && s.tabActive, tab === 'shopping' && { backgroundColor: theme.colors.primary + '22' }]} onPress={() => goTo('shopping')}>
             <View style={s.tabInner}>
-              <Icon name="shopping-cart" size={16} color={tab === 'shopping' ? theme.colors.text : theme.colors.textSecondary} />
-              <Text style={[s.tabText, tab === 'shopping' && s.tabTextActive]}> Lista zakupów</Text>
+              <Icon name="shopping-cart" size={16} color={tab === 'shopping' ? theme.colors.primary : theme.colors.textSecondary} />
+              <Text style={[s.tabText, tab === 'shopping' && { color: theme.colors.primary, fontWeight: theme.fontWeight.bold }]}> Lista zakupów</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[s.tab, tab === 'medical' && s.tabActive]} onPress={() => goTo('medical')}>
+          <TouchableOpacity style={[s.tab, tab === 'medical' && s.tabActive, tab === 'medical' && { backgroundColor: theme.colors.planning + '22' }]} onPress={() => goTo('medical')}>
             <View style={s.tabInner}>
-              <Icon name="hospital" size={16} color={tab === 'medical' ? theme.colors.text : theme.colors.textSecondary} />
-              <Text style={[s.tabText, tab === 'medical' && s.tabTextActive]}> Opieka medyczna</Text>
+              <Icon name="hospital" size={16} color={tab === 'medical' ? theme.colors.planning : theme.colors.textSecondary} />
+              <Text style={[s.tabText, tab === 'medical' && { color: theme.colors.planning, fontWeight: theme.fontWeight.bold }]}> Opieka medyczna</Text>
             </View>
           </TouchableOpacity>
         </View>

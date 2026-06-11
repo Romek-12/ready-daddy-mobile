@@ -34,6 +34,12 @@ export default function GlassCard({ children, style, elevated = false, accent, o
     ? { borderLeftWidth: 3, borderLeftColor: accentColor }
     : null;
 
+  const glowShadow: ViewStyle = accent === 'cyan'
+    ? { shadowColor: theme.colors.primary, shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 0 }
+    : accent === 'violet'
+    ? { shadowColor: theme.colors.violet, shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 0 }
+    : {};
+
   const scaleAnim = useSharedValue(1);
   const animStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scaleAnim.value }],
@@ -57,9 +63,9 @@ export default function GlassCard({ children, style, elevated = false, accent, o
   if (glassEnabled && Platform.OS === 'ios') {
     if (onPress) {
       return (
-        <Animated.View style={animStyle}>
+        <Animated.View style={[animStyle, glowShadow]}>
           <BlurView
-            intensity={elevated ? 60 : 40}
+            intensity={elevated ? 80 : 55}
             tint="dark"
             style={[styles.base, { borderColor: borderCol, borderRadius }, accentStyle, style]}
           >
@@ -77,9 +83,9 @@ export default function GlassCard({ children, style, elevated = false, accent, o
     }
     return (
       <BlurView
-        intensity={elevated ? 60 : 40}
+        intensity={elevated ? 80 : 55}
         tint="dark"
-        style={[styles.base, { borderColor: borderCol, borderRadius }, accentStyle, style]}
+        style={[styles.base, { borderColor: borderCol, borderRadius }, accentStyle, glowShadow, style]}
       >
         {highlight}
         {children}
@@ -88,7 +94,7 @@ export default function GlassCard({ children, style, elevated = false, accent, o
   }
 
   const bg = glassEnabled
-    ? elevated ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.05)'
+    ? elevated ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.08)'
     : elevated ? theme.colors.surfaceHi : theme.colors.surface;
 
   if (onPress) {
@@ -101,6 +107,7 @@ export default function GlassCard({ children, style, elevated = false, accent, o
           styles.base,
           { backgroundColor: bg, borderColor: borderCol, borderRadius },
           accentStyle,
+          glowShadow,
           style,
           animStyle,
         ]}
@@ -117,6 +124,7 @@ export default function GlassCard({ children, style, elevated = false, accent, o
         styles.base,
         { backgroundColor: bg, borderColor: borderCol, borderRadius },
         accentStyle,
+        glowShadow,
         style,
       ]}
     >

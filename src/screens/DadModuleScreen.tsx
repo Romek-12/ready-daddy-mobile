@@ -12,6 +12,7 @@ import GlowPill from '../components/ui/GlowPill';
 import AuroraBackground from '../components/ui/AuroraBackground';
 import GradientText from '../components/ui/GradientText';
 import Kicker from '../components/ui/Kicker';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 const resolveIconColor = (colorKey: string, theme: Theme): string => {
   const colorMap: Record<string, string> = {
@@ -208,7 +209,7 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
 
   return (
     <AuroraBackground>
-    <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
+    <View style={{ flex: 1 }}>
       <View style={s.header}>
         <Kicker style={s.headerKicker}>Moduł taty</Kicker>
         <View style={s.titleStack}>
@@ -217,7 +218,7 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
         </View>
         <Text style={s.subtitle}>Praktyczne porady dla ojców — od narodzin do pierwszego roku.</Text>
       </View>
-
+    <ScrollView style={s.c} contentContainerStyle={s.scrollContent}>
       <View style={{ paddingHorizontal: 16 }}>
         <GlassCard elevated style={s.tipCard}>
           <GlowPill label="Wskazówka dnia" />
@@ -268,8 +269,10 @@ export default function DadModuleScreen({ navigation }: { navigation: AppNavigat
         })}
       </View>
 
+      <MedicalDisclaimer />
       <View style={{ height: 32 }} />
     </ScrollView>
+    </View>
     </AuroraBackground>
   );
 }

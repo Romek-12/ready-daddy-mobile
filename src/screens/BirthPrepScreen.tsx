@@ -6,12 +6,15 @@ import type { Theme } from '../theme';
 import { usePersistedChecklist } from '../hooks/usePersistedChecklist';
 import { useBirthPreparation, useBagChecklist } from '../hooks/useAppData';
 import Icon from '../components/Icon';
+import GradientText from '../components/ui/GradientText';
+import Kicker from '../components/ui/Kicker';
 import { useAuth } from '../context/AuthContext';
 import { useBadgeContext } from '../context/BadgeContext';
 import { checkChecklistBadge } from '../services/gamification/BadgeChecker';
 import GlassCard from '../components/ui/GlassCard';
 import ProgressRing from '../components/ui/ProgressRing';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 interface BagItem {
   name: string;
@@ -217,12 +220,16 @@ export default function BirthPrepScreen() {
 
   return (
     <AuroraBackground>
-    <ScrollView style={s.c}>
+    <View style={{ flex: 1 }}>
       <View style={s.header}>
-        <Icon name="hospital" size={48} color={theme.colors.birth} />
-        <Text style={s.title}>Misja: Porodówka</Text>
+        <Kicker>Przygotowania</Kicker>
+        <View style={s.titleStack}>
+          <Text style={s.title}>Misja:</Text>
+          <GradientText style={s.title} colors={[theme.colors.birth, theme.colors.violet]}>Porodówka.</GradientText>
+        </View>
+        <Text style={s.subtitle}>Kompletna lista rzeczy do spakowania i pamiętnik porodu</Text>
       </View>
-
+    <ScrollView style={s.c}>
       {/* Progress hero */}
       <GlassCard elevated style={s.progressHero}>
         <ProgressRing value={percentPacked} size={80} stroke={7}>
@@ -230,7 +237,7 @@ export default function BirthPrepScreen() {
         </ProgressRing>
         <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
           <Text style={s.progressTitle}>Torba na porodówkę</Text>
-          <Text style={s.progressSub}>{totalChecked} z {totalItems} spakowane</Text>
+          <Text style={s.progressSub}>{totalChecked}/{totalItems}</Text>
         </View>
       </GlassCard>
 
@@ -317,23 +324,26 @@ export default function BirthPrepScreen() {
         <Text style={s.disclaimerText}>Ta lista jest orientacyjna. Szpitale mogą mieć własne wymagania — sprawdź je na stronie oddziału położniczego, w którym planujecie poród.</Text>
       </View>
 
+      <MedicalDisclaimer />
       <View style={{ height: 40 }} />
     </ScrollView>
+    </View>
     </AuroraBackground>
   );
 }
 
 const createStyles = (theme: Theme, topInset: number) => StyleSheet.create({
   c: { flex: 1, backgroundColor: 'transparent' },
-  header: { alignItems: 'center', paddingTop: topInset + 16, paddingBottom: theme.spacing.lg },
-  title: { fontSize: theme.fontSize.xxl, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.birth, marginTop: theme.spacing.sm },
-  sub: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: theme.spacing.xs },
+  header: { alignItems: 'flex-start', paddingHorizontal: theme.spacing.lg, paddingTop: topInset + 16, paddingBottom: 24, gap: 8 },
+  titleStack: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline', gap: 8 },
+  title: { fontSize: theme.fontSize.hero, fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', color: theme.colors.text, letterSpacing: 1 },
+  subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 8 },
 
   progressCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.xl, backgroundColor: theme.colors.birth, borderRadius: theme.borderRadius.xl, paddingHorizontal: theme.spacing.lg, paddingVertical: 24, minHeight: 110 },
   progressHero: { flexDirection: 'row', alignItems: 'center', padding: theme.spacing.md, marginHorizontal: theme.spacing.lg, marginBottom: theme.spacing.md },
   progressText: { fontFamily: theme.fonts.title, fontVariationSettings: '"wght" 700', fontSize: 16, color: theme.colors.text },
   progressTitle: { fontFamily: theme.fonts.bold, fontSize: theme.fontSize.lg, color: theme.colors.text },
-  progressSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textSecondary, marginTop: 2 },
+  progressSub: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textMuted, marginTop: 2 },
   progressLabel: { fontSize: theme.fontSize.lg, color: theme.colors.white, fontWeight: theme.fontWeight.bold, flex: 1, marginRight: theme.spacing.md },
   progressRight: { alignItems: 'flex-end' },
   progressCount: { fontSize: theme.fontSize.xl, fontWeight: theme.fontWeight.bold, color: theme.colors.white },

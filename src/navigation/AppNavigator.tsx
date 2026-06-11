@@ -33,6 +33,7 @@ import DadPologScreen from '../screens/DadPologScreen';
 import DadRelacjaScreen from '../screens/DadRelacjaScreen';
 import DadNoworodekScreen from '../screens/DadNoworodekScreen';
 import NotificationSettingsScreen from '../screens/NotificationSettingsScreen';
+import ModuleOrderScreen from '../screens/ModuleOrderScreen';
 import JournalScreen from '../screens/journal/JournalScreen';
 import JournalEntryScreen from '../screens/journal/JournalEntryScreen';
 import AddEntryScreen from '../screens/journal/AddEntryScreen';
@@ -41,6 +42,7 @@ import FirstYearHomeScreen from '../screens/first-year/FirstYearHomeScreen';
 import MonthScreen from '../screens/first-year/MonthScreen';
 import AddVisitScreen from '../screens/AddVisitScreen';
 import NameDrawScreen from '../screens/NameDrawScreen';
+import PregnancySafetyScreen from '../screens/PregnancySafetyScreen';
 import { BadgeProvider } from '../context/BadgeContext';
 import BadgeUnlockModal from '../components/gamification/BadgeUnlockModal';
 
@@ -83,6 +85,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="HomeMain" component={HomeScreen} />
       <HomeStack.Screen name="Settings" component={SettingsScreen} />
       <HomeStack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+      <HomeStack.Screen name="ModuleOrder" component={ModuleOrderScreen} />
       <HomeStack.Screen name="WeekDetail" component={WeekDetailScreen} />
       <HomeStack.Screen name="BirthPrep" component={BirthPrepScreen} />
       <HomeStack.Screen name="DadModule" component={DadModuleScreen} />
@@ -98,6 +101,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="Month" component={MonthScreen} />
       <HomeStack.Screen name="AddVisit" component={AddVisitScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="NameDraw" component={NameDrawScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="PregnancySafety" component={PregnancySafetyScreen} options={{ headerShown: false, presentation: 'modal' }} />
     </HomeStack.Navigator>
   );
 }
@@ -108,7 +112,7 @@ function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: 'rgba(11,21,18,0.85)',
+          backgroundColor: 'rgba(0,0,0,0.90)',
           borderTopWidth: 1,
           borderTopColor: theme.colors.cardBorder,
           elevation: 0,

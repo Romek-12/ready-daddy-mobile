@@ -106,6 +106,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setLoading(false);
       }
+    }).catch((e) => {
+      logError('AuthContext:getSession', e);
+      setLoading(false);
     });
 
     // POPRAWKA: Ignorujemy TOKEN_REFRESHED — to zdarzenie strzelało co kilka minut
@@ -214,23 +217,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const linkGoogleAccount = async (): Promise<void> => {
-    const { idToken, accessToken } = await getGoogleTokens();
-    const { error } = await (supabase.auth as any).linkIdentity({
+    const idToken = await getGoogleIdToken();
+    const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token: idToken,
-      access_token: accessToken,
     });
     if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Brak danych użytkownika');
+    await handleSocialUser(data.user.id, data.user.email ?? '');
   };
 
   const linkFacebookAccount = async (): Promise<void> => {
     const accessToken = await getFacebookAccessToken();
     if (!accessToken) return;
-    const { error } = await (supabase.auth as any).linkIdentity({
+    const { data, error } = await supabase.auth.signInWithIdToken({
       provider: 'facebook',
       token: accessToken,
     });
     if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Brak danych użytkownika');
+    await handleSocialUser(data.user.id, data.user.email ?? '');
   };
 
   const logout = async () => {

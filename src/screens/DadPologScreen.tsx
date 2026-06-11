@@ -6,6 +6,7 @@ import type { Theme } from '../theme';
 import Icon from '../components/Icon';
 import GlassCard from '../components/ui/GlassCard';
 import AuroraBackground from '../components/ui/AuroraBackground';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 export default function DadPologScreen() {
   const { theme } = useTheme();
@@ -160,6 +161,7 @@ export default function DadPologScreen() {
       <View style={st.footer}>
         <Text style={st.footerText}>Uwaga: Informacje tu przedstawione mają charakter wspierający, nie są poradą medyczną. Przy ostrych objawach u partnerki zgłaszacie się pod opiekę lekarza psychiatrii.</Text>
       </View>
+      <MedicalDisclaimer />
       <View style={{ height: 40 }} />
     </ScrollView>
     </AuroraBackground>

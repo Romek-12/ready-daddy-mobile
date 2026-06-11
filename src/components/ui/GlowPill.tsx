@@ -13,7 +13,7 @@ export default function GlowPill({ label, variant = 'cyan' }: GlowPillProps) {
   const color = isCyan ? theme.colors.primary : theme.colors.violet;
   const bg = isCyan ? theme.colors.primaryLight : theme.colors.violetSoft;
   return (
-    <View style={[styles.pill, { backgroundColor: bg, borderColor: color + '55' }]}>
+    <View style={[styles.pill, { backgroundColor: bg, borderColor: color + '55', shadowColor: color, shadowOpacity: 0.5, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 }]}>
       <View style={[styles.dot, { backgroundColor: color }]} />
       <Text style={[styles.text, { color }]}>{label.toUpperCase()}</Text>
     </View>
